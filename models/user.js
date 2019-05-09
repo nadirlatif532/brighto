@@ -1,5 +1,5 @@
 'use strict';
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -67,6 +67,12 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
+    role: {
+      type: DataTypes.ENUM({
+        values: ['Customer', 'Admin', 'Dealer']
+      }),
+      allowNull:false
+    },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -79,21 +85,21 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   }, {
-    indexes: [
-      {
-        unique: true,
-        fields: ['email', 'username']
+      indexes: [
+        {
+          unique: true,
+          fields: ['email', 'username']
+        }
+      ],
+      defaultScope: {
+        attributes: { exclude: ['password', 'updatedAt', 'createdAt'] }
+      },
+      scopes: {
+        withPassword: {
+          attributes: {}
+        }
       }
-    ],
-    defaultScope: {
-      attributes: {exclude: ['password', 'updatedAt', 'createdAt']}
-    },
-    scopes: {
-      withPassword: {
-        attributes: {}
-      }
-    }
-  });
+    });
 
   User.prototype.getFullName = () => [this.firstname, this.lastname].join('.');
 
@@ -110,6 +116,9 @@ module.exports = (sequelize, DataTypes) => {
 
   User.associate = function (models) {
     // associations can be defined here
+    const { Product, Favorite_Product, Favorite_Shades, Color } = models;
+    User.belongsToMany(Product, { through: Favorite_Product });
+    User.belongsToMany(Color, { through: Favorite_Shades });
   };
   return User;
 };
