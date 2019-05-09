@@ -44,8 +44,8 @@ module.exports = (sequelize, DataTypes) => {
     })
     Color.associate = function (models) {
         // associations can be defined here
-        const { Order, User, Favorite_Shades } = models;
-        Color.belongsToMany(User, { through: Favorite_Shades });
+        const { Order, User} = models;
+       
         const { Family, Color_Family } = models;
         Color.belongsToMany(Family, { through: Color_Family });
     };
