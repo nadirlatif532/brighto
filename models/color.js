@@ -16,21 +16,38 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
+        itemCode: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+            validate: {
+                notEmpty: {
+                    msg: 'Item Code is required'
+                }
+            }
+        },
         rbg: {
             type: DataTypes.STRING,
             allowNull: false,
         },
         description: {
             type: DataTypes.TEXT
+        },
+        isAC: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        isRM: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
     })
     Color.associate = function (models) {
         // associations can be defined here
-        const { User, Favorite_Shades } = models;
+        const { Order, User, Favorite_Shades } = models;
         Color.belongsToMany(User, { through: Favorite_Shades });
         const { Family, Color_Family } = models;
         Color.belongsToMany(Family, { through: Color_Family });
-
     };
     return Color;
 };

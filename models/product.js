@@ -22,8 +22,15 @@ module.exports = (sequelize, DataTypes) => {
         },
         spreading: {
             type: DataTypes.INTEGER,
+        },
+        image: {
+            type: DataTypes.STRING,
+            defaultValue:''
+        },
+        isActive: {
+            type: DataTypes.BOOLEAN,
+            defaultValue:true
         }
-
     }, {
             indexes: [
                 {
@@ -35,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Product.associate = function (models) {
         // associations can be defined here
-        const { User, Favorite_Product, Country, Country_Product,Category } = models;
+        const { User, Order, Favorite_Product, Country, Country_Product,Category } = models;
         Product.belongsToMany(User, { through: Favorite_Product });
         Product.belongsToMany(Country, { through: Country_Product });
         Product.belongsTo(Category);
