@@ -19,11 +19,11 @@ module.exports = (sequelize, DataTypes) => {
     })
     Order.associate = function (models) {
         // associations can be defined here
-        const {User,Dealer,Product,Color} = models;
+        const {User,Dealer,Product,Shades} = models;
         Order.belongsTo(User);
         Order.belongsTo(Dealer);
         Order.belongsTo(Product);
-        Order.belongsTo(Color);
+        Order.belongsTo(Shades);
     };
     return Order;
 };

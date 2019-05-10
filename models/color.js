@@ -1,18 +1,18 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-    const Color = sequelize.define('Color', {
+    const Shades = sequelize.define('Shades', {
         name: {
             type: DataTypes.STRING,
             allowNull: false,
             defaultValue: '',
             validate: {
                 notEmpty: {
-                    msg: 'Color Name is required'
+                    msg: 'Shades Name is required'
                 },
                 len: {
                     args: [3, 40],
-                    msg: 'Please provide a Color name which must be 3-40 characters in length'
+                    msg: 'Please provide a Shades name which must be 3-40 characters in length'
                 }
             }
         },
@@ -42,12 +42,12 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: false
         }
     })
-    Color.associate = function (models) {
+    Shades.associate = function (models) {
         // associations can be defined here
         const { Order, User} = models;
        
         const { Family, Color_Family } = models;
-        Color.belongsToMany(Family, { through: Color_Family });
+        Shades.belongsToMany(Family, { through: Color_Family });
     };
-    return Color;
+    return Shades;
 };

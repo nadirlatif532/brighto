@@ -12,8 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     })
     Related_Shades.associate = function (models) {
         // associations can be defined here
-        const { Color } = models;
-        Related_Shades.belongsTo(Color);
+        const { Shades } = models;
+        Related_Shades.belongsTo(Shades);
     };
     return Related_Shades;
 };

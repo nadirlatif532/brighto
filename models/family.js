@@ -8,11 +8,11 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: '',
             validate: {
                 notEmpty: {
-                    msg: 'Color Family Name is required'
+                    msg: 'Shades Family Name is required'
                 },
                 len: {
                     args: [3, 40],
-                    msg: 'Please provide a Color Family name which must be 3-40 characters in length'
+                    msg: 'Please provide a Shades Family name which must be 3-40 characters in length'
                 }
             }
         },
@@ -23,8 +23,8 @@ module.exports = (sequelize, DataTypes) => {
     })
     Family.associate = function (models) {
         // associations can be defined here
-        const { Color, Color_Family } = models;
-        Family.belongsToMany(Color, { through: Color_Family });
+        const { Shades, Color_Family } = models;
+        Family.belongsToMany(Shades, { through: Color_Family });
 
     };
     return Family;

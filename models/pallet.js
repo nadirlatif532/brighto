@@ -44,14 +44,14 @@ module.exports = (sequelize, DataTypes) => {
     })
     Pallet.associate = function (models) {
         // associations can be defined here
-        const { Color } = models;
-        Pallet.belongsTo(Color, { as: 'color_1' });
-        Pallet.belongsTo(Color, { as: 'color_2' });
-        Pallet.belongsTo(Color, { as: 'color_3' });
-        Pallet.belongsTo(Color, { as: 'color_4' });
-        Pallet.belongsTo(Color, { as: 'color_5' });
-        Pallet.belongsTo(Color, { as: 'color_6' });
-        Pallet.belongsTo(Color, { as: 'color_7' });
+        const {Shades } = models;
+        Pallet.belongsTo(Shades, { as: 'color_1' });
+        Pallet.belongsTo(Shades, { as: 'color_2' });
+        Pallet.belongsTo(Shades, { as: 'color_3' });
+        Pallet.belongsTo(Shades, { as: 'color_4' });
+        Pallet.belongsTo(Shades, { as: 'color_5' });
+        Pallet.belongsTo(Shades, { as: 'color_6' });
+        Pallet.belongsTo(Shades, { as: 'color_7' });
     };
     return Pallet;
 };
