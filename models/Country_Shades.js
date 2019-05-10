@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-    const Related_Shades = sequelize.define('Related_Shades', {
+    const Country_Shades = sequelize.define('Country_Shades', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -10,10 +10,8 @@ module.exports = (sequelize, DataTypes) => {
             unique: true
         }
     })
-    Related_Shades.associate = function (models) {
+    Country_Shades.associate = function (models) {
         // associations can be defined here
-        const { Shades } = models;
-        Related_Shades.belongsTo(Shades);
     };
-    return Related_Shades;
+    return Country_Shades;
 };
