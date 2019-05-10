@@ -1,5 +1,5 @@
 'use strict';
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -67,6 +67,12 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
+    role: {
+      type: DataTypes.ENUM({
+        values: ['Customer', 'Admin', 'Dealer']
+      }),
+      allowNull:false
+    },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -77,23 +83,26 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Please provide a password which is at least 6 characters long.'
         }
       }
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN
     }
   }, {
-    indexes: [
-      {
-        unique: true,
-        fields: ['email', 'username']
+      indexes: [
+        {
+          unique: true,
+          fields: ['email', 'username']
+        }
+      ],
+      defaultScope: {
+        attributes: { exclude: ['password', 'updatedAt', 'createdAt'] }
+      },
+      scopes: {
+        withPassword: {
+          attributes: {}
+        }
       }
-    ],
-    defaultScope: {
-      attributes: {exclude: ['password', 'updatedAt', 'createdAt']}
-    },
-    scopes: {
-      withPassword: {
-        attributes: {}
-      }
-    }
-  });
+    });
 
   User.prototype.getFullName = () => [this.firstname, this.lastname].join('.');
 
@@ -110,6 +119,8 @@ module.exports = (sequelize, DataTypes) => {
 
   User.associate = function (models) {
     // associations can be defined here
+    const { Dealer, Order, Product, Color } = models;
+    User.belongsTo(Dealer,{allowNull:true});
   };
   return User;
 };
