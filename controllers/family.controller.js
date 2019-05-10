@@ -52,6 +52,15 @@ exports.deleteColor = async (req, res) => {
   }
 }
 
+exports.getAllColors = async (req,res) => {
+  try{
+    const result = await Family.findAll({});
+    return res.status(200).json({ success: true, message: result });
+  }
+  catch(err) {
+    return res.status(500).json({ success: false, message: err });
+  }
+}
 exports.getColorDetails = async (req, res) => {
   req.params['color'] = req.params['color'].toLowerCase();
   const { color } = req.params;
@@ -70,16 +79,7 @@ exports.getColorDetails = async (req, res) => {
           }
         }
       });
-    }
-    else {
-      result = await Family.findAll({
-        where: { name: color },
-        include: {
-          model: Shades,
-          through: { attributes: [] },
-        }
-      });
-    }
+    }    
     return res.status(200).json({ success: true, message: result });
   }
   catch (err) {
