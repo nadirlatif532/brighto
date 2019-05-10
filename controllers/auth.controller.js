@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
   const user = await User.scope('withPassword').findOne({where: {email: email}});
 
   if (!user) {
-    return res.json({success: false, message: 'User with this email does not exist.'});
+    return res.status(400).json({success: false, errors: {"email": "Email does not exist."}});
   }
 
   user.comparePassword(password, (err, result) => {
@@ -43,7 +43,7 @@ exports.login = async (req, res) => {
         res.status(200).json({token: token});
       });
     } else {
-      res.status(401).json({success: false, message: "Incorrect password"});
+      res.status(401).json({success: false, errors: { "password": "Incorrect password" }});
     }
   });
 };
