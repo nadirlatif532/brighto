@@ -1,13 +1,13 @@
-const express = require('express');
+const express = require("express");
 const unauth = express.Router();
-const AuthController = require('../controllers/auth.controller');
+const AuthController = require("../controllers/auth.controller");
 
 unauth
-    .post('/signup', AuthController.signup)
-    .post('/login', AuthController.login)
-    .post('/forgot-password', AuthController.forgotPassword)
-    .post('/reset-password/:token', AuthController.resetPassword)
+  .post("/signup", AuthController.signup)
+  .post("/login", AuthController.login)
+  .post("/forgot-password", AuthController.forgotPassword)
+  .post("/reset-password/:token", AuthController.resetPassword);
 
-    unauth.use('/family', require('./routes.family'));
+unauth.use("/family", require("./routes.family"));
 
 module.exports = unauth;
