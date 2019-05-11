@@ -25,11 +25,16 @@ module.exports = (sequelize, DataTypes) => {
         },
         image: {
             type: DataTypes.STRING,
-            defaultValue:''
+            defaultValue: '',
+            validate: {
+                isUrl: {
+                    msg: "Invalid format. Please provide a URL"
+                }
+            }
         },
         isActive: {
             type: DataTypes.BOOLEAN,
-            defaultValue:true
+            defaultValue: true
         }
     }, {
             indexes: [
@@ -42,9 +47,9 @@ module.exports = (sequelize, DataTypes) => {
 
     Product.associate = function (models) {
         // associations can be defined here
-        const { User, Order, Country, Country_Product,Category } = models;
-        Product.belongsToMany(Country, { through: Country_Product });
-        Product.belongsTo(Category);
+        const { User, Order, Country, Country_Product, Category } = models;
+        Product.belongsToMany(Country, { through: Country_Product, onDelete: 'cascade' });
+        Product.belongsTo(Category, { onDelete: 'cascade' });
 
     };
     return Product;
