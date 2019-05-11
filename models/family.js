@@ -16,15 +16,23 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
-        rbg: {
-            type: DataTypes.STRING,
+        r: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        g: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        b: {
+            type: DataTypes.INTEGER,
             allowNull: false,
         }
     })
     Family.associate = function (models) {
         // associations can be defined here
         const { Shades, Color_Family } = models;
-        Family.belongsToMany(Shades, { through: Color_Family });
+        Family.belongsToMany(Shades, { through: Color_Family, onDelete: 'cascade' });
 
     };
     return Family;
