@@ -5,7 +5,6 @@ exports.createColor = async (req, res) => {
    {name:"Red",r:255,g:101,b:0}
  */
   try {
-    req.body['name'] = req.body.name.toLowerCase();
     const { name, r,g,b } = req.body;
     await Family.create({
       name, r,g,b
@@ -55,7 +54,7 @@ exports.deleteColor = async (req, res) => {
 exports.getAllColors = async (req, res) => {
   try {
     const result = await Family.findAll({});
-    return res.status(200).json({ success: true, result });
+    return res.status(200).json({ success: true, data: result });
   }
   catch (err) {
     return res.status(500).json({ success: false, errors: err });
