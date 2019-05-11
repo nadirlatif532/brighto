@@ -16,8 +16,16 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
-        rgb: {
-            type: DataTypes.STRING,
+        r: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        g: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        b: {
+            type: DataTypes.INTEGER,
             allowNull: false,
         }
     })

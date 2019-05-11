@@ -69,9 +69,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     role: {
       type: DataTypes.ENUM({
-        values: ['Customer', 'Admin', 'Dealer']
+        values: ['CUSTOMER', 'ADMIN', 'DEALER']
       }),
-      allowNull:false
     },
     password: {
       type: DataTypes.STRING,

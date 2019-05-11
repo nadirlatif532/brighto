@@ -2,26 +2,26 @@ const { Family, Shades, Country } = require('../models');
 
 exports.createColor = async (req, res) => {
   /*Expects an object with the format:
-   {name:"Red",rgb:"#FFFFFF"}
+   {name:"Red",r:255,g:101,b:0}
  */
   try {
     req.body['name'] = req.body.name.toLowerCase();
-    const { name, rgb } = req.body;
+    const { name, r,g,b } = req.body;
     await Family.create({
-      name, rgb
+      name, r,g,b
     });
     return res.status(200).json({ success: true, message: 'Color created successfully' });
   }
   catch (err) {
-    return res.status(500).json({ success: false, message: err });
+    return res.status(500).json({ success: false, errors: err });
   }
 }
 
 exports.updateColor = async (req, res) => {
   /*Expects an object with the format:
     if name only:  {name: 'Red'},
-    if rgb only:  {rgb: '#FFFFFF},
-    if both :  {name: 'Red', rgb: '#FFFFFF}
+    if rgb only:  {r: 255, g: 101, b: 0},
+    if both :  {name: 'Red', r: 255, g: 101, b: 0}
   */
   const updateObject = req.body;
   const { id } = req.params;
@@ -33,7 +33,7 @@ exports.updateColor = async (req, res) => {
     return res.status(200).json({ success: true, message: 'Color updated successfully' });
   }
   catch (err) {
-    return res.status(500).json({ success: false, message: err });
+    return res.status(500).json({ success: false, errors: err });
   }
 }
 
@@ -48,17 +48,17 @@ exports.deleteColor = async (req, res) => {
     return res.status(200).json({ success: true, message: 'Color deleted successfully' });
   }
   catch (err) {
-    return res.status(500).json({ success: false, message: err });
+    return res.status(500).json({ success: false, errors: err });
   }
 }
 
-exports.getAllColors = async (req,res) => {
-  try{
+exports.getAllColors = async (req, res) => {
+  try {
     const result = await Family.findAll({});
-    return res.status(200).json({ success: true, message: result });
+    return res.status(200).json({ success: true, result });
   }
-  catch(err) {
-    return res.status(500).json({ success: false, message: err });
+  catch (err) {
+    return res.status(500).json({ success: false, errors: err });
   }
 }
 exports.getColorDetails = async (req, res) => {
@@ -79,11 +79,19 @@ exports.getColorDetails = async (req, res) => {
           }
         }
       });
-    }    
-    return res.status(200).json({ success: true, message: result });
+    } else {
+      result = await Family.findAll({
+        where: { name: color },
+        include: {
+          model: Shades,
+          through: { attributes: [] },
+        }
+      });
+    }
+    return res.status(200).json({ success: true, result });
   }
   catch (err) {
-    return res.status(500).json({ success: false, message: err });
+    return res.status(500).json({ success: false, errors: err });
   }
 }
 
@@ -100,9 +108,9 @@ exports.getShadeDetails = async (req, res) => {
         through: { attributes: [] }
       }
     });
-    return res.status(200).json({ success: true, message: result });
+    return res.status(200).json({ success: true, result });
   }
   catch (err) {
-    return res.status(500).json({ success: false, message: err });
+    return res.status(500).json({ success: false, errors: err });
   }
 }

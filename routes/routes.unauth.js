@@ -8,4 +8,6 @@ unauth
     .post('/forgot-password', AuthController.forgotPassword)
     .post('/reset-password/:token', AuthController.resetPassword)
 
+    unauth.use('/family', require('./routes.family'));
+
 module.exports = unauth;
