@@ -9,5 +9,6 @@ unauth
   .post("/reset-password/:token", AuthController.resetPassword);
 
 unauth.use("/family", require("./routes.family"));
+unauth.use("/products", require("./routes.product"));
 
 module.exports = unauth;
