@@ -15,4 +15,6 @@ admin
   .delete("/shades/:id",ShadesController.deleteShade)
   .delete("/family/:id", FamilyController.deleteColor)
 
+admin.use("/country",require("./routes.country"));
+
 module.exports = admin;
