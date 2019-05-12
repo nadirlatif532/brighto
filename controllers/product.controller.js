@@ -17,10 +17,10 @@ exports.getAllProducts = async (req, res) => {
         else {
             result = await Product.findAll({});
         }
-        return res.status(200).json({ success: true, message: result });
+        return res.status(200).json({ success: true, result: result });
     }
     catch (err) {
-        return res.status(500).json({ success: false, message: err });
+        return res.status(500).json({ success: false, errors: err });
     }
 }
 
@@ -29,17 +29,16 @@ exports.getSpecificProduct = async (req, res) => {
     const id = req.params.product_id;
     try {
         const result = await Product.findAll({ where: { id } });
-        return res.status(200).json({ success: true, message: result });
+        return res.status(200).json({ success: true, result: result });
     }
     catch (err) {
-        return res.status(500).json({ success: false, message: err });
+        return res.status(500).json({ success: false, errors: err });
     }
 }
 
 
 exports.createProduct = async (req, res) => {
     const { name, CategoryId, description, spreading, image } = req.body;
-    console.log(req.body);
     try {
         await Product.create({
             name,
@@ -51,7 +50,7 @@ exports.createProduct = async (req, res) => {
         return res.status(200).json({ success: true, message: 'Product created successfully' });
     }
     catch (err) {
-        return res.status(500).json({ success: false, message: err });
+        return res.status(500).json({ success: false, errors: err });
     }
 }
 
@@ -68,7 +67,7 @@ exports.updateProduct = async (req, res) => {
         return res.status(200).json({ success: true, message: 'Product updated successfully' });
     }
     catch (err) {
-        return res.status(500).json({ success: false, message: err });
+        return res.status(500).json({ success: false, errors: err });
     }
 }
 
@@ -84,6 +83,6 @@ exports.deleteProduct = async (req, res) => {
         return res.status(200).json({ success: true, message: 'Product deleted successfully' });
     }
     catch (err) {
-        return res.status(500).json({ success: false, message: err });
+        return res.status(500).json({ success: false, errors: err });
     }
 }

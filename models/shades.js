@@ -26,9 +26,14 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
-        rbg: {
-            type: DataTypes.STRING,
-            allowNull: false,
+        r: {
+            type: DataTypes.INTEGER,
+        },
+        g: {
+            type: DataTypes.INTEGER,
+        },
+        b: {
+            type: DataTypes.INTEGER,
         },
         description: {
             type: DataTypes.TEXT
@@ -45,9 +50,9 @@ module.exports = (sequelize, DataTypes) => {
     Shades.associate = function (models) {
         // associations can be defined here 
         const { Family, Color_Family, Product, Country, Country_Shades } = models;
-        Shades.belongsToMany(Family, { through: Color_Family });
-        Shades.belongsToMany(Country, { through: Country_Shades });
-        Shades.belongsTo(Product);
+        Shades.belongsToMany(Family, { through: Color_Family,onDelete: 'cascade' });
+        Shades.belongsToMany(Country, { through: Country_Shades,onDelete: 'cascade' });
+        Shades.belongsTo(Product, {onDelete: 'cascade'});
     };
     return Shades;
 };
