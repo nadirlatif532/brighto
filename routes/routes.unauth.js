@@ -10,5 +10,6 @@ unauth
 
 unauth.use("/family", require("./routes.family"));
 unauth.use("/products", require("./routes.product"));
+unauth.use("/shades", require("./routes.shades"));
 
 module.exports = unauth;
