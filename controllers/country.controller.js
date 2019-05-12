@@ -44,7 +44,7 @@ exports.deleteCountry = async (req,res) => {
 exports.getAllCountries = async (req,res) => {
     try{
         const result = await Country.findAll({});
-        return res.status(200).json({ success: true, result });
+        return res.status(200).json({ success: true, data: result  });
     }
     catch(err) {
         return res.status(500).json({ success: false, errors: err });
