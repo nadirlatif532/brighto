@@ -14,7 +14,7 @@ require("./routes/routes.index")(app);
 
 const PORT = process.env.PORT || 5000;
 
-db.sequelize.sync({force: true}).then(() => {
+db.sequelize.sync().then(() => {
   app.listen(PORT, () => {
     console.log(`Express server listening on port ${PORT}`);
   });
