@@ -8,7 +8,7 @@ exports.getAllProducts = async (req, res) => {
         include: [
           {
             model: Country,
-            where: { name: req.query.country },
+            where: { id: req.query.country },
             required: true,
             through: { attributes: [] }
           },
