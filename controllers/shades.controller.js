@@ -55,12 +55,19 @@ exports.getShades = async (req, res) => {
                     where: { id: product_id },
                     model: Product,
                     attributes: []
-                }
-            })
+                },
+                raw:true
+            });
         }
         else {
-            result = await Shades.findAll({});
+            result = await Shades.findAll({raw:true});
         }
+        result.map((item)=> {
+            item['color'] = {r:item['r'],g:item['g'],b:item['b']};
+            delete item['r'];
+            delete item['g'];
+            delete item['b'];
+          });
         return res.status(200).json({ success: true, result: result })
     }
     catch (err) {
