@@ -47,7 +47,7 @@ exports.deleteShade = async (req, res) => {
 
 exports.getShades = async (req, res) => {
     try {
-        const { product_id } = req.query;
+        const { product_id, shade_id } = req.body;
         let result;
         if (product_id) {
             result = await Shades.findAll({
@@ -58,6 +58,9 @@ exports.getShades = async (req, res) => {
                 },
                 raw:true
             });
+        }
+        else if(shade_id) {
+            result = await Shades.findAll({where:{id:shade_id},raw:true});
         }
         else {
             result = await Shades.findAll({raw:true});

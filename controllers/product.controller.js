@@ -3,12 +3,12 @@ const { Product, Country, Country_Product, Category } = require("../models");
 exports.getAllProducts = async (req, res) => {
   let result;
   try {
-    if (req.query.country) {
+    if (req.body.country_id) {
       result = await Product.findAll({
         include: [
           {
             model: Country,
-            where: { id: req.query.country },
+            where: { id: req.body.country_id },
             required: true,
             through: { attributes: [] }
           },
@@ -37,7 +37,7 @@ exports.getAllProducts = async (req, res) => {
 };
 
 exports.getSpecificProduct = async (req, res) => {
-  const id = req.params.product_id;
+  const id = req.body.product_id;
   try {
     const result = await Product.findAll({
       where: { id },
@@ -98,6 +98,14 @@ exports.updateProduct = async (req, res) => {
   const { id } = req.params;
   try {
     await Product.update(updateObject, { where: { id } });
+    if (updateObject['countries']) {
+      for (let country of updateObject['countries']) {
+        await Country_Product.update({
+          ProductId: id,
+          CountryId: country["id"]
+        }, { where: { id } });
+      }
+    }
     return res
       .status(200)
       .json({ success: true, message: "Product updated successfully" });
