@@ -15,10 +15,20 @@ module.exports = (sequelize, DataTypes) => {
             "Please provide a finish type which must be 3-40 characters in length"
         }
       }
+    },
+    image: {
+      type: DataTypes.STRING,
+      defaultValue: '',
+      validate: {
+        isUrl: {
+          msg: "Invalid format. Please provide a URL"
+        }
+      }
     }
   });
-  FinishType.associate = function(models) {
+  FinishType.associate = function (models) {
     // associations can be defined here
+    
   };
   return FinishType;
 };

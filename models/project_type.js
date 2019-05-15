@@ -14,7 +14,16 @@ module.exports = (sequelize, DataTypes) => {
                     msg: 'Please provide a project_type name which must be 3-40 characters in length'
                 }
             }
-        }
+        },
+        image: {
+            type: DataTypes.STRING,
+            defaultValue: '',
+            validate: {
+                isUrl: {
+                    msg: "Invalid format. Please provide a URL"
+                }
+            }
+        },
     }, {
             indexes: [
                 {

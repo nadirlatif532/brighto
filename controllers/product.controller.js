@@ -1,4 +1,4 @@
-const { Product, Country, Country_Product, Category } = require("../models");
+const { Product, Country, Country_Product, Category, ProjectType, Surface, FinishType } = require("../models");
 
 exports.getAllProducts = async (req, res) => {
   let result;
@@ -103,7 +103,7 @@ exports.updateProduct = async (req, res) => {
         await Country_Product.update({
           ProductId: id,
           CountryId: country["id"]
-        }, { where: { id } });
+        }, { where: { ProductId: id } });
       }
     }
     return res
@@ -129,3 +129,39 @@ exports.deleteProduct = async (req, res) => {
     return res.status(500).json({ success: false, errors: err });
   }
 };
+
+exports.getFilteredProduct = async (req, res) => {
+  try {
+    const { project_type, category, surface, finishtype } = req.query;
+    const result = await Product.findAll({
+      include: [
+        {
+          model: Category,
+          where: { id: category },
+          attributes: []
+        },
+        {
+          model: Surface,
+          where: { id: surface },
+          attributes: []
+        },
+        {
+          model: ProjectType,
+          where: { id: project_type },
+          attributes: []
+        },
+        {
+          model: FinishType,
+          where: { id: finishtype },
+          attributes: []
+        }
+      ]
+    });
+    return res
+      .status(200)
+      .json({ success: true, result });
+  }
+  catch (err) {
+    return res.status(500).json({ success: false, errors: err });
+  }
+}
