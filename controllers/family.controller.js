@@ -53,7 +53,11 @@ exports.deleteColor = async (req, res) => {
 
 exports.getAllColors = async (req, res) => {
   try {
-    const result = await Family.findAll({raw:true});
+    const result = await Family.findAll({
+      include: {
+        model: Country
+      }
+    });
     result.map((item)=> {
       item['color'] = {r:item['r'],g:item['g'],b:item['b']};
       delete item['r'];
@@ -69,10 +73,10 @@ exports.getAllColors = async (req, res) => {
 
 
 exports.getColorDetails = async (req, res) => {
-  const { color_id } = req.params;
+  const { color_id,country_id } = req.body;
   let result;
   try {
-    if (req.query.country_id) {
+    if (country_id) {
       result = await Family.findAll({
         where: { id: color_id },
         include: {
@@ -80,11 +84,10 @@ exports.getColorDetails = async (req, res) => {
           through: { attributes: [] },
           include: {
             model: Country,
-            where: { id: req.query.country_id },
+            where: { id: country_id },
             through: { attributes: [] }
           }
-        },
-        raw:true
+        }
       });
     } else {
       result = await Family.findAll({
@@ -110,8 +113,8 @@ exports.getColorDetails = async (req, res) => {
     });
     return res.status(200).json({ success: true, result });
   }
-  catch (err) {
-    return res.status(500).json({ success: false, errors: err });
+ catch (err) {
+   return res.status(500).json({ success: false, errors: err });
   }
 }
 

@@ -3,6 +3,6 @@ const shade = express.Router();
 const ShadesController = require("../controllers/shades.controller");
 
 shade
-    .get("/", ShadesController.getShades)
+    .post("/", ShadesController.getShades)
 
 module.exports = shade;
