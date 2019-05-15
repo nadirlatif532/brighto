@@ -10,9 +10,9 @@ exports.getAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { name } = req.body;
+  const { name, image } = req.body;
   try {
-    await Category.create({ name });
+    await Category.create({ name, image });
     return res
       .status(200)
       .json({ success: true, message: "Category created successfully" });
