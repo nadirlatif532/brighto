@@ -1,8 +1,8 @@
-const { Category } = require("../models");
+const { Surface } = require("../models");
 
 exports.getAll = async (req, res) => {
   try {
-    const result = await Category.findAll({});
+    const result = await Surface.findAll({});
     return res.status(200).json({ success: true, data: result });
   } catch {
     return res.status(500).json({ success: false, errors: err });
@@ -12,24 +12,24 @@ exports.getAll = async (req, res) => {
 exports.create = async (req, res) => {
   const { name, image } = req.body;
   try {
-    await Category.create({ name, image });
+    await Surface.create({ name, image });
     return res
       .status(200)
-      .json({ success: true, message: "Category created successfully" });
+      .json({ success: true, message: "Surface created successfully" });
   } catch (err) {
     return res.status(500).json({ success: false, errors: err });
   }
 };
 
 exports.update = async (req, res) => {
-  const updateCategory = req.body;
+  const updateSurface = req.body;
   const { id } = req.params;
 
   try {
-    await Category.update(updateCategory, { where: { id } });
+    await Surface.update(updateSurface, { where: { id } });
     return res
       .status(200)
-      .json({ success: true, message: "Category updated successfully" });
+      .json({ success: true, message: "Surface updated successfully" });
   } catch (err) {
     return res.status(500).json({ success: false, errors: err });
   }
@@ -38,14 +38,14 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   const { id } = req.params;
   try {
-    await Category.destroy({
+    await Surface.destroy({
       where: {
         id
       }
     });
     return res
       .status(200)
-      .json({ success: true, message: "Category deleted successfully" });
+      .json({ success: true, message: "Surface deleted successfully" });
   } catch (err) {
     return res.status(500).json({ success: false, errors: err });
   }
