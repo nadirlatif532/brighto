@@ -10,9 +10,9 @@ exports.getAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { name, image } = req.body;
+  const { name } = req.body;
   try {
-    await ProjectType.create({ name, image });
+    await ProjectType.create({ name, image:req.file.originalname });
     return res
       .status(200)
       .json({ success: true, message: "Project Type created successfully" });
@@ -24,7 +24,9 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   const updateProjectType = req.body;
   const { id } = req.params;
-
+  if(req.file) {
+    updateProjectType['image'] = req.file.originalname;
+  }
   try {
     await ProjectType.update(updateProjectType, { where: { id } });
     return res

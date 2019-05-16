@@ -10,9 +10,9 @@ exports.getAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { name, image } = req.body;
+  const { name } = req.body;
   try {
-    await Category.create({ name, image });
+    await Category.create({ name, image:req.file.originalname });
     return res
       .status(200)
       .json({ success: true, message: "Category created successfully" });
@@ -23,6 +23,9 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   const updateCategory = req.body;
+  if(req.file) {
+    updateCategory['image'] = req.file.originalname;
+  }
   const { id } = req.params;
 
   try {

@@ -10,9 +10,9 @@ exports.getAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { name, image } = req.body;
+  const { name } = req.body;
   try {
-    await Surface.create({ name, image });
+    await Surface.create({ name, image: req.file.originalname });
     return res
       .status(200)
       .json({ success: true, message: "Surface created successfully" });
@@ -24,7 +24,9 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   const updateSurface = req.body;
   const { id } = req.params;
-
+  if(req.file) {
+    updateSurface['image'] = req.file.originalname;
+  }
   try {
     await Surface.update(updateSurface, { where: { id } });
     return res

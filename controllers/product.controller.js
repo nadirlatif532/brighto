@@ -64,7 +64,6 @@ exports.createProduct = async (req, res) => {
     CategoryId,
     description,
     spreading,
-    image,
     countries
   } = req.body;
   try {
@@ -74,7 +73,7 @@ exports.createProduct = async (req, res) => {
         CategoryId,
         description,
         spreading,
-        image
+        image: req.file.originalname
       },
       { raw: true }
     );
@@ -95,6 +94,9 @@ exports.createProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   /*Expects an object with the format: {name: 'Emulsion',description:'This is a good paint',is_active:1 ...}*/
   const updateObject = req.body;
+  if(req.file) {
+    updateObject['image'] = req.file.originalname;
+  }
   const { id } = req.params;
   try {
     await Product.update(updateObject, { where: { id } });
