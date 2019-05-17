@@ -7,13 +7,13 @@ const keys = require('./config/keys')
 const multer = require('multer');
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, keys.storage)
+    cb(null, `${keys.storage}/`)
   },
   filename: function (req, file, cb) {
     cb(null, `${file.originalname}-${new Date().getTime()}`)
   }
 })
- 
+
 const upload = multer({ storage: storage })
 const app = express();
 
@@ -21,7 +21,7 @@ app.use(cors());
 app.use(morgan("combined"));
 app.use(bodyParser.json());
 
-require("./routes/routes.index")({app,upload});
+require("./routes/routes.index")({ app, upload });
 
 const PORT = process.env.PORT || 5000;
 

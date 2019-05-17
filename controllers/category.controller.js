@@ -1,4 +1,7 @@
 const { Category } = require("../models");
+const fs = require('fs');
+const keys = require('../config/keys');
+
 
 exports.getAll = async (req, res) => {
   try {
@@ -12,7 +15,7 @@ exports.getAll = async (req, res) => {
 exports.create = async (req, res) => {
   const { name } = req.body;
   try {
-    await Category.create({ name, image:req.file.originalname });
+    await Category.create({ name, image: req.file.filename });
     return res
       .status(200)
       .json({ success: true, message: "Category created successfully" });
@@ -23,8 +26,10 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   const updateCategory = req.body;
-  if(req.file) {
-    updateCategory['image'] = req.file.originalname;
+  if (req.file) {
+    updateCategory['image'] = req.file.filename;
+    const { image } = await Category.find({ where: { id: req.params.id }, raw: true });
+    fs.unlinkSync(`${keys.storage}/${image}`);
   }
   const { id } = req.params;
 
