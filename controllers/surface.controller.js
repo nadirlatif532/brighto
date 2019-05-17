@@ -1,5 +1,6 @@
 const { Surface } = require("../models");
-
+const fs = require('fs');
+const keys = require('../config/keys')
 exports.getAll = async (req, res) => {
   try {
     const result = await Surface.findAll({});
@@ -10,9 +11,9 @@ exports.getAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { name, image } = req.body;
+  const { name } = req.body;
   try {
-    await Surface.create({ name, image });
+    await Surface.create({ name, image: req.file.filename });
     return res
       .status(200)
       .json({ success: true, message: "Surface created successfully" });
@@ -24,7 +25,11 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   const updateSurface = req.body;
   const { id } = req.params;
-
+  if(req.file) {
+    updateSurface['image'] = req.file.filename;
+    const { image } = await Surface.find({ where: { id: req.params.id }, raw: true });
+    fs.unlinkSync(`${keys.storage}/${image}`);
+  }
   try {
     await Surface.update(updateSurface, { where: { id } });
     return res
