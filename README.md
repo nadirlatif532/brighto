@@ -1,2 +1,0 @@
-# brighto
-Brighto CMS
