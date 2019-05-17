@@ -2,7 +2,6 @@ const { Category } = require("../models");
 const fs = require('fs');
 const keys = require('../config/keys');
 
-
 exports.getAll = async (req, res) => {
   try {
     const result = await Category.findAll({});
