@@ -64,6 +64,3 @@ typings/
 #config 
 config.json
 dev.js
-
-#image hosting folder
-uploads

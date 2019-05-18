@@ -18,7 +18,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         image: {
             type: DataTypes.STRING,
-            defaultValue: ''
+            defaultValue: '',
+            validate: {
+                isUrl: {
+                    msg: "Invalid format. Please provide a URL"
+                }
+            }
         },
     });
     Surface.associate = function (models) {
