@@ -1,0 +1,8 @@
+const express = require("express");
+const colorTrends = express.Router();
+const ColorTrendsController = require("../controllers/color_trends.controller");
+
+colorTrends
+  .get("/", ColorTrendsController.getAll)
+
+module.exports = colorTrends;
