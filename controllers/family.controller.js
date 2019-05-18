@@ -53,11 +53,7 @@ exports.deleteColor = async (req, res) => {
 
 exports.getAllColors = async (req, res) => {
   try {
-    const result = await Family.findAll({
-      include: {
-        model: Country
-      }
-    });
+    const result = await Family.findAll({ raw: true });
     result.map((item)=> {
       item['color'] = {r:item['r'],g:item['g'],b:item['b']};
       delete item['r'];
