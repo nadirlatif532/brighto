@@ -5,9 +5,9 @@ exports.createColor = async (req, res) => {
    {name:"Red",r:255,g:101,b:0}
  */
   try {
-    const { name, r,g,b } = req.body;
+    const { name, r, g, b } = req.body;
     await Family.create({
-      name, r,g,b
+      name, r, g, b
     });
     return res.status(200).json({ success: true, message: 'Color created successfully' });
   }
@@ -61,15 +61,15 @@ exports.getAllColors = async (req, res) => {
       delete item['b'];
     });
     return res.status(200).json({ success: true, data: result });
- }
+  }
   catch (err) {
-   return res.status(500).json({ success: false, errors: err });
+    return res.status(500).json({ success: false, errors: err });
   }
 }
 
 
 exports.getColorDetails = async (req, res) => {
-  const { color_id,country_id } = req.body;
+  const { color_id, country_id } = req.body;
   let result;
   try {
     if (country_id) {
@@ -95,13 +95,13 @@ exports.getColorDetails = async (req, res) => {
       });
     }
     result = JSON.parse(JSON.stringify(result));
-    result.map((item)=> {
-      item['color'] = {r:item['r'],g:item['g'],b:item['b']};
+    result.map((item) => {
+      item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
       delete item['r'];
       delete item['g'];
       delete item['b'];
-      item['Shades'].map((shade)=>{
-        shade['color'] = {r:shade['r'],g:shade['g'],b:shade['b']};
+      item['Shades'].map((shade) => {
+        shade['color'] = { r: shade['r'], g: shade['g'], b: shade['b'] };
         delete shade['r'];
         delete shade['g'];
         delete shade['b'];
@@ -109,8 +109,8 @@ exports.getColorDetails = async (req, res) => {
     });
     return res.status(200).json({ success: true, result });
   }
- catch (err) {
-   return res.status(500).json({ success: false, errors: err });
+  catch (err) {
+    return res.status(500).json({ success: false, errors: err });
   }
 }
 
@@ -127,13 +127,13 @@ exports.getShadeDetails = async (req, res) => {
       }
     });
     result = JSON.parse(JSON.stringify(result));
-    result.map((item)=> {
-      item['color'] = {r:item['r'],g:item['g'],b:item['b']};
+    result.map((item) => {
+      item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
       delete item['r'];
       delete item['g'];
       delete item['b'];
-      item['Shades'].map((shade)=>{
-        shade['color'] = {r:shade['r'],g:shade['g'],b:shade['b']};
+      item['Shades'].map((shade) => {
+        shade['color'] = { r: shade['r'], g: shade['g'], b: shade['b'] };
         delete shade['r'];
         delete shade['g'];
         delete shade['b'];
@@ -141,7 +141,7 @@ exports.getShadeDetails = async (req, res) => {
     });
     return res.status(200).json({ success: true, result });
   }
- catch (err) {
-   return res.status(500).json({ success: false, errors: err });
- }
+  catch (err) {
+    return res.status(500).json({ success: false, errors: err });
+  }
 }

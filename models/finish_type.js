@@ -18,12 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     image: {
       type: DataTypes.STRING,
-      defaultValue: '',
-      validate: {
-        isUrl: {
-          msg: "Invalid format. Please provide a URL"
-        }
-      }
+      defaultValue: ''
     }
   });
   FinishType.associate = function (models) {

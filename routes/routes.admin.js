@@ -16,10 +16,10 @@ admin
   .delete("/shades/:id", ShadesController.deleteShade)
   .delete("/family/:id", FamilyController.deleteColor);
 
-admin.use("/country",require("./routes.country"));
+admin.use("/country", require("./routes.country"));
 admin.use("/category", require("./routes.category"));
-admin.use("/project-type",require('./routes.projectType'));
-admin.use('/surface',require('./routes.surface'));
-admin.use('/finish-type',require("./routes.finishType"));
+admin.use("/project-type", require('./routes.projectType'));
+admin.use('/surface', require('./routes.surface'));
+admin.use('/finish-type', require("./routes.finishType"));
 
 module.exports = admin;
