@@ -64,3 +64,5 @@ typings/
 #config 
 config.json
 dev.js
+
+uploads

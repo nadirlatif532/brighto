@@ -1,4 +1,6 @@
 const { FinishType } = require("../models");
+const keys = require("../config/keys");
+const fs = require('fs');
 
 exports.getAll = async (req, res) => {
   try {
@@ -10,9 +12,9 @@ exports.getAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { name, image } = req.body;
+  const { name } = req.body;
   try {
-    await FinishType.create({ name, image });
+    await FinishType.create({ name, image: req.file.filename  });
     return res
       .status(200)
       .json({ success: true, message: "Project Type created successfully" });
@@ -24,6 +26,11 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   const updateFinishType = req.body;
   const { id } = req.params;
+  if(req.file) {
+    updateFinishType['image'] = req.file.filename;
+    const { image } = await FinishType.find({ where: { id: req.params.id }, raw: true });
+    fs.unlinkSync(`${keys.storage}/${image}`);
+  }
 
   try {
     await FinishType.update(updateFinishType, { where: { id } });

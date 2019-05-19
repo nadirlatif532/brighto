@@ -1,4 +1,6 @@
 const { Product, Country, Country_Product, Category, ProjectType, Surface, FinishType } = require("../models");
+const keys = require("../config/keys");
+const fs = require('fs');
 
 exports.getAllProducts = async (req, res) => {
   let result;
@@ -64,7 +66,6 @@ exports.createProduct = async (req, res) => {
     CategoryId,
     description,
     spreading,
-    image,
     countries
   } = req.body;
   try {
@@ -74,7 +75,7 @@ exports.createProduct = async (req, res) => {
         CategoryId,
         description,
         spreading,
-        image
+        image: req.file.filename
       },
       { raw: true }
     );
@@ -96,6 +97,11 @@ exports.updateProduct = async (req, res) => {
   /*Expects an object with the format: {name: 'Emulsion',description:'This is a good paint',is_active:1 ...}*/
   const updateObject = req.body;
   const { id } = req.params;
+  if(req.file) {
+    updateObject['image'] = req.file.filename;
+    const { image } = await Product.find({ where: { id: req.params.id }, raw: true });
+    fs.unlinkSync(`${keys.storage}/${image}`);
+  }
   try {
     await Product.update(updateObject, { where: { id } });
     if (updateObject['countries']) {

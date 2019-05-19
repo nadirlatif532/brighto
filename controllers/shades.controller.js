@@ -1,16 +1,18 @@
-const { Shades, Product, Country_Shades, Color_Family } = require('../models');
+const { Shades, Product, Country_Shades, Color_Family, Country } = require('../models');
 
 exports.createShade = async (req, res) => {
     try {
         req.body['name'] = req.body.name.toLowerCase();
-        const { name, r, g, b, description, itemCode, isAC, isRM, ProductId, CountryId,FamilyId } = req.body;
+        const { name, r, g, b, description, itemCode, isAC, isRM, ProductId, countries,FamilyId } = req.body;
         const shade = await Shades.create({
             name, r, g, b, description, itemCode, isAC, isRM, ProductId
         }, { raw: true });
-        await Country_Shades.create({
-            CountryId,
-            ShadeId: shade.id
-        });
+        for (let country of countries) {
+            await Country_Shades.create({
+                ShadeId: shade.id,
+              CountryId: country["id"]
+            });
+          }
         await Color_Family.create({
             ShadeId: shade.id,
             FamilyId
