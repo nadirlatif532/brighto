@@ -31,6 +31,8 @@ exports.update = async (req, res) => {
     updateSurface['image'] = req.file.filename;
     const { image } = await Surface.find({ where: { id: req.params.id }, raw: true });
     fs.unlinkSync(`${keys.storage}/${image}`);
+  } else {
+    delete updateSurface["image"];
   }
 
   try {
@@ -45,6 +47,8 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
   const { id } = req.params;
+  const { image } = await Surface.find({ where: { id: id }, raw: true });
+  fs.unlinkSync(`${keys.storage}/${image}`);
   try {
     await Surface.destroy({
       where: {
