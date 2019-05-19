@@ -30,7 +30,7 @@ exports.update = async (req, res) => {
     const { image } = await Category.find({ where: { id: req.params.id }, raw: true });
     fs.unlinkSync(`${keys.storage}/${image}`);
   } else {
-    delete updateFinishType["image"];
+    delete updateCategory["image"];
   }
   const { id } = req.params;
 
