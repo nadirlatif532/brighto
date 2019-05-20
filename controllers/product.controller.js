@@ -39,7 +39,7 @@ exports.getAllProducts = async (req, res) => {
 };
 
 exports.getSpecificProduct = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.body;
   try {
     const result = await Product.findAll({
       where: { id },
@@ -110,6 +110,7 @@ exports.updateProduct = async (req, res) => {
   const updateObject = req.body;
   const { id } = req.params;
   if(req.file) {
+    console.log(req.file)
     updateObject['image'] = req.file.filename;
     const { image } = await Product.find({ where: { id: req.params.id }, raw: true });
     fs.unlinkSync(`${keys.storage}/${image}`);

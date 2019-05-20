@@ -4,7 +4,7 @@ const ProductController = require("../controllers/product.controller");
 
 product
   .post("/", ProductController.getAllProducts)
-  .get("/:id", ProductController.getSpecificProduct)
+  .post("/id", ProductController.getSpecificProduct)
   .get('/filter',ProductController.getFilteredProduct)
 
 module.exports = product;
