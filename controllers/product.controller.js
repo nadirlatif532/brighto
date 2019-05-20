@@ -39,7 +39,7 @@ exports.getAllProducts = async (req, res) => {
 };
 
 exports.getSpecificProduct = async (req, res) => {
-  const id = req.body.product_id;
+  const { id } = req.params;
   try {
     const result = await Product.findAll({
       where: { id },
@@ -51,6 +51,12 @@ exports.getSpecificProduct = async (req, res) => {
         },
         {
           model: Category
+        },
+        {
+          model: Surface
+        },
+        {
+          model: FinishType
         }
       ]
     });
@@ -63,23 +69,29 @@ exports.getSpecificProduct = async (req, res) => {
 exports.createProduct = async (req, res) => {
   const {
     name,
+    ProjectTypeId,
     CategoryId,
+    SurfaceId,
+    FinishTypeId,
     description,
     spreading,
-    countries
+    countries,
   } = req.body;
   try {
     const product = await Product.create(
       {
         name,
+        ProjectTypeId,
         CategoryId,
+        SurfaceId,
+        FinishTypeId,
         description,
         spreading,
         image: req.file.filename
       },
       { raw: true }
     );
-    for (let country of countries) {
+    for (let country of JSON.parse(countries)) {
       await Country_Product.create({
         ProductId: product["id"],
         CountryId: country["id"]
@@ -104,12 +116,12 @@ exports.updateProduct = async (req, res) => {
   }
   try {
     await Product.update(updateObject, { where: { id } });
-    if (updateObject['countries']) {
-      for (let country of updateObject['countries']) {
+    if (updateObject['Countries']) {
+      for (let country of updateObject['Countries']) {
         await Country_Product.update({
           ProductId: id,
           CountryId: country["id"]
-        }, { where: { ProductId: id } });
+        }, { where: { id } });
       }
     }
     return res

@@ -6,8 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
-            autoIncrement: true,
-            unique: true
+            autoIncrement: true
         }
     })
     Country_Product.associate = function (models) {
