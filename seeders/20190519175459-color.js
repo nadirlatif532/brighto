@@ -85,6 +85,28 @@ module.exports = {
       { name: "Shade 5", itemCode: "1233", r: "250", g: "32", b: "44", isAC: true, isRM: true, description: "Hello World", ProductId: productId[2].id },
     ])
 
+    await queryInterface.bulkInsert("Countries", [
+      { name: "Pakistan" },
+      { name: "Qatar" },
+      { name: "China" },
+      { name: "Kuwait" },
+      { name: "Afghanistan" }
+    ]);
+
+    let countryId = await queryInterface.sequelize.query(
+      `SELECT id from Countries;`
+    );
+
+    countryId = countryId[0];
+
+    await queryInterface.bulkInsert("Country_Products", [
+      { CountryId: countryId[0].id, ProductId: productId[0].id },
+      { CountryId: countryId[1].id, ProductId: productId[1].id },
+      { CountryId: countryId[2].id, ProductId: productId[2].id },
+      { CountryId: countryId[3].id, ProductId: productId[3].id },
+      { CountryId: countryId[4].id, ProductId: productId[4].id }
+    ]);
+
   },
 
 

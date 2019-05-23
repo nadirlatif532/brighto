@@ -9,8 +9,10 @@ unauth
   .post("/reset-password/:token", AuthController.resetPassword);
 
 unauth.use("/family", require("./routes.family"));
-unauth.use("/products", require("./routes.product"));
+unauth.use("/products", require("./routes.products"));
+unauth.use("/product",require("./routes.product"));
 unauth.use("/shades", require("./routes.shades"));
+unauth.use("/shade", require("./routes.shade"));
 unauth.use("/pallet",require('./routes.pallet'));
 unauth.use("/color-trends",require('./routes.colorTrend'));
 
@@ -19,4 +21,6 @@ unauth.use("/category", require("./routes.category"));
 unauth.use("/project-type",require('./routes.projectType'));
 unauth.use('/surface',require('./routes.surface'));
 unauth.use('/finish-type',require("./routes.finishType"));
+
+unauth.use('/favourite',require('./routes.favourite'));
 module.exports = unauth;

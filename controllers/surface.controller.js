@@ -45,6 +45,22 @@ exports.update = async (req, res) => {
   }
 };
 
+
+exports.getSpecificSurface = async (req,res) => {
+  const { id } = req.body;
+  try {
+    if (!id) {
+      throw "Category Id is is not sent.";
+    }
+    const result = await Surface.findAll({ where: { CategoryId: id } })
+    return res
+      .status(200)
+      .json({ success: true, message: result });
+  }
+  catch (err) {
+    return res.status(500).json({ success: false, errors: err });
+  }
+}
 exports.delete = async (req, res) => {
   const { id } = req.params;
   const { image } = await Surface.find({ where: { id: id }, raw: true });

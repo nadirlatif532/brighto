@@ -40,8 +40,7 @@ exports.getAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-    /*
-        {
+    /*{
             "color1Id":"1",
             "color2Id":"2",
             "color3Id":"3",
@@ -49,9 +48,7 @@ exports.create = async (req, res) => {
             "name":"newPalleta",
             "likes":10,
             "pallete_by":"Amjad"
-        }
-    */
-
+    }*/
     try {
         await Pallet.create(req.body);
         return res
@@ -74,7 +71,6 @@ exports.update = async (req, res) => {
     }*/
     const updateFinishType = req.body;
     const { id } = req.params;
-
     try {
         await Pallet.update(updateFinishType, { where: { id } });
         return res

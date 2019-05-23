@@ -23,6 +23,24 @@ exports.create = async (req, res) => {
   }
 };
 
+
+exports.getSpecificCategory = async (req, res) => {
+  const { id } = req.body;
+  try {
+    if (!id) {
+      throw "Project Type Id is is not sent.";
+    }
+    const result = await Category.findAll({ where: { ProjectTypeId: id } })
+    return res
+      .status(200)
+      .json({ success: true, message: result });
+  }
+  catch (err) {
+    return res.status(500).json({ success: false, errors: err });
+  }
+}
+
+
 exports.update = async (req, res) => {
   const updateCategory = req.body;
   if (req.file) {

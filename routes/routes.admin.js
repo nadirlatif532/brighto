@@ -15,7 +15,6 @@ admin
   .post("/family/create", FamilyController.createColor)
   .post("/products/create", ProductController.createProduct)
   .post("/shades/create", ShadesController.createShade)
-  .post("/pallet/create",PalletController.create)
   .post("/color-trends/create", ColorTrendsController.create)
   .post("/country/create", CountryController.createCountry)
   .post("/category/create", CategoryController.create)

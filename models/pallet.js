@@ -49,9 +49,6 @@ module.exports = (sequelize, DataTypes) => {
         Pallet.belongsTo(Shades, { as: 'color_2' });
         Pallet.belongsTo(Shades, { as: 'color_3' });
         Pallet.belongsTo(Shades, { as: 'color_4' });
-        Pallet.belongsTo(Shades, { as: 'color_5' });
-        Pallet.belongsTo(Shades, { as: 'color_6' });
-        Pallet.belongsTo(Shades, { as: 'color_7' });
     };
     return Pallet;
 };

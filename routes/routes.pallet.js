@@ -4,5 +4,6 @@ const PalletController = require("../controllers/pallet.controller");
 
 pallet
   .get('/',PalletController.getAll)
+  .post("/pallet/create",PalletController.create)
 
 module.exports = pallet;
