@@ -25,6 +25,9 @@ exports.updateColor = async (req, res) => {
   const updateObject = req.body;
   const { id } = req.params;
   try {
+    if (!id) {
+      throw "Id is missing or incorrect format";
+    }
     await Family.update(
       updateObject,
       { where: { id } }
@@ -39,6 +42,9 @@ exports.updateColor = async (req, res) => {
 exports.deleteColor = async (req, res) => {
   const { id } = req.params;
   try {
+    if (!id) {
+      throw "Id is missing or incorrect format";
+    }
     await Family.destroy({
       where: {
         id
@@ -110,6 +116,9 @@ exports.getColorDetails = async (req, res) => {
 exports.getShadeDetails = async (req, res) => {
   const { color_id, shade_id } = req.params;
   try {
+    if (!color_id || !shade_id) {
+      throw "Color Id or Shade Id is missing";
+    }
     let result = await Family.findAll({
       where: { id: color_id },
       include: {

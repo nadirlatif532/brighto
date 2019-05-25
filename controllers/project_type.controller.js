@@ -26,8 +26,10 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   const updateProjectType = req.body;
   const { id } = req.params;
-
-  if(req.file) {
+  if (!id) {
+    throw "Id is missing or incorrect format";
+  }
+  if (req.file) {
     updateProjectType['image'] = req.file.filename;
     const { image } = await ProjectType.find({ where: { id: req.params.id }, raw: true });
     fs.unlinkSync(`${keys.storage}/${image}`);
@@ -47,6 +49,9 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
   const { id } = req.params;
+  if (!id) {
+    throw "Id is missing or incorrect format";
+  }
   const { image } = await ProjectType.find({ where: { id: id }, raw: true });
   fs.unlinkSync(`${keys.storage}/${image}`);
   try {

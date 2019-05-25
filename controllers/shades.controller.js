@@ -64,6 +64,9 @@ exports.updateShade = async (req, res) => {
     try {
         const updateObject = req.body;
         const { id } = req.params;
+        if (!id) {
+            throw "Id is missing or incorrect format";
+        }
         await Shades.update(
             updateObject,
             { where: { id } },
@@ -108,6 +111,9 @@ exports.updateShade = async (req, res) => {
 
 exports.deleteShade = async (req, res) => {
     const { id } = req.params;
+    if (!id) {
+        throw "Id is missing or incorrect format";
+    }
     try {
         await Shades.destroy({
             where: {

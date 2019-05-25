@@ -1,4 +1,4 @@
-const { Product, Country, Country_Product, Category, ProjectType, Surface, FinishType } = require("../models");
+const { Product, Country, Country_Product, Category, ProjectType, Surface, FinishType, Product_Shades } = require("../models");
 const keys = require("../config/keys");
 const fs = require('fs');
 
@@ -143,8 +143,10 @@ exports.updateProduct = async (req, res) => {
   /*Expects an object with the format: {name: 'Emulsion',description:'This is a good paint',is_active:1 ...}*/
   const updateObject = req.body;
   const { id } = req.params;
+  if (!id) {
+    throw "Id is missing or incorrect format";
+  }
   if (req.file) {
-    console.log(req.file)
     updateObject['image'] = req.file.filename;
     const { image } = await Product.find({ where: { id: req.params.id }, raw: true });
     fs.unlinkSync(`${keys.storage}/${image}`);
@@ -169,6 +171,9 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   const { id } = req.params;
+  if (!id) {
+    throw "Id is missing or incorrect format";
+  }
   try {
     await Product.destroy({
       where: {

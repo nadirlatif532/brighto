@@ -8,7 +8,7 @@ exports.computeDistance = (curr, original) => {
         let distance = Math.sqrt(Math.pow((i['r'] - curr[0]), 2) +
             Math.pow((i['g'] - curr[1]), 2) +
             Math.pow((i['b'] - curr[2]), 2));
-        finalDistance = {...finalDistance['distance'] < distance ? finalDistance : { distance,id:i['id'] }};
+        finalDistance = { ...finalDistance['distance'] < distance ? finalDistance : { distance, id: i['id'] } };
     }
     return finalDistance['id'];
 };
@@ -59,7 +59,7 @@ exports.create = async (req, res) => {
             rgb.forEach((item, index) => {
                 shadeIds[index] = exports.computeDistance(item, rgbValues);
             })
-            shadeIds.forEach((item,index) => {
+            shadeIds.forEach((item, index) => {
                 req.body[`color${index + 1}Id`] = item;
             });
             console.log(req.body)
@@ -85,6 +85,9 @@ exports.update = async (req, res) => {
     }*/
     const updateFinishType = req.body;
     const { id } = req.params;
+    if (!id) {
+        throw "Id is missing or incorrect format";
+    }
     try {
         await Pallet.update(updateFinishType, { where: { id } });
         return res
@@ -97,6 +100,9 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
     const { id } = req.params;
+    if (!id) {
+        throw "Id is missing or incorrect format";
+    }
     try {
         await Pallet.destroy({
             where: {

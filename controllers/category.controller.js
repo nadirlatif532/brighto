@@ -12,9 +12,9 @@ exports.getAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { name } = req.body;
+  const { name, ProjectTypeId } = req.body;
   try {
-    await Category.create({ name, image: req.file.filename });
+    await Category.create({ name, image: req.file.filename, ProjectTypeId });
     return res
       .status(200)
       .json({ success: true, message: "Category created successfully" });
@@ -53,6 +53,9 @@ exports.update = async (req, res) => {
   const { id } = req.params;
 
   try {
+    if (!id) {
+      throw "No id was provided.";
+    }
     await Category.update(updateCategory, { where: { id } });
     return res
       .status(200)
@@ -67,6 +70,9 @@ exports.delete = async (req, res) => {
   const { image } = await Category.find({ where: { id: id }, raw: true });
   fs.unlinkSync(`${keys.storage}/${image}`);
   try {
+    if (!id) {
+      throw "No Id was provided";
+    }
     await Category.destroy({
       where: {
         id
