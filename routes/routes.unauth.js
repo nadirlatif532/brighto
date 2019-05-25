@@ -15,7 +15,7 @@ unauth.use("/shades", require("./routes.shades"));
 unauth.use("/shade", require("./routes.shade"));
 unauth.use("/pallet",require('./routes.pallet'));
 unauth.use("/color-trends",require('./routes.colorTrend'));
-
+unauth.use('/city',require('./routes.city'));
 unauth.use("/country",require("./routes.country"));
 unauth.use("/category", require("./routes.category"));
 unauth.use("/project-type",require('./routes.projectType'));
