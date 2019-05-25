@@ -12,5 +12,4 @@ module.exports = finishType;
 /*
   2. Create and Update all controllers.
   4. Create pallet
-  4. isAC and isRM confirmation
 */

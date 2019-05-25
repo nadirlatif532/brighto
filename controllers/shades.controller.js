@@ -1,33 +1,58 @@
 const { Shades, Product, Family, Country, Color_Family, Country_Shades, Product_Shades } = require('../models');
 
+/*helper methods */
+exports.isValid = async (array, deleteValue = false, id) => {
+    if (!(array instanceof Array)) {
+        if (deleteValue) {
+            await Shades.destroy({ where: { id } });
+        }
+        return true;
+    }
+    return false;
+}
+
+exports.createProductShade = async (ProductId, id) => {
+    try {
+        for (let pid of ProductId) {
+            await Product_Shades.create({
+                ProductId: pid,
+                ShadeId: id
+            })
+        }
+    }
+    catch (err) {
+        return err;
+    }
+}
+
+/***************************** */
+
 exports.createShade = async (req, res) => {
     try {
         req.body['name'] = req.body.name.toLowerCase();
-        const { name, r, g, b, description, itemCode, isAC, isRM, ProductId, countries, FamilyId, ProductId } = req.body;
+        const { name, r, g, b, description, itemCode, isAC, isRM, ProductId, countries, FamilyId } = req.body;
         const shade = await Shades.create({
-            name, r, g, b, description, itemCode, isAC, isRM
+            name, r, g, b, description, itemCode, isAC, isRM, FamilyId
         }, { raw: true });
+
         for (let country of countries) {
             await Country_Shades.create({
                 ShadeId: shade.id,
-                CountryId: country["id"]
+                CountryId: country
             });
         }
-        if(!ProductId instanceof Array) {
-            ProductId = ProductId.split(',');
+        if (!ProductId || !exports.isValid(ProductId, true, shade.id)) {
+            throw "Incorrect or no Product Id was provided.";
         }
-        if(shade.isAC) {
-            for (let product of ProductId) {
-                await Product_Shades.create({
-                    ShadeId: shade.id,
-                    ProductId: product.id
-                });
+        if (shade.isAC == 1) {
+            exports.createProductShade(ProductId, shade.id);
+        }
+        else {
+            if ((!(Product_Shades instanceof Array)) && (Product_Shades.length != 1)) {
+                throw "Product Shades should be an array with a single value."
             }
+            exports.createProductShade(Product_Shades, id);
         }
-        await Color_Family.create({
-            ShadeId: shade.id,
-            FamilyId
-        })
         return res.status(200).json({ success: true, message: 'Shade created successfully.' });
     }
     catch (err) {
@@ -41,11 +66,41 @@ exports.updateShade = async (req, res) => {
         const { id } = req.params;
         await Shades.update(
             updateObject,
-            { where: { id } }
+            { where: { id } },
         );
-        return res.status(200).json({ success: true, message: 'Shade updated successfully.' });
+        let updatedShade = await Shades.findAll({ where: { id }, raw: true });
+
+        if (updateObject['countries']) {
+            for (let id of updateObject['countries']) {
+                await Country_Shades.update(
+                    { CountryId: id },
+                    { where: { ShadeId: id } }
+                );
+            }
+        }
+
+        if (updateObject['ProductId']) {
+            const { ProductId } = updateObject
+            const { isAC, isRM, id } = updatedShade[0];
+            if (!ProductId || !exports.isValid(ProductId, true, id)) {
+                throw "Product Update Failed.Product Id should be an array";
+            }
+            if (isAC == 1) {
+                await Product_Shades.destroy({ where: { ShadeId: id } });
+                exports.createProductShade(ProductId, id);
+            }
+            else if (isRM == 1) {
+                if ((!(Product_Shades instanceof Array)) && (Product_Shades.length != 1)) {
+                    throw "Product Shades should be an array with a single value."
+                }
+                await Product_Shades.destroy({ where: { ShadeId: id } });
+                exports.createProductShade(Product_Shades, id);
+            }
+        }
+        return res.status(200).json({ success: true, message: "Shade Updated Successfully!" });
     }
     catch (err) {
+        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }
