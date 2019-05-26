@@ -242,7 +242,6 @@ exports.getShades = async (req, res) => {
             ]
         });
         result = JSON.parse(JSON.stringify(result));
-        console.log(result[0]['Family']);
         result.map((item) => {
             item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
             delete item['r'];
