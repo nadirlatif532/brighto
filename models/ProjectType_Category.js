@@ -6,8 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
-            autoIncrement: true,
-            unique: true
+            autoIncrement: true
         }
     })
     ProjectType_Category.associate = function (models) {
