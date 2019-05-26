@@ -23,6 +23,8 @@ module.exports = (sequelize, DataTypes) => {
     });
     Surface.associate = function (models) {
         // associations can be defined here
+        const {Category} = models;
+        Surface.belongsTo(Category);
     };
     return Surface;
 };

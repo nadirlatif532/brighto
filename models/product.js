@@ -42,8 +42,9 @@ module.exports = (sequelize, DataTypes) => {
 
     Product.associate = function (models) {
         // associations can be defined here
-        const { User, Order, Country, Country_Product, Category,Surface,ProjectType,FinishType } = models;
+        const { User, Order, Country, Country_Product, Category,Surface,ProjectType,FinishType,Shades,Product_Shades } = models;
         Product.belongsToMany(Country, { through: Country_Product, onDelete: 'cascade' });
+        Product.belongsToMany(Shades, {through: Product_Shades,onDelete: 'cascade'});
         Product.belongsTo(Category, { onDelete: 'cascade' });
         Product.belongsTo(Surface);
         Product.belongsTo(Category);

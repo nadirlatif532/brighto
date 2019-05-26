@@ -10,18 +10,19 @@ const CountryController = require('../controllers/country.controller');
 const CategoryController = require('../controllers/category.controller');
 const ProjectTypeController = require('../controllers/project_type.controller');
 const FinishTypeController = require('../controllers/finish_type.controller');
+const CityController = require("../controllers/city.controller");
 
 admin
   .post("/family/create", FamilyController.createColor)
   .post("/products/create", ProductController.createProduct)
   .post("/shades/create", ShadesController.createShade)
-  .post("/pallet/create",PalletController.create)
   .post("/color-trends/create", ColorTrendsController.create)
   .post("/country/create", CountryController.createCountry)
   .post("/category/create", CategoryController.create)
   .post("/project-type/create", ProjectTypeController.create)
   .post("/finish-type/create", FinishTypeController.create)
   .post("/surface/create", SurfaceController.create)
+  .post("/city/create", CityController.createCity)
   .put("/project-type/:id", ProjectTypeController.update)
   .put("/category/:id", CategoryController.update)
   .put("/country/:id", CountryController.updateCountry)
@@ -32,6 +33,7 @@ admin
   .put("/family/:id", FamilyController.updateColor)
   .put("/finish-type/:id", FinishTypeController.update)
   .put("/surface/:id", SurfaceController.update)
+  .put("/city/:id",CityController.updateCity)
   .delete("/category/:id", CategoryController.delete)
   .delete("/project-type/:id", ProjectTypeController.delete)
   .delete("/country/:id",CountryController.deleteCountry)
@@ -41,6 +43,7 @@ admin
   .delete("/shades/:id", ShadesController.deleteShade)
   .delete("/family/:id", FamilyController.deleteColor)
   .delete("/finish-type/:id", FinishTypeController.delete)
-  .delete("/surface/:id", SurfaceController.delete);
+  .delete("/surface/:id", SurfaceController.delete)
+  .delete("/city/:id",CityController.deleteCity);
 
 module.exports = admin;

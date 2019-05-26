@@ -23,6 +23,8 @@ module.exports = (sequelize, DataTypes) => {
   });
   FinishType.associate = function (models) {
     // associations can be defined here
+    const {Surface} = models;
+    FinishType.belongsTo(Surface);
     
   };
   return FinishType;

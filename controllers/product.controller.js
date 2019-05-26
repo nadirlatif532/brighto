@@ -1,46 +1,77 @@
-const { Product, Country, Country_Product, Category, ProjectType, Surface, FinishType } = require("../models");
+const { Product, Country, Country_Product, Category, ProjectType, Surface, FinishType, Product_Shades } = require("../models");
 const keys = require("../config/keys");
 const fs = require('fs');
 
 exports.getAllProducts = async (req, res) => {
-  let result;
   try {
-    if (req.body.country_id) {
-      result = await Product.findAll({
-        include: [
-          {
-            model: Country,
-            where: { id: req.body.country_id },
-            required: true,
-            through: { attributes: [] }
-          },
-          {
-            model: Category
-          }
-        ]
-      });
-    } else {
-      result = await Product.findAll({
-        include: [
-          {
-            model: Country,
-            through: { attributes: [] }
-          },
-          {
-            model: Category
-          }
-        ]
-      });
-    }
+    const result = await Product.findAll({
+      include: [
+        {
+          model: Country,
+          through: { attributes: [] }
+        },
+        {
+          model: ProjectType
+        },
+        {
+          model: Category
+        },
+        {
+          model: Surface
+        },
+        {
+          model: FinishType
+        }
+      ]
+    });
     return res.status(200).json({ success: true, data: result });
   } catch (err) {
     return res.status(500).json({ success: false, errors: err });
   }
 };
 
+exports.getProductByCountry = async (req, res) => {
+  const { country_id } = req.body;
+  try {
+    if (!country_id) {
+      throw "No Country id was sent.";
+    }
+    result = await Product.findAll({
+      include: [
+        {
+          model: Country,
+          where: { id: country_id },
+          required: true,
+          through: { attributes: [] }
+        },
+        {
+          model: ProjectType
+        },
+        {
+          model: Category
+        },
+        {
+          model: Surface
+        },
+        {
+          model: FinishType
+        }
+      ]
+    });
+
+    return res.status(200).json({ success: true, data: result });
+  } catch (err) {
+    return res.status(500).json({ success: false, errors: err });
+  }
+}
+
 exports.getSpecificProduct = async (req, res) => {
   const { id } = req.body;
+  console.log(req);
   try {
+    if (!id) {
+      throw "No Product id was sent.";
+    }
     const result = await Product.findAll({
       where: { id },
       include: [
@@ -48,6 +79,9 @@ exports.getSpecificProduct = async (req, res) => {
           model: Country,
           required: true,
           through: { attributes: [] }
+        },
+        {
+          model: ProjectType
         },
         {
           model: Category
@@ -109,8 +143,10 @@ exports.updateProduct = async (req, res) => {
   /*Expects an object with the format: {name: 'Emulsion',description:'This is a good paint',is_active:1 ...}*/
   const updateObject = req.body;
   const { id } = req.params;
-  if(req.file) {
-    console.log(req.file)
+  if (!id) {
+    throw "Id is missing or incorrect format";
+  }
+  if (req.file) {
     updateObject['image'] = req.file.filename;
     const { image } = await Product.find({ where: { id: req.params.id }, raw: true });
     fs.unlinkSync(`${keys.storage}/${image}`);
@@ -135,6 +171,9 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   const { id } = req.params;
+  if (!id) {
+    throw "Id is missing or incorrect format";
+  }
   try {
     await Product.destroy({
       where: {

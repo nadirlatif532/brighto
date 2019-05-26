@@ -27,6 +27,9 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
     const updateColorTrends = req.body;
     const { id } = req.params;
+    if(!id){ 
+        throw "Id is missing or incorrect.";
+    }
     if (req.file) {
         updateColorTrends['image'] = req.file.filename;
         const { image } = await ColorTrends.find({ where: { id: req.params.id }, raw: true });
@@ -45,6 +48,9 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
     const { id } = req.params;
     try {
+        if(!id) {
+            throw "id is missing or incorrect format";
+        }
         await ColorTrends.destroy({
             where: {
                 id

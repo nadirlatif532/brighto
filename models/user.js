@@ -1,5 +1,5 @@
 'use strict';
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -86,6 +86,18 @@ module.exports = (sequelize, DataTypes) => {
     },
     isActive: {
       type: DataTypes.BOOLEAN
+    },
+    liked_products: {
+      type: DataTypes.STRING,
+      defaultValue: null
+    },
+    liked_shades: {
+      type: DataTypes.STRING,
+      defaultValue: null
+    },
+    liked_pallets: {
+       type: DataTypes.STRING,
+       defaultValue: null
     }
   }, {
       indexes: [

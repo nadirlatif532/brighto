@@ -12,9 +12,9 @@ exports.getAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { name } = req.body;
+  const { name, CategoryId } = req.body;
   try {
-    await Surface.create({ name, image: req.file.filename });
+    await Surface.create({ name, image: req.file.filename, CategoryId });
     return res
       .status(200)
       .json({ success: true, message: "Surface created successfully" });
@@ -26,8 +26,10 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   const updateSurface = req.body;
   const { id } = req.params;
-
-  if(req.file) {
+  if (!id) {
+    throw "Id is missing or incorrect format";
+  }
+  if (req.file) {
     updateSurface['image'] = req.file.filename;
     const { image } = await Surface.find({ where: { id: req.params.id }, raw: true });
     fs.unlinkSync(`${keys.storage}/${image}`);
@@ -45,8 +47,27 @@ exports.update = async (req, res) => {
   }
 };
 
+
+exports.getSpecificSurface = async (req, res) => {
+  const { id } = req.body;
+  try {
+    if (!id) {
+      throw "Category Id is is not sent.";
+    }
+    const result = await Surface.findAll({ where: { CategoryId: id } })
+    return res
+      .status(200)
+      .json({ success: true, message: result });
+  }
+  catch (err) {
+    return res.status(500).json({ success: false, errors: err });
+  }
+}
 exports.delete = async (req, res) => {
   const { id } = req.params;
+  if (!id) {
+    throw "Id is missing or incorrect format";
+  }
   const { image } = await Surface.find({ where: { id: id }, raw: true });
   fs.unlinkSync(`${keys.storage}/${image}`);
   try {

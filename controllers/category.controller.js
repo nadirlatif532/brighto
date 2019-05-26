@@ -12,9 +12,9 @@ exports.getAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { name } = req.body;
+  const { name, ProjectTypeId } = req.body;
   try {
-    await Category.create({ name, image: req.file.filename });
+    await Category.create({ name, image: req.file.filename, ProjectTypeId });
     return res
       .status(200)
       .json({ success: true, message: "Category created successfully" });
@@ -22,6 +22,24 @@ exports.create = async (req, res) => {
     return res.status(500).json({ success: false, errors: err });
   }
 };
+
+
+exports.getSpecificCategory = async (req, res) => {
+  const { id } = req.body;
+  try {
+    if (!id) {
+      throw "Project Type Id is is not sent.";
+    }
+    const result = await Category.findAll({ where: { ProjectTypeId: id } })
+    return res
+      .status(200)
+      .json({ success: true, message: result });
+  }
+  catch (err) {
+    return res.status(500).json({ success: false, errors: err });
+  }
+}
+
 
 exports.update = async (req, res) => {
   const updateCategory = req.body;
@@ -35,6 +53,9 @@ exports.update = async (req, res) => {
   const { id } = req.params;
 
   try {
+    if (!id) {
+      throw "No id was provided.";
+    }
     await Category.update(updateCategory, { where: { id } });
     return res
       .status(200)
@@ -49,6 +70,9 @@ exports.delete = async (req, res) => {
   const { image } = await Category.find({ where: { id: id }, raw: true });
   fs.unlinkSync(`${keys.storage}/${image}`);
   try {
+    if (!id) {
+      throw "No Id was provided";
+    }
     await Category.destroy({
       where: {
         id
