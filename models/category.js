@@ -23,8 +23,9 @@ module.exports = (sequelize, DataTypes) => {
   });
   Category.associate = function (models) {
     // associations can be defined here
-    const { ProjectType } = models;
-    Category.belongsTo(ProjectType);
+    const { ProjectType, ProjectType_Category, Surface, Category_Surface } = models;
+    Category.belongsToMany(ProjectType, { through: ProjectType_Category, onDelete: 'cascade' });
+    Category.belongsToMany(Surface, { through: Category_Surface, onDelete: 'cascade' });
   };
   return Category;
 };

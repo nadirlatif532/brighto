@@ -1,10 +1,17 @@
-const { FinishType } = require("../models");
+const { FinishType, Surface_Finish_type } = require("../models");
 const keys = require("../config/keys");
 const fs = require('fs');
 
 exports.getAll = async (req, res) => {
   try {
-    const result = await FinishType.findAll({});
+    const result = await FinishType.findAll({
+      include: [
+        {
+          model: Surface_Finish_type,
+          through: { attributes: [] }
+        }
+      ]
+    });
     return res.status(200).json({ success: true, data: result });
   } catch {
     return res.status(500).json({ success: false, errors: err });
@@ -14,7 +21,13 @@ exports.getAll = async (req, res) => {
 exports.create = async (req, res) => {
   const { name, SurfaceId } = req.body;
   try {
-    await FinishType.create({ name, image: req.file.filename,SurfaceId });
+    let finishId = await FinishType.create({ name, image: req.file.filename, SurfaceId });
+    finishId = JSON.parse(JSON.stringify(finishId))
+    if (SurfaceId) {
+      for (let id of SurfaceId) {
+        await Surface_Finish_type.create({ SurfaceId: id, FinishTypeId: finishId.id })
+      }
+    }
     return res
       .status(200)
       .json({ success: true, message: "Project Type created successfully" });
@@ -29,7 +42,15 @@ exports.getSpecificFinish = async (req, res) => {
     if (!id) {
       throw "Surface Id is not sent."
     }
-    const result = await FinishType.findAll({ where: { SurfaceId: id } });
+    const result = await FinishType.findAll({
+      where: { SurfaceId: id },
+      include: [
+        {
+          model: Surface_Finish_type,
+          through: { attributes: [] }
+        }
+      ]
+    });
     return res
       .status(200)
       .json({ success: true, message: result });
@@ -54,6 +75,11 @@ exports.update = async (req, res) => {
 
   try {
     await FinishType.update(updateFinishType, { where: { id } });
+    if (updateFinishType['SurfaceId']) {
+      for (let sid of updateFinishType['SurfaceId']) {
+        await Surface_Finish_type.update({ SurfaceId: sid},{where: {FinishTypeId: id }})
+      }
+    }
     return res
       .status(200)
       .json({ success: true, message: "FinishType updated successfully" });

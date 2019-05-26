@@ -158,7 +158,7 @@ exports.updateProduct = async (req, res) => {
         await Country_Product.update({
           ProductId: id,
           CountryId: country["id"]
-        }, { where: { id } });
+        }, { where: { ProductId: id } });
       }
     }
     return res

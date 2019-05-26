@@ -1,10 +1,21 @@
-const { Surface } = require("../models");
+const { Surface, Category_Surface, Surface_Finish_type } = require("../models");
 const fs = require('fs');
 const keys = require('../config/keys');
 
 exports.getAll = async (req, res) => {
   try {
-    const result = await Surface.findAll({});
+    const result = await Surface.findAll({
+      include: [
+        {
+          model: Category_Surface,
+          through: { attributes: [] }
+        },
+        {
+          model: Surface_Finish_type,
+          through: { attributes: [] }
+        }
+      ]
+    });
     return res.status(200).json({ success: true, data: result });
   } catch {
     return res.status(500).json({ success: false, errors: err });
@@ -12,9 +23,20 @@ exports.getAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { name, CategoryId } = req.body;
+  const { name, CategoryId, FinishTypeId } = req.body;
   try {
-    await Surface.create({ name, image: req.file.filename, CategoryId });
+    let surfaceId = await Surface.create({ name, image: req.file.filename });
+    surfaceId = JSON.parse(JSON.stringify(surfaceId))
+    if (FinishTypeId) {
+      for (let id of FinishTypeId) {
+        await Surface_Finish_type.create({ FinishTypeId: id, SurfaceId: surfaceId.id })
+      }
+    }
+    if (CategoryId) {
+      for (let id of CategoryId) {
+        await Category_Surface.create({ SurfaceId: surfaceId.id, CategoryId: id })
+      }
+    }
     return res
       .status(200)
       .json({ success: true, message: "Surface created successfully" });
@@ -39,6 +61,16 @@ exports.update = async (req, res) => {
 
   try {
     await Surface.update(updateSurface, { where: { id } });
+    if (updateSurface['FinishTypeId']) {
+      for (let sid of updateSurface['FinishTypeId']) {
+        await Surface_Finish_type.update({ FinishTypeId: sid, where: { SurfaceId: id } })
+      }
+    }
+    if (updateSurface['CategoryId']) {
+      for (let cid of updateSurface['CategoryId']) {
+        await Category_Surface.update({ CategoryId: cid, where: { SurfaceId: id } })
+      }
+    }
     return res
       .status(200)
       .json({ success: true, message: "Surface updated successfully" });
@@ -54,10 +86,22 @@ exports.getSpecificSurface = async (req, res) => {
     if (!id) {
       throw "Category Id is is not sent.";
     }
-    const result = await Surface.findAll({ where: { CategoryId: id } })
+    const result = await Surface.findAll({
+      where: { CategoryId: id },
+      include: [
+        {
+          model: Category_Surface,
+          through: { attributes: [] }
+        },
+        {
+          model: Surface_Finish_type,
+          through: { attributes: [] }
+        }
+      ]
+    })
     return res
       .status(200)
-      .json({ success: true, message: result });
+      .json({ success: true, data: result });
   }
   catch (err) {
     return res.status(500).json({ success: false, errors: err });

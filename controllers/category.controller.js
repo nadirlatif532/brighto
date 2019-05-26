@@ -1,10 +1,21 @@
-const { Category } = require("../models");
+const { Category, Category_Surface, ProjectType_Category } = require("../models");
 const fs = require('fs');
 const keys = require('../config/keys');
 
 exports.getAll = async (req, res) => {
   try {
-    const result = await Category.findAll({});
+    const result = await Category.findAll({
+      include: [
+        {
+          model: Category_Surface,
+          through: { attributes: [] }
+        },
+        {
+          model: ProjectType_Category,
+          through: { attributes: [] }
+        }
+      ]
+    });
     return res.status(200).json({ success: true, data: result });
   } catch {
     return res.status(500).json({ success: false, errors: err });
@@ -12,13 +23,28 @@ exports.getAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { name, ProjectTypeId } = req.body;
+  const { name, ProjectTypeId, SurfaceId } = req.body;
   try {
-    await Category.create({ name, image: req.file.filename, ProjectTypeId });
+    if (!req.file.filename) {
+      throw "No image was provided";
+    }
+    let categoryId = await Category.create({ name, image: req.file.filename });
+    categoryId = JSON.parse(JSON.stringify(categoryId))
+    if (ProjectTypeId) {
+      for (let id of ProjectTypeId) {
+        await ProjectType_Category.create({ ProjectTypeId: id, CategoryId: categoryId.id })
+      }
+    }
+    if (SurfaceId) {
+      for (let id of SurfaceId) {
+        await Category_Surface.create({ SurfaceId: id, CategoryId: categoryId.id })
+      }
+    }
     return res
       .status(200)
       .json({ success: true, message: "Category created successfully" });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ success: false, errors: err });
   }
 };
@@ -30,10 +56,22 @@ exports.getSpecificCategory = async (req, res) => {
     if (!id) {
       throw "Project Type Id is is not sent.";
     }
-    const result = await Category.findAll({ where: { ProjectTypeId: id } })
+    const result = await Category.findAll({
+      where: { ProjectTypeId: id },
+      include: [
+        {
+          model: Category_Surface,
+          through: { attributes: [] }
+        },
+        {
+          model: ProjectType_Category,
+          through: { attributes: [] }
+        }
+      ]
+    })
     return res
       .status(200)
-      .json({ success: true, message: result });
+      .json({ success: true, data: result });
   }
   catch (err) {
     return res.status(500).json({ success: false, errors: err });
@@ -57,6 +95,17 @@ exports.update = async (req, res) => {
       throw "No id was provided.";
     }
     await Category.update(updateCategory, { where: { id } });
+
+    if (updateCategory['ProjectTypeId']) {
+      for (let pid of updateCategory['ProjectTypeId']) {
+        await ProjectType_Category.update({ ProjectTypeId: pid }, { where: { CategoryId: id } })
+      }
+    }
+    if (updateCategory['SurfaceId']) {
+      for (let sid of updateCategory['SurfaceId']) {
+        await Category_Surface.update({ SurfaceId: sid }, { where: { CategoryId: id } })
+      }
+    }
     return res
       .status(200)
       .json({ success: true, message: "Category updated successfully" });

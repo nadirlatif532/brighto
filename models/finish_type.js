@@ -23,9 +23,8 @@ module.exports = (sequelize, DataTypes) => {
   });
   FinishType.associate = function (models) {
     // associations can be defined here
-    const {Surface} = models;
-    FinishType.belongsTo(Surface);
-    
+    const { Surface, Surface_Finish_type } = models;
+    FinishType.belongsToMany(Surface, { through: Surface_Finish_type, onDelete: 'cascade' });
   };
   return FinishType;
 };
