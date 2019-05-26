@@ -1,4 +1,4 @@
-const { FinishType, Surface_Finish_type } = require("../models");
+const { FinishType, Surface_Finish_type,Surface } = require("../models");
 const keys = require("../config/keys");
 const fs = require('fs');
 
@@ -7,13 +7,13 @@ exports.getAll = async (req, res) => {
     const result = await FinishType.findAll({
       include: [
         {
-          model: Surface_Finish_type,
+          model: Surface,
           through: { attributes: [] }
         }
       ]
     });
     return res.status(200).json({ success: true, data: result });
-  } catch {
+  } catch(err) {
     return res.status(500).json({ success: false, errors: err });
   }
 };
@@ -46,7 +46,7 @@ exports.getSpecificFinish = async (req, res) => {
       where: { SurfaceId: id },
       include: [
         {
-          model: Surface_Finish_type,
+          model: Surface,
           through: { attributes: [] }
         }
       ]

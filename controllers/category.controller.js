@@ -1,4 +1,4 @@
-const { Category, Category_Surface, ProjectType_Category } = require("../models");
+const { Category, Category_Surface, ProjectType_Category,Surface,ProjectType } = require("../models");
 const fs = require('fs');
 const keys = require('../config/keys');
 
@@ -7,17 +7,18 @@ exports.getAll = async (req, res) => {
     const result = await Category.findAll({
       include: [
         {
-          model: Category_Surface,
+          model: Surface,
           through: { attributes: [] }
         },
         {
-          model: ProjectType_Category,
+          model: ProjectType,
           through: { attributes: [] }
         }
       ]
     });
     return res.status(200).json({ success: true, data: result });
-  } catch {
+  } catch(err) {
+    console.log(err)
     return res.status(500).json({ success: false, errors: err });
   }
 };
@@ -60,11 +61,11 @@ exports.getSpecificCategory = async (req, res) => {
       where: { ProjectTypeId: id },
       include: [
         {
-          model: Category_Surface,
+          model: Surface,
           through: { attributes: [] }
         },
         {
-          model: ProjectType_Category,
+          model: ProjectType,
           through: { attributes: [] }
         }
       ]
