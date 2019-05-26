@@ -1,4 +1,4 @@
-const { Category, Category_Surface, ProjectType_Category,Surface,ProjectType } = require("../models");
+const { Category, Category_Surface, ProjectType_Category, Surface, ProjectType } = require("../models");
 const fs = require('fs');
 const keys = require('../config/keys');
 
@@ -17,7 +17,7 @@ exports.getAll = async (req, res) => {
       ]
     });
     return res.status(200).json({ success: true, data: result });
-  } catch(err) {
+  } catch (err) {
     console.log(err)
     return res.status(500).json({ success: false, errors: err });
   }
@@ -98,13 +98,15 @@ exports.update = async (req, res) => {
     await Category.update(updateCategory, { where: { id } });
 
     if (updateCategory['ProjectTypeId']) {
+      await ProjectType_Category.destroy({ CategoryId: id });
       for (let pid of updateCategory['ProjectTypeId']) {
-        await ProjectType_Category.update({ ProjectTypeId: pid }, { where: { CategoryId: id } })
+        await ProjectType_Category.update({ ProjectTypeId: pid, CategoryId: id })
       }
     }
     if (updateCategory['SurfaceId']) {
+      await ProjectType_Category.destroy({ CategoryId: id });
       for (let sid of updateCategory['SurfaceId']) {
-        await Category_Surface.update({ SurfaceId: sid }, { where: { CategoryId: id } })
+        await Category_Surface.update({ SurfaceId: sid, CategoryId: id })
       }
     }
     return res

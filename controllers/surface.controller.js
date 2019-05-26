@@ -1,4 +1,4 @@
-const { Surface, Category_Surface, Surface_Finish_type,Category,FinishType } = require("../models");
+const { Surface, Category_Surface, Surface_Finish_type, Category, FinishType } = require("../models");
 const fs = require('fs');
 const keys = require('../config/keys');
 
@@ -17,7 +17,7 @@ exports.getAll = async (req, res) => {
       ]
     });
     return res.status(200).json({ success: true, data: result });
-  } catch(err) {
+  } catch (err) {
     return res.status(500).json({ success: false, errors: err });
   }
 };
@@ -62,13 +62,15 @@ exports.update = async (req, res) => {
   try {
     await Surface.update(updateSurface, { where: { id } });
     if (updateSurface['FinishTypeId']) {
+      await Surface.destroy({ where: { SurfaceId: id } });
       for (let sid of updateSurface['FinishTypeId']) {
-        await Surface_Finish_type.update({ FinishTypeId: sid, where: { SurfaceId: id } })
+        await Surface_Finish_type.create({ FinishTypeId: sid, SurfaceId: id })
       }
     }
     if (updateSurface['CategoryId']) {
+      await Surface.destroy({ where: { SurfaceId: id } });
       for (let cid of updateSurface['CategoryId']) {
-        await Category_Surface.update({ CategoryId: cid, where: { SurfaceId: id } })
+        await Category_Surface.create({ CategoryId: cid, SurfaceId: id })
       }
     }
     return res
