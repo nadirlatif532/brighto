@@ -151,7 +151,8 @@ exports.getShadeById = async (req, res) => {
             where: { id },
             include: [
                 {
-                    model: Product
+                    model: Product,
+                    through: {attributes: []}
                 },
                 {
                     model: Family
@@ -162,14 +163,18 @@ exports.getShadeById = async (req, res) => {
             ]
         });
         result = JSON.parse(JSON.stringify(result));
-        result.map((item) => {
-            item['Families'].map((family) => {
-                family['color'] = { r: family['r'], g: family['g'], b: family['b'] };
-                delete family['r'];
-                delete family['g'];
-                delete family['b'];
-            })
-        });
+       
+            result.map((item) => {
+                item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
+                delete item['r'];
+                delete item['g'];
+                delete item['b'];
+                item['Family']['color'] = { r: item['Family']['r'], g: item['Family']['g'], b: item['Family']['b'] };
+                delete item['Family']['r'];
+                delete item['Family']['g'];
+                delete item['Family']['b'];
+            });
+        
         return res.status(200).json({ success: true, result });
     }
     catch (err) {
@@ -189,7 +194,8 @@ exports.getShadeByProduct = async (req, res) => {
             include: [
                 {
                     where: { id: product_id },
-                    model: Product
+                    model: Product,
+                    through: {attributes: []}
                 },
                 {
                     model: Family
@@ -200,14 +206,16 @@ exports.getShadeByProduct = async (req, res) => {
             ]
         });
         result = JSON.parse(JSON.stringify(result));
-        result.map((item) => {
-            item['Families'].map((family) => {
-                family['color'] = { r: family['r'], g: family['g'], b: family['b'] };
-                delete family['r'];
-                delete family['g'];
-                delete family['b'];
-            })
-        });
+            result.map((item) => {
+                item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
+                delete item['r'];
+                delete item['g'];
+                delete item['b'];
+                item['Family']['color'] = { r: item['Family']['r'], g: item['Family']['g'], b: item['Family']['b'] };
+                delete item['Family']['r'];
+                delete item['Family']['g'];
+                delete item['Family']['b'];
+            });
         return res.status(200).json({ success: true, result });
     }
     catch (err) {
@@ -220,11 +228,12 @@ exports.getShades = async (req, res) => {
         let result = await Shades.findAll({
             include: [
                 {
-                    model: Product
+                    model: Product,
+                    through: { attributes: [] }
                 },
                 {
                     model: Family,
-                    through: { attributes: [] }
+                    
                 },
                 {
                     model: Country,
@@ -233,21 +242,21 @@ exports.getShades = async (req, res) => {
             ]
         });
         result = JSON.parse(JSON.stringify(result));
+        console.log(result[0]['Family']);
         result.map((item) => {
             item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
             delete item['r'];
             delete item['g'];
             delete item['b'];
-            item['Families'].map((family) => {
-                family['color'] = { r: family['r'], g: family['g'], b: family['b'] };
-                delete family['r'];
-                delete family['g'];
-                delete family['b'];
-            })
+            item['Family']['color'] = { r: item['Family']['r'], g: item['Family']['g'], b: item['Family']['b'] };
+            delete item['Family']['r'];
+            delete item['Family']['g'];
+            delete item['Family']['b'];
         });
         return res.status(200).json({ success: true, result: result })
     }
     catch (err) {
+        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }
