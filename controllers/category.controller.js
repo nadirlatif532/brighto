@@ -18,7 +18,6 @@ exports.getAll = async (req, res) => {
     });
     return res.status(200).json({ success: true, data: result });
   } catch (err) {
-    console.log(err)
     return res.status(500).json({ success: false, errors: err });
   }
 };
@@ -32,7 +31,7 @@ exports.create = async (req, res) => {
     let categoryId = await Category.create({ name, image: req.file.filename });
     categoryId = JSON.parse(JSON.stringify(categoryId))
     if (ProjectTypeId) {
-      for (let id of ProjectTypeId) {
+      for (let id of JSON.parse(ProjectTypeId)) {
         await ProjectType_Category.create({ ProjectTypeId: id, CategoryId: categoryId.id })
       }
     }
@@ -45,7 +44,6 @@ exports.create = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Category created successfully" });
   } catch (err) {
-    console.log(err);
     return res.status(500).json({ success: false, errors: err });
   }
 };
@@ -98,15 +96,15 @@ exports.update = async (req, res) => {
     await Category.update(updateCategory, { where: { id } });
 
     if (updateCategory['ProjectTypeId']) {
-      await ProjectType_Category.destroy({ CategoryId: id });
-      for (let pid of updateCategory['ProjectTypeId']) {
-        await ProjectType_Category.update({ ProjectTypeId: pid, CategoryId: id })
+      await ProjectType_Category.destroy({ where: { CategoryId: id } });
+      for (let pid of JSON.parse(updateCategory['ProjectTypeId'])) {
+        await ProjectType_Category.create({ ProjectTypeId: pid, CategoryId: id })
       }
     }
     if (updateCategory['SurfaceId']) {
-      await ProjectType_Category.destroy({ CategoryId: id });
-      for (let sid of updateCategory['SurfaceId']) {
-        await Category_Surface.update({ SurfaceId: sid, CategoryId: id })
+      await ProjectType_Category.destroy({ where: { CategoryId: id } });
+      for (let sid of JSON.parse(updateCategory['SurfaceId'])) {
+        await Category_Surface.create({ SurfaceId: sid, CategoryId: id })
       }
     }
     return res
