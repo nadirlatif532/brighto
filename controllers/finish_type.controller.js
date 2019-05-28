@@ -1,4 +1,4 @@
-const { FinishType, Surface_Finish_type, Surface } = require("../models");
+const { FinishType, Surface_Finish_type, Surface, Category, ProjectType } = require("../models");
 const keys = require("../config/keys");
 const fs = require('fs');
 
@@ -8,9 +8,19 @@ exports.getAll = async (req, res) => {
       include: [
         {
           model: Surface,
-          through: { attributes: [] }
+          attributes: ['id', 'name', 'image'],
+          through: { attributes: [] },
+          include: [
+            {
+              model: Category, 
+              attributes: ["id", "name", "image"], 
+              through: { attributes: [] },
+              include: [ {model: ProjectType, attributes: ["id", "name", "image"], through: { attributes: [] }} ]
+            } 
+        ]
         }
-      ]
+      ],
+      attributes: ['id', 'name', 'image']
     });
     return res.status(200).json({ success: true, data: result });
   } catch (err) {
@@ -24,7 +34,7 @@ exports.create = async (req, res) => {
     let finishId = await FinishType.create({ name, image: req.file.filename, SurfaceId });
     finishId = JSON.parse(JSON.stringify(finishId))
     if (SurfaceId) {
-      for (let id of SurfaceId) {
+      for (let id of JSON.parse(SurfaceId)) {
         await Surface_Finish_type.create({ SurfaceId: id, FinishTypeId: finishId.id })
       }
     }
@@ -77,7 +87,7 @@ exports.update = async (req, res) => {
     await FinishType.update(updateFinishType, { where: { id } });
     if (updateFinishType['SurfaceId']) {
       await Surface_Finish_type.destroy({ where: { FinishTypeId: id } });
-      for (let sid of updateFinishType['SurfaceId']) {
+      for (let sid of JSON.parse(updateFinishType['SurfaceId'])) {
         await Surface_Finish_type.create({ SurfaceId: sid, FinishTypeId: id })
       }
     }
