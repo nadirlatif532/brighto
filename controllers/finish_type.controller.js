@@ -53,17 +53,19 @@ exports.getSpecificFinish = async (req, res) => {
       throw "Surface Id is not sent."
     }
     const result = await FinishType.findAll({
-      where: { SurfaceId: id },
       include: [
         {
           model: Surface,
-          through: { attributes: [] }
+          through: { attributes: [] },
+          where: { id: id },
+          attributes: ["id", "name", "image"]
         }
-      ]
+      ],
+      attributes: ["id", "name", "image"]
     });
     return res
       .status(200)
-      .json({ success: true, message: result });
+      .json({ success: true, data: result });
   }
   catch (err) {
     return res.status(500).json({ success: false, errors: err });
