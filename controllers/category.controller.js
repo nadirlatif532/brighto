@@ -7,14 +7,12 @@ exports.getAll = async (req, res) => {
     const result = await Category.findAll({
       include: [
         {
-          model: Surface,
-          through: { attributes: [] }
-        },
-        {
           model: ProjectType,
+          attributes: ['id', 'name', 'image'],
           through: { attributes: [] }
         }
-      ]
+      ],
+      attributes: ['id', 'name', 'image']
     });
     return res.status(200).json({ success: true, data: result });
   } catch (err) {
