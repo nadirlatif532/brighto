@@ -93,24 +93,14 @@ exports.update = async (req, res) => {
 
     if (updateCategory['ProjectTypeId']) {
       await ProjectType_Category.destroy({ where: { CategoryId: id } });
-<<<<<<< Updated upstream
       for (let pid of JSON.parse(updateCategory['ProjectTypeId'])) {
         await ProjectType_Category.create({ ProjectTypeId: pid, CategoryId: id })
-=======
-      for (let pid of updateCategory['ProjectTypeId']) {
-        await ProjectType_Category.update({ ProjectTypeId: pid, CategoryId: id })
->>>>>>> Stashed changes
       }
     }
     if (updateCategory['SurfaceId']) {
       await ProjectType_Category.destroy({ where: { CategoryId: id } });
-<<<<<<< Updated upstream
       for (let sid of JSON.parse(updateCategory['SurfaceId'])) {
         await Category_Surface.create({ SurfaceId: sid, CategoryId: id })
-=======
-      for (let sid of updateCategory['SurfaceId']) {
-        await Category_Surface.update({ SurfaceId: sid, CategoryId: id })
->>>>>>> Stashed changes
       }
     }
     return res
