@@ -15,6 +15,9 @@ exports.getAll = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
+        if(!req.body.ShadeId) {
+            throw "Shade id is missing";
+        }
         await ColorTrends.create({ ...req.body, image: req.file.filename });
         return res
             .status(200)
@@ -36,7 +39,7 @@ exports.update = async (req, res) => {
         fs.unlinkSync(`${keys.storage}/${image}`);
     }
     try {
-        await Pallet.update(updateColorTrends, { where: { id } });
+        await ColorTrends.update(updateColorTrends, { where: { id } });
         return res
             .status(200)
             .json({ success: true, message: "Color Trends updated successfully" });
