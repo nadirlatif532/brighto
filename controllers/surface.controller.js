@@ -88,17 +88,15 @@ exports.getSpecificSurface = async (req, res) => {
       throw "Category Id is is not sent.";
     }
     const result = await Surface.findAll({
-      where: { CategoryId: id },
       include: [
         {
           model: Category,
-          through: { attributes: [] }
-        },
-        {
-          model: FinishType,
-          through: { attributes: [] }
+          through: { attributes: [] },
+          where: { id: id },
+          attributes: ["id", "name", "image"]
         }
-      ]
+      ],
+      attributes: ["id", "name", "image"]
     })
     return res
       .status(200)
