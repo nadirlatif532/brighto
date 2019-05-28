@@ -4,7 +4,9 @@ const fs = require('fs');
 
 exports.getAll = async (req, res) => {
   try {
-    const result = await ProjectType.findAll({});
+    const result = await ProjectType.findAll({
+      attributes: ['id', 'image', 'name']
+    });
     return res.status(200).json({ success: true, data: result });
   } catch {
     return res.status(500).json({ success: false, errors: err });
