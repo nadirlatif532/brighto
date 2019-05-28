@@ -54,17 +54,15 @@ exports.getSpecificCategory = async (req, res) => {
       throw "Project Type Id is is not sent.";
     }
     const result = await Category.findAll({
-      where: { ProjectTypeId: id },
       include: [
         {
-          model: Surface,
-          through: { attributes: [] }
-        },
-        {
           model: ProjectType,
-          through: { attributes: [] }
+          where: { id: id },
+          through: { attributes: [] },
+          attributes: ["id", "name", "image"]
         }
-      ]
+      ],
+      attributes: ["id", "name", "image"]
     })
     return res
       .status(200)
