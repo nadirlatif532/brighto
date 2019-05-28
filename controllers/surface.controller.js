@@ -1,4 +1,4 @@
-const { Surface, Category_Surface, Surface_Finish_type, Category, FinishType } = require("../models");
+const { Surface, Category_Surface, Surface_Finish_type, Category, FinishType, ProjectType } = require("../models");
 const fs = require('fs');
 const keys = require('../config/keys');
 
@@ -8,13 +8,12 @@ exports.getAll = async (req, res) => {
       include: [
         {
           model: Category,
-          through: { attributes: [] }
-        },
-        {
-          model: FinishType,
-          through: { attributes: [] }
+          through: { attributes: [] },
+          attributes: ["id", "name", "image"],
+          include: [ {model: ProjectType, attributes: ["id", "name", "image"], through: { attributes: [] }} ]
         }
-      ]
+      ],
+      attributes: ["id", "name", "image"]
     });
     return res.status(200).json({ success: true, data: result });
   } catch (err) {
@@ -33,7 +32,7 @@ exports.create = async (req, res) => {
       }
     }
     if (CategoryId) {
-      for (let id of CategoryId) {
+      for (let id of JSON.parse(CategoryId)) {
         await Category_Surface.create({ SurfaceId: surfaceId.id, CategoryId: id })
       }
     }
@@ -62,14 +61,14 @@ exports.update = async (req, res) => {
   try {
     await Surface.update(updateSurface, { where: { id } });
     if (updateSurface['FinishTypeId']) {
-      await Surface.destroy({ where: { SurfaceId: id } });
-      for (let sid of updateSurface['FinishTypeId']) {
+      await Surface_Finish_type.destroy({ where: { SurfaceId: id } });
+      for (let sid of JSON.parse(updateSurface['FinishTypeId'])) {
         await Surface_Finish_type.create({ FinishTypeId: sid, SurfaceId: id })
       }
     }
     if (updateSurface['CategoryId']) {
-      await Surface.destroy({ where: { SurfaceId: id } });
-      for (let cid of updateSurface['CategoryId']) {
+      await Category_Surface.destroy({ where: { SurfaceId: id } });
+      for (let cid of JSON.parse(updateSurface['CategoryId'])) {
         await Category_Surface.create({ CategoryId: cid, SurfaceId: id })
       }
     }
