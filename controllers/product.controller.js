@@ -156,8 +156,7 @@ exports.updateProduct = async (req, res) => {
     if (updateObject['countries']) {
       for (let country of updateObject['countries']) {
         await Country_Product.update({
-          ProductId: id,
-          CountryId: country["id"]
+          CountryId: country
         }, { where: { ProductId: id } });
       }
     }
