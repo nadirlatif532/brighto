@@ -1,4 +1,4 @@
-const { City } = require('../models');
+const { City, Country } = require('../models');
 
 exports.createCity = async (req, res) => {
     try {
@@ -14,6 +14,7 @@ exports.createCity = async (req, res) => {
 exports.updateCity = async (req, res) => {
     const updateObject = req.body;
     const { id } = req.params;
+    updateObject['CountryId'] = updateObject.CountryId.id
     try {
         if(!id) {
             throw "Id is missing or incorrect format";
@@ -49,10 +50,15 @@ exports.deleteCity = async (req, res) => {
 
 exports.getAllCities = async (req, res) => {
     try {
-        const result = await City.findAll({});
+        const result = await City.findAll({
+            include: {
+                model: Country
+            }
+        });
         return res.status(200).json({ success: true, data: result });
     }
     catch (err) {
+        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }
