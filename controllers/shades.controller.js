@@ -152,7 +152,7 @@ exports.getShadeById = async (req, res) => {
             include: [
                 {
                     model: Product,
-                    through: {attributes: []}
+                    through: { attributes: [] }
                 },
                 {
                     model: Family
@@ -163,18 +163,18 @@ exports.getShadeById = async (req, res) => {
             ]
         });
         result = JSON.parse(JSON.stringify(result));
-       
-            result.map((item) => {
-                item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
-                delete item['r'];
-                delete item['g'];
-                delete item['b'];
-                item['Family']['color'] = { r: item['Family']['r'], g: item['Family']['g'], b: item['Family']['b'] };
-                delete item['Family']['r'];
-                delete item['Family']['g'];
-                delete item['Family']['b'];
-            });
-        
+
+        result.map((item) => {
+            item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
+            delete item['r'];
+            delete item['g'];
+            delete item['b'];
+            item['Family']['color'] = { r: item['Family']['r'], g: item['Family']['g'], b: item['Family']['b'] };
+            delete item['Family']['r'];
+            delete item['Family']['g'];
+            delete item['Family']['b'];
+        });
+
         return res.status(200).json({ success: true, result });
     }
     catch (err) {
@@ -195,7 +195,7 @@ exports.getShadeByProduct = async (req, res) => {
                 {
                     where: { id: product_id },
                     model: Product,
-                    through: {attributes: []}
+                    through: { attributes: [] }
                 },
                 {
                     model: Family
@@ -206,16 +206,16 @@ exports.getShadeByProduct = async (req, res) => {
             ]
         });
         result = JSON.parse(JSON.stringify(result));
-            result.map((item) => {
-                item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
-                delete item['r'];
-                delete item['g'];
-                delete item['b'];
-                item['Family']['color'] = { r: item['Family']['r'], g: item['Family']['g'], b: item['Family']['b'] };
-                delete item['Family']['r'];
-                delete item['Family']['g'];
-                delete item['Family']['b'];
-            });
+        result.map((item) => {
+            item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
+            delete item['r'];
+            delete item['g'];
+            delete item['b'];
+            item['Family']['color'] = { r: item['Family']['r'], g: item['Family']['g'], b: item['Family']['b'] };
+            delete item['Family']['r'];
+            delete item['Family']['g'];
+            delete item['Family']['b'];
+        });
         return res.status(200).json({ success: true, result });
     }
     catch (err) {
@@ -233,7 +233,7 @@ exports.getShades = async (req, res) => {
                 },
                 {
                     model: Family,
-                    
+
                 },
                 {
                     model: Country,
@@ -247,10 +247,12 @@ exports.getShades = async (req, res) => {
             delete item['r'];
             delete item['g'];
             delete item['b'];
-            item['Family']['color'] = { r: item['Family']['r'], g: item['Family']['g'], b: item['Family']['b'] };
-            delete item['Family']['r'];
-            delete item['Family']['g'];
-            delete item['Family']['b'];
+            if (item['Family']) {
+                item['Family']['color'] = { r: item['Family']['r'], g: item['Family']['g'], b: item['Family']['b'] };
+                delete item['Family']['r'];
+                delete item['Family']['g'];
+                delete item['Family']['b'];
+            }
         });
         return res.status(200).json({ success: true, result: result })
     }
