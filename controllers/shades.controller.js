@@ -247,7 +247,7 @@ exports.getShades = async (req, res) => {
             delete item['r'];
             delete item['g'];
             delete item['b'];
-            if (item['Family']) {
+            if(item['Family']) {
                 item['Family']['color'] = { r: item['Family']['r'], g: item['Family']['g'], b: item['Family']['b'] };
                 delete item['Family']['r'];
                 delete item['Family']['g'];
