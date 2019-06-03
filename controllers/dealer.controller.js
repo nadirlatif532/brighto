@@ -1,0 +1,93 @@
+const { Dealer, Country, City } = require('../models');
+
+exports.createDealer = async (req, res) => {
+    try {
+        const { name, address, longitude, latitude, phone, isAC, isRM, CountryId, CityId } = req.body;
+        await Dealer.create({ name, address, longitude, latitude, phone, isAC, isRM, CountryId, CityId });
+        return res.status(200).json({ success: true, message: 'Dealer created successfully' });
+    }
+    catch (err) {
+        return res.status(500).json({ success: false, errors: err });
+    }
+}
+
+exports.updateDealer = async (req, res) => {
+    const updateObject = req.body;
+    const { id } = req.params;
+    try {
+        if (!id) {
+            throw "Id is missing or incorrect format";
+        }
+        await Dealer.update(
+            updateObject,
+            { where: { id } }
+        );
+        return res.status(200).json({ success: true, message: 'Dealer updated successfully' });
+    }
+    catch (err) {
+        return res.status(500).json({ success: false, errors: err });
+    }
+}
+
+exports.deleteDealer = async (req, res) => {
+    const { id } = req.params;
+    try {
+        if (!id) {
+            throw "Id is missing or incorrect format";
+        }
+        await Dealer.destroy({
+            where: {
+                id
+            }
+        });
+        return res.status(200).json({ success: true, message: 'Dealer deleted successfully' });
+    }
+    catch (err) {
+        return res.status(500).json({ success: false, errors: err });
+    }
+}
+
+exports.getAllDealers = async (req, res) => {
+    try {
+        const result = await Dealer.findAll({
+            attributes:["id","name","address","longitude","latitude","phone","isAC","isRM","createdAt","updatedAt"],
+            include: [
+                {
+                    model: Country
+                },
+                {
+                    model: City
+                }
+            ]
+        });
+        return res.status(200).json({ success: true, data: result });
+    }
+    catch (err) {
+        return res.status(500).json({ success: false, errors: err });
+    }
+}
+
+exports.getSpecificDealer = async (req, res) => {
+    const { dealer_id } = req.body;
+    try {
+        if (!dealer_id) {
+            throw "Dealer Id is missing.";
+        }
+        const result = await Dealer.findAll({
+            attributes:["id","name","address","longitude","latitude","phone","isAC","isRM","createdAt","updatedAt"],
+            where: { id: dealer_id },
+            include: [
+                {
+                    model: Country
+                },
+                {
+                    model: City
+                }
+            ]
+        });
+        return res.status(200).json({ success: true, data: result });
+    }
+    catch (err) {
+        return res.status(500).json({ success: false, errors: err });
+    }
+}

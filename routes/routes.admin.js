@@ -12,6 +12,7 @@ const ProjectTypeController = require('../controllers/project_type.controller');
 const FinishTypeController = require('../controllers/finish_type.controller');
 const CityController = require("../controllers/city.controller");
 const OrderController = require("../controllers/order.controller");
+const DealersController = require("../controllers/dealer.controller");
 
 admin
   .post("/family/create", FamilyController.createColor)
@@ -26,6 +27,8 @@ admin
   .post("/city/create", CityController.createCity)
   .post("/order/create", OrderController.createOrder)
   .put("/order/:id",OrderController.updateOrder)
+  .post("/dealer/create",DealersController.createDealer)
+  .put("/dealer/:id", DealersController.updateDealer)
   .put("/color-trends/:id", ColorTrendsController.update)
   .put("/project-type/:id", ProjectTypeController.update)
   .put("/category/:id", CategoryController.update)
@@ -39,6 +42,7 @@ admin
   .put("/surface/:id", SurfaceController.update)
   .put("/city/:id",CityController.updateCity)
   .delete("/order/:id",OrderController.deleteOrder)
+  .delete('/dealer/:id', DealersController.deleteDealer)
   .delete("/color-trends/:id", ColorTrendsController.delete)
   .delete("/category/:id", CategoryController.delete)
   .delete("/project-type/:id", ProjectTypeController.delete)
