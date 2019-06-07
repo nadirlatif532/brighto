@@ -80,70 +80,64 @@ exports.getColorDetails = async (req, res) => {
     if (!color_id || !country_id) {
       throw "Color Id or Country Id is missing";
     }
-    let result = await Family.findAll({
-      where: { id: color_id },
-      include: {
-        model: Shades,
-        through: { attributes: [] },
-        include: {
-          model: Country,
-          where: { id: country_id },
-          through: { attributes: [] }
-        }
-      }
+    let result = await Shades.findAll({
+      include: [{
+        model: Family,
+        where: { id: color_id },
+      },
+      {
+        model: Country,
+        where: { id: country_id },
+        through: { attributes: [] }
+
+      }]
     });
 
     result = JSON.parse(JSON.stringify(result));
     result.map((item) => {
-      item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
-      delete item['r'];
-      delete item['g'];
-      delete item['b'];
-      item['Shades'].map((shade) => {
-        shade['color'] = { r: shade['r'], g: shade['g'], b: shade['b'] };
-        delete shade['r'];
-        delete shade['g'];
-        delete shade['b'];
-      })
+      console.log(item)
+      if (item['Family']) {
+        item['Family']['color'] = { r: item['Family']['r'], g: item['Family']['g'], b: item['Family']['b'] };
+        delete item['Family']['r'];
+        delete item['Family']['g'];
+        delete item['Family']['b'];
+
+      }
     });
     return res.status(200).json({ success: true, result });
   }
   catch (err) {
+    console.log(err);
     return res.status(500).json({ success: false, errors: err });
   }
 }
 
 exports.getShadeDetails = async (req, res) => {
-  const { color_id, shade_id } = req.params;
+  const { color_id, shade_id } = req.body;
   try {
     if (!color_id || !shade_id) {
       throw "Color Id or Shade Id is missing";
     }
-    let result = await Family.findAll({
-      where: { id: color_id },
-      include: {
-        model: Shades,
-        where: { id: shade_id },
-        required: true,
-        through: { attributes: [] }
-      }
+    let result = await Shades.findAll({
+      where: { id: shade_id },
+      include: [{
+        model: Family,
+        where: { id: color_id },
+      }]
     });
     result = JSON.parse(JSON.stringify(result));
     result.map((item) => {
-      item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
-      delete item['r'];
-      delete item['g'];
-      delete item['b'];
-      item['Shades'].map((shade) => {
-        shade['color'] = { r: shade['r'], g: shade['g'], b: shade['b'] };
-        delete shade['r'];
-        delete shade['g'];
-        delete shade['b'];
-      })
+      if (item['Family']) {
+        item['Family']['color'] = { r: item['Family']['r'], g: item['Family']['g'], b: item['Family']['b'] };
+        delete item['Family']['r'];
+        delete item['Family']['g'];
+        delete item['Family']['b'];
+      }
     });
     return res.status(200).json({ success: true, result });
   }
   catch (err) {
+    console.log(err);
     return res.status(500).json({ success: false, errors: err });
   }
 }
