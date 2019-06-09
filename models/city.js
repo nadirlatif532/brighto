@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         }
+    }, {
+        defaultScope: {
+            attributes: { exclude: ['updatedAt', 'createdAt'] }
+        }
     })
     City.associate = function (models) {
         // associations can be defined here
