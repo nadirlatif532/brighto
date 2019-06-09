@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
         }
+    }, {
+        defaultScope: {
+            attributes: { exclude: ['updatedAt', 'createdAt'] }
+        }
     })
     Family.associate = function (models) {
         // associations can be defined here
