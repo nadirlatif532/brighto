@@ -47,15 +47,21 @@ exports.getLikedShades = async (req, res) => {
         if (!user_id) {
             throw "No user id is provided.";
         }
-        const result = await User.findAll({ where: { user_id }, raw: true });
+        const result = await User.findAll({ where: { id: user_id }, raw: true });
         let liked_shades = result[0].liked_shades;
-        const details = await Shades.findAll({
+        let details = await Shades.findAll({
             where: { id: liked_shades.split(',') }
         })
-        return res.status(200).json({ success: true, result: details });
+        details = JSON.parse(JSON.stringify(details));
+        details.map(item => {
+            item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
+            delete item['r'];
+            delete item['g'];
+            delete item['b'];
+        })
+        return res.status(200).json({ success: true, data: details });
     }
     catch (err) {
-        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }
@@ -111,16 +117,19 @@ exports.likeShade = async (req, res) => {
         if (!user_id || !shade_id) {
             throw "User id or Shade id is missing.";
         }
-        const user = await User.findAll({ where: { user_id }, raw: true });
+        const user = await User.findAll({ where: { id: user_id }, raw: true });
         let liked_shades = user[0].liked_shades;
-        liked_shades.split(',').map((item) => {
-            if (item == shade_id) {
-                throw "Pallete is already liked";
-            }
-        });
+        if (liked_shades) {
+            liked_shades.split(',').map((item) => {
+                if (item == shade_id) {
+                    throw "Shade is already liked";
+                }
+            });
+        }
+
         liked_shades = liked_shades ? `${liked_shades},${shade_id}` : shade_id;
-        await User.update({ liked_shades }, { where: { user_id } });
-        return res.status(200).json({ success: true, message: 'Shade updated successfully' });
+        await User.update({ liked_shades }, { where: { id: user_id } });
+        return res.status(200).json({ success: true, message: 'Shade liked' });
     }
     catch (err) {
         return res.status(500).json({ success: false, errors: err });
@@ -133,20 +142,23 @@ exports.unlikeShade = async (req, res) => {
         if (!user_id || !shade_id) {
             throw "User id or Shade id is missing.";
         }
-        const user = await User.findAll({ where: { user_id }, raw: true });
+        const user = await User.findAll({ where: { id: user_id }, raw: true });
         let liked_shades = user[0].liked_shades;
         if (!liked_shades) {
-            throw "This pallete has not been liked before";
+            throw "This shade has not been liked before";
         }
-        liked_shades = liked_shades.split(',');
-        liked_shades.forEach((item, index) => {
-            if (item == shade_id) {
-                liked_shades.splice(index, 1);
-            }
-        })
+        if (liked_shades) {
+            liked_shades = liked_shades.split(',');
+            liked_shades.forEach((item, index) => {
+                if (item == shade_id) {
+                    liked_shades.splice(index, 1);
+                }
+            })
+        }
+        
         liked_shades = liked_shades.join(',');
-        await User.update({ liked_shades }, { where: { user_id } });
-        return res.status(200).json({ success: true, message: 'Shade updated successfully' });
+        await User.update({ liked_shades }, { where: { id: user_id } });
+        return res.status(200).json({ success: true, message: 'Shade unliked' });
     }
     catch (err) {
         return res.status(500).json({ success: false, errors: err });

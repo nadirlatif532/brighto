@@ -29,29 +29,24 @@ exports.createProductShade = async (ProductId, id) => {
 
 exports.createShade = async (req, res) => {
     try {
-        req.body['name'] = req.body.name.toLowerCase();
-        const { name, r, g, b, description, itemCode, isAC, isRM, ProductId, countries, FamilyId } = req.body;
+        const { name, description, itemCode, isAC, isRM, Products, Countries } = req.body;
+        const { r, g, b } = req.body.color;
+        const FamilyId = req.body.Family.id;
         const shade = await Shades.create({
             name, r, g, b, description, itemCode, isAC, isRM, FamilyId
         }, { raw: true });
 
-        for (let country of countries) {
+        for (let country of Countries) {
             await Country_Shades.create({
                 ShadeId: shade.id,
-                CountryId: country
+                CountryId: country.id
             });
         }
-        if (!ProductId || !exports.isValid(ProductId, true, shade.id)) {
-            throw "Incorrect or no Product Id was provided.";
-        }
-        if (shade.isAC == 1) {
-            exports.createProductShade(ProductId, shade.id);
-        }
-        else {
-            if ((!(Product_Shades instanceof Array)) && (Product_Shades.length != 1)) {
-                throw "Product Shades should be an array with a single value."
-            }
-            exports.createProductShade(Product_Shades, id);
+        for (let product of Products) {
+            await Product_Shades.create({
+                ProductId: product.id,
+                ShadeId: shade.id
+            })
         }
         return res.status(200).json({ success: true, message: 'Shade created successfully.' });
     }
@@ -62,8 +57,16 @@ exports.createShade = async (req, res) => {
 
 exports.updateShade = async (req, res) => {
     try {
-        const updateObject = req.body;
+        let updateObject = req.body;
+        const { r, g, b } = req.body.color;
+        updateObject["r"] = r;
+        updateObject["g"] = g;
+        updateObject["b"] = b;
+        const FamilyId = req.body.Family.id;
+        delete updateObject["Family"];
+        updateObject["FamilyId"] = FamilyId;
         const { id } = req.params;
+
         if (!id) {
             throw "Id is missing or incorrect format";
         }
@@ -71,39 +74,28 @@ exports.updateShade = async (req, res) => {
             updateObject,
             { where: { id } },
         );
-        let updatedShade = await Shades.findAll({ where: { id }, raw: true });
 
-        if (updateObject['countries']) {
-            for (let id of updateObject['countries']) {
-                await Country_Shades.update(
-                    { CountryId: id },
-                    { where: { ShadeId: id } }
-                );
+        if (updateObject['Countries']) {
+            await Country_Shades.destroy({ where: { ShadeId: id } });
+            for (let country of updateObject['Countries']) {
+                await Country_Shades.create({
+                    ShadeId: id,
+                    CountryId: country.id
+                });
             }
         }
-
-        if (updateObject['ProductId']) {
-            const { ProductId } = updateObject
-            const { isAC, isRM, id } = updatedShade[0];
-            if (!ProductId || !exports.isValid(ProductId, true, id)) {
-                throw "Product Update Failed.Product Id should be an array";
-            }
-            if (isAC == 1) {
-                await Product_Shades.destroy({ where: { ShadeId: id } });
-                exports.createProductShade(ProductId, id);
-            }
-            else if (isRM == 1) {
-                if ((!(Product_Shades instanceof Array)) && (Product_Shades.length != 1)) {
-                    throw "Product Shades should be an array with a single value."
-                }
-                await Product_Shades.destroy({ where: { ShadeId: id } });
-                exports.createProductShade(Product_Shades, id);
+        if (updateObject['Products']) {
+            await Product_Shades.destroy({ where: { ShadeId: id } });
+            for (let product of updateObject['Products']) {
+                await Product_Shades.create({
+                    ShadeId: id,
+                    ProductId: product.id
+                });
             }
         }
         return res.status(200).json({ success: true, message: "Shade Updated Successfully!" });
     }
     catch (err) {
-        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }
@@ -127,14 +119,52 @@ exports.deleteShade = async (req, res) => {
     }
 }
 
+exports.getColorDetails = async (req, res) => {
+    const { family_id, country_id } = req.body;
+    try {
+      if (!family_id || !country_id) {
+        throw "Family Id or Country Id is missing";
+      }
+      let result = await Shades.findAll({
+          where: {FamilyId: family_id},
+        include: [
+        {
+          model: Country,
+          where: { id: country_id },
+          attributes: [],
+          through: { attributes: [] }
+        }]
+      });
+  
+      result = JSON.parse(JSON.stringify(result));
+      result.map((item) => {
+          item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
+          delete item['r'];
+          delete item['g'];
+          delete item['b'];
+      });
+      return res.status(200).json({ success: true, data: result });
+    }
+    catch (err) {
+      return res.status(500).json({ success: false, errors: err });
+    }
+  }
+
 exports.getShadeByCode = async (req, res) => {
     const { code } = req.body;
     try {
         if (!code) {
             throw "No item code was sent.";
         }
-        const result = await Shades.findAll({ where: { itemCode: code } });
-        return res.status(200).json({ success: true, result });
+        let result = await Shades.findAll({ where: { itemCode: code } });
+        result = JSON.parse(JSON.stringify(result));
+        result.map(item => {
+            item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
+            delete item['r'];
+            delete item['g'];
+            delete item['b'];
+        })
+        return res.status(200).json({ success: true, data: result[0] });
     }
     catch (err) {
         return res.status(500).json({ success: false, errors: err });
@@ -158,7 +188,8 @@ exports.getShadeById = async (req, res) => {
                     model: Family
                 },
                 {
-                    model: Country
+                    model: Country,
+                    through: { attributes: [] }
                 }
             ]
         });
@@ -175,10 +206,9 @@ exports.getShadeById = async (req, res) => {
             delete item['Family']['b'];
         });
 
-        return res.status(200).json({ success: true, result });
+        return res.status(200).json({ success: true, data: result });
     }
     catch (err) {
-        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }
@@ -201,7 +231,8 @@ exports.getShadeByProduct = async (req, res) => {
                     model: Family
                 },
                 {
-                    model: Country
+                    model: Country,
+                    through: { attributes: [] }
                 }
             ]
         });
@@ -216,7 +247,7 @@ exports.getShadeByProduct = async (req, res) => {
             delete item['Family']['g'];
             delete item['Family']['b'];
         });
-        return res.status(200).json({ success: true, result });
+        return res.status(200).json({ success: true, data: result });
     }
     catch (err) {
         return res.status(500).json({ success: false, errors: err });
@@ -254,7 +285,7 @@ exports.getShades = async (req, res) => {
                 delete item['Family']['b'];
             }
         });
-        return res.status(200).json({ success: true, result: result })
+        return res.status(200).json({ success: true, data: result })
     }
     catch (err) {
         console.log(err);

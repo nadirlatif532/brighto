@@ -73,45 +73,6 @@ exports.getAllColors = async (req, res) => {
   }
 }
 
-
-exports.getColorDetails = async (req, res) => {
-  const { color_id, country_id } = req.body;
-  try {
-    if (!color_id || !country_id) {
-      throw "Color Id or Country Id is missing";
-    }
-    let result = await Shades.findAll({
-      include: [{
-        model: Family,
-        where: { id: color_id },
-      },
-      {
-        model: Country,
-        where: { id: country_id },
-        through: { attributes: [] }
-
-      }]
-    });
-
-    result = JSON.parse(JSON.stringify(result));
-    result.map((item) => {
-      console.log(item)
-      if (item['Family']) {
-        item['Family']['color'] = { r: item['Family']['r'], g: item['Family']['g'], b: item['Family']['b'] };
-        delete item['Family']['r'];
-        delete item['Family']['g'];
-        delete item['Family']['b'];
-
-      }
-    });
-    return res.status(200).json({ success: true, result });
-  }
-  catch (err) {
-    console.log(err);
-    return res.status(500).json({ success: false, errors: err });
-  }
-}
-
 exports.getShadeDetails = async (req, res) => {
   const { color_id, shade_id } = req.body;
   try {

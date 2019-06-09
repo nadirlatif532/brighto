@@ -1,10 +1,9 @@
 const express = require("express");
 const product = express.Router();
-const ShadeController = require("../controllers/shades.controller");
+const ShadesController = require("../controllers/shades.controller");
 
 product
-  .post("/id", ShadeController.getShadeById )
-  .post("/product",ShadeController.getShadeByProduct)
-  .post("/code",ShadeController.getShadeByCode);
+  .post("/id", ShadesController.getShadeById )
+  .post("/code", ShadesController.getShadeByCode);
 
 module.exports = product;
