@@ -56,7 +56,12 @@ exports.getAllDealers = async (req, res) => {
                     model: Country
                 },
                 {
-                    model: City
+                    model: City,
+                    include: [
+                        {
+                            model: Country
+                        }
+                    ]
                 }
             ]
         });
