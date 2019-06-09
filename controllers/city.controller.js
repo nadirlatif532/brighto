@@ -14,7 +14,7 @@ exports.createCity = async (req, res) => {
 exports.updateCity = async (req, res) => {
     const updateObject = req.body;
     const { id } = req.params;
-    updateObject['CountryId'] = updateObject.CountryId.id
+    updateObject['CountryId'] = updateObject.CountryId;
     try {
         if(!id) {
             throw "Id is missing or incorrect format";
@@ -52,7 +52,8 @@ exports.getAllCities = async (req, res) => {
     try {
         const result = await City.findAll({
             include: {
-                model: Country
+                model: Country,
+                attributes: ["id", "name"]
             }
         });
         return res.status(200).json({ success: true, data: result });
