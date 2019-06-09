@@ -31,9 +31,11 @@ module.exports = (sequelize, DataTypes) => {
     isRM: {
       type: DataTypes.BOOLEAN
     }
+  }, {
+    defaultScope: {
+      attributes: { exclude: ['updatedAt', 'createdAt'] }
+    }
   });
-
-
 
   Dealer.associate = function (models) {
     // associations can be defined here
