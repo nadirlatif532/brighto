@@ -189,27 +189,27 @@ exports.deleteProduct = async (req, res) => {
 
 exports.getFilteredProduct = async (req, res) => {
   try {
-    const { project_type, category, surface, finishtype } = req.query;
+    const { project_type_id, category_id, surface_id, finish_type_id } = req.body;
     const result = await Product.findAll({
       include: [
         {
           model: Category,
-          where: { id: category },
+          where: { id: category_id },
           attributes: []
         },
         {
           model: Surface,
-          where: { id: surface },
+          where: { id: surface_id },
           attributes: []
         },
         {
           model: ProjectType,
-          where: { id: project_type },
+          where: { id: project_type_id },
           attributes: []
         },
         {
           model: FinishType,
-          where: { id: finishtype },
+          where: { id: finish_type_id },
           attributes: []
         }
       ]

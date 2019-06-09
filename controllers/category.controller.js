@@ -48,18 +48,18 @@ exports.create = async (req, res) => {
 
 
 exports.getSpecificCategory = async (req, res) => {
-  const { id } = req.body;
+  const { project_type_id } = req.body;
   try {
-    if (!id) {
+    if (!project_type_id) {
       throw "Project Type Id is is not sent.";
     }
     const result = await Category.findAll({
       include: [
         {
           model: ProjectType,
-          where: { id: id },
+          where: { id: project_type_id },
           through: { attributes: [] },
-          attributes: ["id", "name", "image"]
+          attributes: []
         }
       ],
       attributes: ["id", "name", "image"]

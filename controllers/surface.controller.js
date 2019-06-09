@@ -82,9 +82,9 @@ exports.update = async (req, res) => {
 
 
 exports.getSpecificSurface = async (req, res) => {
-  const { id } = req.body;
+  const { category_id } = req.body;
   try {
-    if (!id) {
+    if (!category_id) {
       throw "Category Id is is not sent.";
     }
     const result = await Surface.findAll({
@@ -92,8 +92,8 @@ exports.getSpecificSurface = async (req, res) => {
         {
           model: Category,
           through: { attributes: [] },
-          where: { id: id },
-          attributes: ["id", "name", "image"]
+          where: { id: category_id },
+          attributes: []
         }
       ],
       attributes: ["id", "name", "image"]

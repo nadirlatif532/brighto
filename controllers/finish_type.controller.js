@@ -47,9 +47,9 @@ exports.create = async (req, res) => {
 };
 
 exports.getSpecificFinish = async (req, res) => {
-  const { id } = req.body;
+  const { surface_id } = req.body;
   try {
-    if (!id) {
+    if (!surface_id) {
       throw "Surface Id is not sent."
     }
     const result = await FinishType.findAll({
@@ -57,8 +57,8 @@ exports.getSpecificFinish = async (req, res) => {
         {
           model: Surface,
           through: { attributes: [] },
-          where: { id: id },
-          attributes: ["id", "name", "image"]
+          where: { id: surface_id },
+          attributes: []
         }
       ],
       attributes: ["id", "name", "image"]
