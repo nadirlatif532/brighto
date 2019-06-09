@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
             unique: true
         }
+    }, {
+        defaultScope: {
+            attributes: { exclude: ['updatedAt', 'createdAt'] }
+        }
     })
     Country_Shades.associate = function (models) {
         // associations can be defined here

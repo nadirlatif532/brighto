@@ -37,7 +37,10 @@ module.exports = (sequelize, DataTypes) => {
                     unique: true,
                     fields: ['name']
                 }
-            ]
+            ],
+            defaultScope: {
+                attributes: { exclude: ['updatedAt', 'createdAt'] }
+            }
         });
 
     Product.associate = function (models) {

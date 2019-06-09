@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         }
+    }, {
+        defaultScope: {
+            attributes: { exclude: ['updatedAt', 'createdAt'] }
+        }
     })
     Country.associate = function (models) {
         // associations can be defined here
