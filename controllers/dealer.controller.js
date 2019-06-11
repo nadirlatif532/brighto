@@ -96,3 +96,29 @@ exports.getSpecificDealer = async (req, res) => {
         return res.status(500).json({ success: false, errors: err });
     }
 }
+
+exports.getCountryDealers = async (req, res) => {
+    const { country_id } = req.body;
+    try {
+        if (!country_id) {
+            throw "Country Id missing";
+        }
+        const result = await Dealer.findAll({where: { CountryId: country_id }});
+        return res.status(200).json({ success: true, data: result });
+    } catch (err) {
+        return res.status(500).json({ success: false, errors: err });
+    }
+}
+
+exports.getCityDealers = async (req, res) => {
+    const { city_id } = req.body;
+    try {
+        if (!city_id) {
+            throw "City Id missing";
+        }
+        const result = await Dealer.findAll({where: { CityId: city_id }});
+        return res.status(200).json({ success: true, data: result });
+    } catch (err) {
+        return res.status(500).json({ success: false, errors: err });
+    }
+}

@@ -59,7 +59,19 @@ exports.getAllCities = async (req, res) => {
         return res.status(200).json({ success: true, data: result });
     }
     catch (err) {
-        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
+}
+
+exports.getCitiesByCountry = async (req, res) => {
+  const { country_id } = req.body;
+  try {
+    if (!country_id) {
+      throw "Country Id missing";
+    }
+    const result = await City.findAll({where: { CountryId: country_id }}, { raw: true });
+    return res.status(200).json({ success: true, data: result });
+  } catch (err) {
+    return res.status(500).json({ success: false, errors: err });
+  }
 }
