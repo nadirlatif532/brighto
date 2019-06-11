@@ -71,7 +71,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM({
         values: ['CUSTOMER', 'ADMIN', 'DEALER']
       }),
-      defaultValue: 'ADMIN'
+      defaultValue: 'CUSTOMER'
     },
     password: {
       type: DataTypes.STRING,
@@ -85,7 +85,8 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     isActive: {
-      type: DataTypes.BOOLEAN
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
     },
     liked_products: {
       type: DataTypes.STRING,
@@ -119,7 +120,6 @@ module.exports = (sequelize, DataTypes) => {
   User.prototype.getFullName = () => [this.firstname, this.lastname].join('.');
 
   User.prototype.comparePassword = function (password, cb) {
-    console.log(this);
     return bcrypt.compare(password, this.password, cb);
   };
 

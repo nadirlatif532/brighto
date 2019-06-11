@@ -15,9 +15,7 @@ exports.signup = async (req, res) => {
           res.status(201).json({success: true, message: 'User created successfully'});
         })
         .catch(errors => {
-          let err = {};
-          errors.errors.forEach(obj => err[obj.path] = obj.message);
-          res.status(400).json({success: false, errors: err});
+          res.status(400).json({success: false, errors: "Fill form fields appropriately"});
         });
   } catch (e) {
     return res.status(400).json({success: false, errors: e})
@@ -25,27 +23,47 @@ exports.signup = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const {email, password} = req.body;
+  const { email, username, password } = req.body;
 
-  const user = await User.scope('withPassword').findOne({where: {email: email}});
+  try {
+    if (!username && !email) throw "Email, username not found.";
+    if (!password) throw "Password not found";
 
-  if (!user) {
-    return res.status(400).json({success: false, errors: {"email": "Email does not exist."}});
-  }
-
-  user.comparePassword(password, (err, result) => {
-    if (err) return res.status(500).json({success: false, message: 'Something went wrong', errors: err});
-
-    if (result) {
-      jwt.sign({sub: user.id}, keys.jwtSecret, (err, token) => {
-        if (err) return err;
-
-        res.status(200).json({token: token});
-      });
-    } else {
-      res.status(401).json({success: false, errors: { "password": "Incorrect password" }});
+    let user = await User.scope('withPassword').findOne({where: {
+      $or: [
+        {
+          email: {
+            $eq: email
+          }
+        }, {
+          username: {
+            $eq: username
+          }
+        }
+      ]
+    }});
+  
+    if (!user) {
+      return res.status(400).json({success: false, errors: {"email": "Email does not exist."}});
     }
-  });
+
+    user.comparePassword(password, (err, result) => {
+      if (err) return res.status(500).json({success: false, message: 'Something went wrong', errors: err});
+  
+      if (result) {
+        jwt.sign({sub: user.id}, keys.jwtSecret, (err, token) => {
+          if (err) return err;
+          user = JSON.parse(JSON.stringify(user));
+          delete user["password"];
+          res.status(200).json({token: token, data: user});
+        });
+      } else {
+        res.status(401).json({success: false, errors: { "password": "Incorrect password" }});
+      }
+    });    
+  } catch(err) {
+    return res.status(500).json({ success: false, errors: err });
+  }
 };
 
 exports.forgotPassword = async (req, res) => {
