@@ -4,14 +4,14 @@ const FavouriteRoutes = require("../controllers/favorite.controller");
 
 favorite
   .post("/pallets/like", FavouriteRoutes.likePallete)
-  .post("/shade/like",FavouriteRoutes.likeShade)
-  .post("/products/like",FavouriteRoutes.likeProduct)
+  .post("/shade/like", FavouriteRoutes.likeShade)
+  .post("/products/like", FavouriteRoutes.likeProduct)
 
   .post("/pallets/unlike", FavouriteRoutes.unlikePallete)
   .post("/shade/unlike", FavouriteRoutes.unlikeShade)
   .post("/products/unlike", FavouriteRoutes.unlikeProduct)
 
-  .post("/products",FavouriteRoutes.getLikedProducts)
-  .post("/shades",FavouriteRoutes.getLikedShades)
-  .post("/pallets",FavouriteRoutes.getLikedPallets);
+  .post("/products", FavouriteRoutes.getLikedProducts)
+  .get("/shades", FavouriteRoutes.getLikedShades)
+  .post("/pallets", FavouriteRoutes.getLikedPallets);
 module.exports = favorite;

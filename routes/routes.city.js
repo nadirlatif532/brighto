@@ -4,5 +4,6 @@ const CityController = require("../controllers/city.controller");
 
 city
   .get("/", CityController.getAllCities)
+  .post("/specific", CityController.getCitiesByCountry);
 
 module.exports = city;
