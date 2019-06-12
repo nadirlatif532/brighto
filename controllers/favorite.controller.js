@@ -23,20 +23,15 @@ exports.likePallete = async (req, res) => {
 }
 
 exports.getLikedProducts = async (req, res) => {
-    const { user_id } = req.body;
     try {
-        if (!user_id) {
-            throw "No user id is provided.";
-        }
-        const result = await User.findAll({ where: { user_id }, raw: true });
-        let liked_products = result[0].liked_products;
+        const result = await User.findOne({ where: { id: req.user.id }, raw: true });
+        let liked_products = result.liked_products;
         const details = await Product.findAll({
             where: { id: liked_products.split(',') }
         })
         return res.status(200).json({ success: true, result: details });
     }
     catch (err) {
-        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }
@@ -173,50 +168,67 @@ exports.unlikeShade = async (req, res) => {
 }
 
 exports.likeProduct = async (req, res) => {
-    const { user_id, product_id } = req.body;
+    const { product_id } = req.body;
     try {
-        if (!user_id || !product_id) {
-            throw "User id or Product id is missing.";
+        if (!product_id) {
+            throw "Product id is missing.";
         }
-        const user = await User.findAll({ where: { user_id }, raw: true });
-        let liked_products = user[0].liked_products;
-        liked_products.split(',').map((item) => {
-            if (item == product_id) {
-                throw "Product is already liked";
-            }
-        })
-        liked_products = liked_products ? `${liked_products},${product_id}` : product_id;
-        await User.update({ liked_products }, { where: { user_id } });
-        return res.status(200).json({ success: true, message: 'Product updated successfully' });
+        const user = await User.findOne({ where: { id: req.user.id }, raw: true });
+        let liked_products = user.liked_products;
+        if (liked_products) {
+            liked_products.split(',').map((item) => {
+                if (item == product_id) {
+                    throw "Product is already liked";
+                }
+            })
+        }
+        const product = await Product.findOne({where: {id: product_id}, raw: true});
+        if (product) {
+            liked_products = liked_products ? `${liked_products},${product.id}` : product.id;
+            await User.update({ liked_products }, { where: { id: req.user.id } });
+        } else {
+            throw "Invalid Product Id";
+        }
+        
+        return res.status(200).json({ success: true, message: 'Product liked' });
     }
     catch (err) {
-        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }
 
 exports.unlikeProduct = async (req, res) => {
-    const { user_id, product_id } = req.body;
+    const { product_id } = req.body;
     try {
-        if (!user_id || !product_id) {
-            throw "User id or Product id is missing.";
+        if (!product_id) {
+            throw "Product id is missing.";
         }
-        const user = await User.findAll({ where: { user_id }, raw: true });
-        let liked_products = user[0].liked_products;
+        const product = await Product.findOne({where: {id: product_id}, raw: true});
+        if (!product) {
+            throw "Invalid Product Id";
+        }
+        const user = await User.findOne({ where: { id: req.user.id }, raw: true });
+        let liked_products = user.liked_products;
         if (!liked_products) {
-            throw "This pallete has not been liked before";
+            throw "This product has not been liked before";
         }
-        liked_products = liked_products.split(',');
-        liked_products.forEach((item, index) => {
-            if (item == product_id) {
-                liked_products.splice(index, 1);
+        if (liked_products) {
+            let flag = false;
+            liked_products = liked_products.split(',');
+            liked_products.forEach((item, index) => {
+                if (item == product_id) {
+                    flag = true;
+                    liked_products.splice(index, 1);
+                }
+            })
+            if (!flag) {
+                throw "Shade already unliked"
             }
-        })
+        }
         liked_products = liked_products.join(',');
-        await User.update({ liked_products }, { where: { user_id } });
-        return res.status(200).json({ success: true, message: 'Product updated successfully' });
-    }
-    catch (err) {
+        await User.update({ liked_products }, { where: { id: req.user.id } });
+        return res.status(200).json({ success: true, message: 'Product unliked' });
+    } catch (err) {
         return res.status(500).json({ success: false, errors: err });
     }
 }

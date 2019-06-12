@@ -8,19 +8,16 @@ exports.getAll = async (req, res) => {
       include: [
         {
           model: Surface,
-          attributes: ['id', 'name', 'image'],
           through: { attributes: [] },
           include: [
             {
               model: Category, 
-              attributes: ["id", "name", "image"], 
               through: { attributes: [] },
-              include: [ {model: ProjectType, attributes: ["id", "name", "image"], through: { attributes: [] }} ]
+              include: [ {model: ProjectType, through: { attributes: [] }} ]
             } 
-        ]
+          ]
         }
       ],
-      attributes: ['id', 'name', 'image']
     });
     return res.status(200).json({ success: true, data: result });
   } catch (err) {

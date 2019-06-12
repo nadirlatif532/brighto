@@ -4,26 +4,7 @@ const fs = require('fs');
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const result = await Product.findAll({
-      include: [
-        {
-          model: Country,
-          through: { attributes: [] }
-        },
-        {
-          model: ProjectType
-        },
-        {
-          model: Category
-        },
-        {
-          model: Surface
-        },
-        {
-          model: FinishType
-        }
-      ]
-    });
+    const result = await Product.findAll({});
     return res.status(200).json({ success: true, data: result });
   } catch (err) {
     return res.status(500).json({ success: false, errors: err });
@@ -36,28 +17,7 @@ exports.getProductByCountry = async (req, res) => {
     if (!country_id) {
       throw "No Country id was sent.";
     }
-    result = await Product.findAll({
-      include: [
-        {
-          model: Country,
-          where: { id: country_id },
-          required: true,
-          through: { attributes: [] }
-        },
-        {
-          model: ProjectType
-        },
-        {
-          model: Category
-        },
-        {
-          model: Surface
-        },
-        {
-          model: FinishType
-        }
-      ]
-    });
+    result = await Product.findAll({});
 
     return res.status(200).json({ success: true, data: result });
   } catch (err) {
@@ -66,14 +26,13 @@ exports.getProductByCountry = async (req, res) => {
 }
 
 exports.getSpecificProduct = async (req, res) => {
-  const { id } = req.body;
-  console.log(req);
+  const { product_id } = req.body;
   try {
-    if (!id) {
+    if (!product_id) {
       throw "No Product id was sent.";
     }
     const result = await Product.findAll({
-      where: { id },
+      where: { id: product_id },
       include: [
         {
           model: Country,
@@ -84,13 +43,49 @@ exports.getSpecificProduct = async (req, res) => {
           model: ProjectType
         },
         {
-          model: Category
+          model: Category,
+          include: [
+            {
+              model: ProjectType,
+              through: { attributes: [] }
+            }
+          ] 
         },
         {
-          model: Surface
+          model: Surface,
+          include: [
+            {
+              model: Category,
+              through: { attributes: [] },
+              include: [
+                {
+                  model: ProjectType,
+                  through: { attributes: [] }
+                }
+              ]
+            }  
+          ]
         },
         {
-          model: FinishType
+          model: FinishType,
+          include: [
+            {
+              model: Surface,
+              through: { attributes: [] },
+              include: [
+                {
+                  model: Category,
+                  through: { attributes: [] },
+                  include: [
+                    {
+                      model: ProjectType,
+                      through: { attributes: [] }
+                    }
+                  ]
+                }
+              ]
+            }
+          ] 
         }
       ]
     });
@@ -150,14 +145,18 @@ exports.updateProduct = async (req, res) => {
     updateObject['image'] = req.file.filename;
     const { image } = await Product.find({ where: { id: req.params.id }, raw: true });
     fs.unlinkSync(`${keys.storage}/${image}`);
+  } else {
+    delete updateObject["image"];
   }
   try {
     await Product.update(updateObject, { where: { id } });
     if (updateObject['countries']) {
-      for (let country of updateObject['countries']) {
-        await Country_Product.update({
-          CountryId: country
-        }, { where: { ProductId: id } });
+      await Country_Product.destroy({ where: { ProductId: id } });
+      for (let country of JSON.parse(updateObject['countries'])) {
+        await Country_Product.create({
+          CountryId: country.id,
+          ProductId: id
+        });
       }
     }
     return res
