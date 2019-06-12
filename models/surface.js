@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             defaultValue: ''
         },
+    }, {
+        defaultScope: {
+            attributes: { exclude: ['updatedAt', 'createdAt'] }
+        }
     });
     Surface.associate = function (models) {
         // associations can be defined here

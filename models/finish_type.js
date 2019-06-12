@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: '',
     }
+  }, {
+    defaultScope: {
+      attributes: { exclude: ['updatedAt', 'createdAt'] }
+    }
   });
   FinishType.associate = function (models) {
     // associations can be defined here
