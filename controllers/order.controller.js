@@ -1,4 +1,4 @@
-const { Order, Dealer, User, Product, Shades } = require('../models');
+const { Order, Dealer, User, Product, Shades, Country, City,Family } = require('../models');
 
 exports.createOrder = async (req, res) => {
     try {
@@ -51,23 +51,61 @@ exports.deleteOrder = async (req, res) => {
 
 exports.getAllOrders = async (req, res) => {
     try {
-        const result = await Order.findAll({
-            attributes:["id","orderDetails","status","quantity","createdAt","updatedAt"],
+        let result = await Order.findAll({
             include: [
                 {
                     model: User
                 },
                 {
-                    model: Dealer
+                    model: Dealer,
+                    attributes:["id","name","address","longitude","latitude","isAC","isRM"],
+                    include: [
+                        {
+                            model: Country
+                        },
+                        {
+                            model: City,
+                            include: {
+                                model: Country
+                            }
+                        }
+                    ]
                 },
                 {
                     model: Product
                 },
                 {
-                    model: Shades
+                    model: Shades,
+                    attributes:['id','r','g','b','isAC','isRM','itemCode','name','description'],
+                    include: [
+                        {
+                            model: Country,
+                            through: { attributes: [] }
+                        },
+                        {
+                            model: Family
+                        },
+                        {
+                            model: Product
+                        }
+                    ]
                 }
             ]
         });
+        result = JSON.parse(JSON.stringify(result));
+        result = result.map((result)=>{
+            result['Shade']['color'] = {r:result['Shade']['r'],g:result['Shade']['g'],b:result['Shade']['b']}
+            delete result['Shade']['r'];
+            delete result['Shade']['g'];
+            delete result['Shade']['b'];
+            if(result['Shade']['Family']){
+                result['Shade']['Family']['color'] = {r:result['Shade']['Family']['r'],g:result['Shade']['Family']['g'],b:result['Shade']['Family']['b']}
+                delete result['Shade']['Family']['r'];
+                delete result['Shade']['Family']['g'];
+                delete result['Shade']['Family']['b'];
+            }
+            return result;
+        })
         return res.status(200).json({ success: true, data: result });
     }
     catch (err) {
@@ -83,7 +121,7 @@ exports.getOrderByDealer = async (req, res) => {
             throw "Dealer Id was missing";
         }
         const result = await Order.findAll({
-            attributes:["id","orderDetails","status","quantity","createdAt","updatedAt"],
+            attributes:["id","orderDetails","status","quantity"],
             include: [
                 {
                     model: User
@@ -110,16 +148,17 @@ exports.getOrderByDealer = async (req, res) => {
 
 exports.getOrderByUser = async (req, res) => {
     try {
-        const { user_id } = req.body;
-        if (!user_id) {
+
+        const { id } = req.user;
+        if (!id) {
             throw "User Id was missing";
         }
         const result = await Order.findAll({
-            attributes:["id","orderDetails","status","quantity","createdAt","updatedAt"],
+            attributes:["id","orderDetails","status","quantity"],
             include: [
                 {
                     model: User,
-                    where: { id: user_id }
+                    where: { id }
                 },
                 {
                     model: Dealer,

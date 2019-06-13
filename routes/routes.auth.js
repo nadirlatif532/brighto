@@ -17,5 +17,6 @@ auth.use("/finish-type", require("./routes.finishType"));
 auth.use("/dealer", require("./routes.dealer"));
 auth.use("/favourite", require("./routes.favourite"));
 auth.use("/order", require("./routes.order"));
+auth.use("/user",require("./routes.user"));
 
 module.exports = auth;

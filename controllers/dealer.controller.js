@@ -50,7 +50,7 @@ exports.deleteDealer = async (req, res) => {
 exports.getAllDealers = async (req, res) => {
     try {
         const result = await Dealer.findAll({
-            attributes:["id","name","address","longitude","latitude","phone","isAC","isRM","createdAt","updatedAt"],
+            attributes:["id","name","address","longitude","latitude","isAC","isRM"],
             include: [
                 {
                     model: Country
