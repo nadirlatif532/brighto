@@ -17,7 +17,13 @@ exports.getProductByCountry = async (req, res) => {
     if (!country_id) {
       throw "No Country id was sent.";
     }
-    result = await Product.findAll({});
+    result = await Product.findAll({
+      include: {
+        model: Country,
+        where: { id: country_id},
+        through: { attributes: [] }
+      }
+    });
 
     return res.status(200).json({ success: true, data: result });
   } catch (err) {
@@ -215,7 +221,7 @@ exports.getFilteredProduct = async (req, res) => {
     });
     return res
       .status(200)
-      .json({ success: true, result });
+      .json({ success: true, data: result });
   }
   catch (err) {
     return res.status(500).json({ success: false, errors: err });
