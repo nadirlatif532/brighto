@@ -6,6 +6,5 @@ order
   .get("/", OrderController.getAllOrders)
   .post("/specific",OrderController.getSpecificOrder)
   .post("/specific/dealer",OrderController.getOrderByDealer)
-  .post("/specific/user", OrderController.getOrderByUser)
 
 module.exports = order;

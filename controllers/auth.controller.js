@@ -44,7 +44,7 @@ exports.login = async (req, res) => {
     }});
   
     if (!user) {
-      return res.status(400).json({success: false, errors: {"email": "Email does not exist."}});
+      return res.status(400).json({success: false, errors: "Email or username does not exist."});
     }
 
     user.comparePassword(password, (err, result) => {
@@ -55,10 +55,10 @@ exports.login = async (req, res) => {
           if (err) return err;
           user = JSON.parse(JSON.stringify(user));
           delete user["password"];
-          res.status(200).json({token: token, data: user});
+          res.status(200).json({success: true, token: token, data: user});
         });
       } else {
-        res.status(401).json({success: false, errors: { "password": "Incorrect password" }});
+        res.status(401).json({success: false, errors: "Incorrect password" });
       }
     });    
   } catch(err) {
