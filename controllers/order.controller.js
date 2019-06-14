@@ -7,14 +7,12 @@ exports.createOrder = async (req, res) => {
         return res.status(200).json({ success: true, message: 'Order created successfully' });
     }
     catch (err) {
-        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }
 
 exports.updateOrder = async (req, res) => {
     const updateObject = req.body;
-    console.log(updateObject)
     const { id } = req.params;
     try {
         if (!id) {
@@ -109,7 +107,6 @@ exports.getAllOrders = async (req, res) => {
         return res.status(200).json({ success: true, data: result });
     }
     catch (err) {
-        console.log(err)
         return res.status(500).json({ success: false, errors: err });
     }
 }
@@ -141,7 +138,6 @@ exports.getOrderByDealer = async (req, res) => {
         return res.status(200).json({ success: true, data: result });
     }
     catch (err) {
-        console.log(err)
         return res.status(500).json({ success: false, errors: err });
     }
 }

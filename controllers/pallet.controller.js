@@ -62,7 +62,6 @@ exports.create = async (req, res) => {
             shadeIds.forEach((item, index) => {
                 req.body[`color${index + 1}Id`] = item;
             });
-            console.log(req.body)
         }
         await Pallet.create(req.body);
         return res

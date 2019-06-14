@@ -71,7 +71,6 @@ exports.getLikedPallets = async (req, res) => {
         return res.status(200).json({ success: true, result: details });
     }
     catch (err) {
-        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }

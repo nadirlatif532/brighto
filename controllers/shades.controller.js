@@ -275,7 +275,6 @@ exports.getShades = async (req, res) => {
         return res.status(200).json({ success: true, data: result })
     }
     catch (err) {
-        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }
