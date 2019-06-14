@@ -11,15 +11,19 @@ module.exports = (sequelize, DataTypes) => {
         },
         status: {
             type: DataTypes.ENUM({
-              values: ['PENDING', 'CONFIRMED', 'ACCEPTED','DELIVERED']
+                values: ['PENDING', 'CONFIRMED', 'ACCEPTED','DELIVERED']
             }),
-            allowNull:false
+            allowNull: false
         },
-        
+
+    }, {
+        defaultScope: {
+            attributes: { exclude: ['updatedAt', 'createdAt'] }
+    }
     })
     Order.associate = function (models) {
         // associations can be defined here
-        const {User,Dealer,Product,Shades} = models;
+        const { User, Dealer, Product, Shades } = models;
         Order.belongsTo(User);
         Order.belongsTo(Dealer);
         Order.belongsTo(Product);
