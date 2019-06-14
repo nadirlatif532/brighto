@@ -220,22 +220,7 @@ exports.getShadeByProduct = async (req, res) => {
         if (!product_id) {
             throw "No Product Id was sent.";
         }
-        let result = await Shades.findAll({
-            include: [
-                {
-                    where: { id: product_id },
-                    model: Product,
-                    through: { attributes: [] }
-                },
-                {
-                    model: Family
-                },
-                {
-                    model: Country,
-                    through: { attributes: [] }
-                }
-            ]
-        });
+        let result = await Shades.findAll({});
         result = JSON.parse(JSON.stringify(result));
         result.map((item) => {
             item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
