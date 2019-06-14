@@ -7,9 +7,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: '',
             validate: {
-                isAlpha: {
-                    msg: 'Last name should only contain alphabets',
-                },
                 len: {
                     args: [2, 254],
                     msg: 'Please provide an alphabetical last name which is 2-254 characters in length'
@@ -19,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
         image: {
             type: DataTypes.STRING,
             defaultValue: ""
+        }
+    }, {
+        defaultScope: {
+            attributes: { exclude: ['updatedAt', 'createdAt'] }
         }
     })
     ColorTrends.associate = function (models) {

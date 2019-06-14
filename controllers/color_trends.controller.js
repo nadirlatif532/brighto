@@ -41,7 +41,6 @@ exports.getById = async (req,res) => {
         delete item['shade3']['g'];
         delete item['shade3']['b'];
     });
-    console.log(result);
     return res.status(200).json({ success: true, data: result });   
     }
     catch(err) {
@@ -83,10 +82,8 @@ exports.getAll = async (req, res) => {
             delete item['shade3']['g'];
             delete item['shade3']['b'];
         });
-        console.log(result);
         return res.status(200).json({ success: true, data: result });
     } catch (err) {
-        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 };
@@ -115,6 +112,8 @@ exports.update = async (req, res) => {
         updateColorTrends['image'] = req.file.filename;
         const { image } = await ColorTrends.find({ where: { id: req.params.id }, raw: true });
         fs.unlinkSync(`${keys.storage}/${image}`);
+    } else {
+        delete updateColorTrends["image"];
     }
     try {
         await ColorTrends.update(updateColorTrends, { where: { id } });
