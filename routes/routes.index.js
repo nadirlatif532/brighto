@@ -1,4 +1,4 @@
-const { authenticate } = require("../middlewares/auth.middleware");
+const { authenticate, isAdmin } = require("../middlewares/auth.middleware");
 
 module.exports = ({ app, upload }) => {
   app.use("/api/v1/u", upload.array(), require("./routes.unauth"));
