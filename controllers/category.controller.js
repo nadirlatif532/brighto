@@ -23,10 +23,10 @@ exports.getAll = async (req, res) => {
 exports.create = async (req, res) => {
   const { name, ProjectTypeId, SurfaceId } = req.body;
   try {
-    if (!req.file.filename) {
+    if (!req.files['image'][0].filename) {
       throw "No image was provided";
     }
-    let categoryId = await Category.create({ name, image: req.file.filename });
+    let categoryId = await Category.create({ name, image: req.files['image'][0].filename });
     categoryId = JSON.parse(JSON.stringify(categoryId))
     if (ProjectTypeId) {
       for (let id of JSON.parse(ProjectTypeId)) {
@@ -76,8 +76,8 @@ exports.getSpecificCategory = async (req, res) => {
 
 exports.update = async (req, res) => {
   const updateCategory = req.body;
-  if (req.file) {
-    updateCategory['image'] = req.file.filename;
+  if (req.files['image']) {
+    updateCategory['image'] = req.files['image'][0].filename;
     const { image } = await Category.find({ where: { id: req.params.id }, raw: true });
     fs.unlinkSync(`${keys.storage}/${image}`);
   } else {

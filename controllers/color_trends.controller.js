@@ -93,7 +93,7 @@ exports.create = async (req, res) => {
         if(!req.body.shade1Id || !req.body.shade2Id || !req.body.shade3Id) {
             throw "Shade id's is missing";
         }
-        await ColorTrends.create({ ...req.body, image: req.file.filename });
+        await ColorTrends.create({ ...req.body, image: req.files['image'][0].filename });
         return res
             .status(200)
             .json({ success: true, message: "Color Trends created successfully" });
@@ -108,8 +108,8 @@ exports.update = async (req, res) => {
     if(!id){ 
         throw "Id is missing or incorrect.";
     }
-    if (req.file) {
-        updateColorTrends['image'] = req.file.filename;
+    if (req.files['image']) {
+        updateColorTrends['image'] = req.files['image'][0].filename;
         const { image } = await ColorTrends.find({ where: { id: req.params.id }, raw: true });
         fs.unlinkSync(`${keys.storage}/${image}`);
     } else {

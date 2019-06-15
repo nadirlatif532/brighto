@@ -16,7 +16,7 @@ exports.getAll = async (req, res) => {
 exports.create = async (req, res) => {
   const { name } = req.body;
   try {
-    await ProjectType.create({ name, image: req.file.filename });
+    await ProjectType.create({ name, image: req.files['image'][0].filename });
     return res
       .status(200)
       .json({ success: true, message: "Project Type created successfully" });
@@ -31,8 +31,8 @@ exports.update = async (req, res) => {
   if (!id) {
     throw "Id is missing or incorrect format";
   }
-  if (req.file) {
-    updateProjectType['image'] = req.file.filename;
+  if (req.files['image']) {
+    updateProjectType['image'] = req.files['image'][0].filename;
     const { image } = await ProjectType.find({ where: { id: req.params.id }, raw: true });
     fs.unlinkSync(`${keys.storage}/${image}`);
   } else {
