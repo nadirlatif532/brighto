@@ -24,7 +24,7 @@ exports.getAll = async (req, res) => {
 exports.create = async (req, res) => {
   const { name, CategoryId, FinishTypeId } = req.body;
   try {
-    let surfaceId = await Surface.create({ name, image: req.file.filename });
+    let surfaceId = await Surface.create({ name, image: req.files['image'][0].filename });
     surfaceId = JSON.parse(JSON.stringify(surfaceId))
     if (FinishTypeId) {
       for (let id of FinishTypeId) {
@@ -50,8 +50,8 @@ exports.update = async (req, res) => {
   if (!id) {
     throw "Id is missing or incorrect format";
   }
-  if (req.file) {
-    updateSurface['image'] = req.file.filename;
+  if (req.files['image']) {
+    updateSurface['image'] = req.files['image'][0].filename;
     const { image } = await Surface.find({ where: { id: req.params.id }, raw: true });
     fs.unlinkSync(`${keys.storage}/${image}`);
   } else {

@@ -122,7 +122,8 @@ exports.createProduct = async (req, res) => {
         FinishTypeId,
         description,
         spreading,
-        image: req.file.filename
+        image: req.files['image'][0].filename,
+        coverImage: req.files['coverImage'][0].filename
       },
       { raw: true }
     );
@@ -147,12 +148,20 @@ exports.updateProduct = async (req, res) => {
   if (!id) {
     throw "Id is missing or incorrect format";
   }
-  if (req.file) {
-    updateObject['image'] = req.file.filename;
+  if (req.files['image']) {
+    updateObject['image'] = req.files['image'][0].filename;
     const { image } = await Product.find({ where: { id: req.params.id }, raw: true });
     fs.unlinkSync(`${keys.storage}/${image}`);
+  }
+  else {
+     delete updateObject["image"];
+  }
+  if(req.files['coverImage']) {
+    updateObject['coverImage'] = req.files['coverImage'][0].filename;
+    const { coverImage } = await Product.find({ where: { id: req.params.id }, raw: true });
+    fs.unlinkSync(`${keys.storage}/${coverImage}`);
   } else {
-    delete updateObject["image"];
+    delete updateObject["coverImage"];
   }
   try {
     await Product.update(updateObject, { where: { id } });

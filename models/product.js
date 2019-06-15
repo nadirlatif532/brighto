@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             defaultValue: ''
         },
+        coverImage: {
+            type: DataTypes.STRING,
+            defaultValue: ''
+        },
         isActive: {
             type: DataTypes.BOOLEAN,
             defaultValue: true
