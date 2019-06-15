@@ -21,3 +21,11 @@ module.exports.authenticate = async (req, res, next) => {
     return res.json({success: false, message: 'Authorization token not found'})
   }
 };
+
+module.exports.isAdmin = async (req, res, next) => {
+  if (req.user.role == 'ADMIN') {
+    next();
+  } else {
+    return res.json({success: false, message: 'Insufficient privilege: Not authorized.'});
+  }
+};
