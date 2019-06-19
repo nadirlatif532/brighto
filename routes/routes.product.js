@@ -4,6 +4,7 @@ const ProductController = require("../controllers/product.controller");
 
 product
   .post("/id", ProductController.getSpecificProduct)
-  .post("/country",ProductController.getProductByCountry);
+  .post("/country",ProductController.getProductByCountry)
+  .post('/shades', ProductController.getProductWithShades)
 
 module.exports = product;
