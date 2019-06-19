@@ -14,8 +14,7 @@ exports.computeDistance = (curr, original) => {
 };
 
 exports.getAll = async (req, res) => {
-    // try {
-        console.log("*************");
+    try {
         let result = await Pallet.findAll({
             include: [
                 {
@@ -60,9 +59,9 @@ exports.getAll = async (req, res) => {
         });
         
         return res.status(200).json({ success: true, data: result });
-    // } catch (err) {
+    } catch (err) {
         return res.status(500).json({ success: false, errors: err });
-    // }
+    }
 };
 
 exports.create = async (req, res) => {
