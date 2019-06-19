@@ -13,5 +13,5 @@ favorite
 
   .get("/products", FavouriteRoutes.getLikedProducts)
   .get("/shades", FavouriteRoutes.getLikedShades)
-  .post("/pallets", FavouriteRoutes.getLikedPallets);
+  .get("/pallets", FavouriteRoutes.getLikedPallets);
 module.exports = favorite;

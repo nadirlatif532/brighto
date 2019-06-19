@@ -14,9 +14,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: '',
             validate: {
-                isAlpha: {
-                    msg: 'Name should only contain alphabets',
-                },
                 len: {
                     args: [2, 254],
                     msg: 'Please provide an alphabetical name which is 2-254 characters in length'
@@ -32,15 +29,16 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: '',
             validate: {
-                isAlpha: {
-                    msg: 'Designer should only contain alphabets',
-                },
                 len: {
                     args: [2, 254],
                     msg: 'Please provide an alphabetical name which is 2-254 characters in length'
                 }
             }
         },
+    }, {
+        // defaultScope: {
+        //     attributes: { exclude: ['updatedAt', 'createdAt'] }
+        // }
     })
     Pallet.associate = function (models) {
         // associations can be defined here

@@ -14,8 +14,9 @@ exports.computeDistance = (curr, original) => {
 };
 
 exports.getAll = async (req, res) => {
-    try {
-        const result = await Pallet.findAll({
+    // try {
+        console.log("*************");
+        let result = await Pallet.findAll({
             include: [
                 {
                     model: Shades,
@@ -35,10 +36,33 @@ exports.getAll = async (req, res) => {
                 }
             ]
         });
+        result = JSON.parse(JSON.stringify(result));
+        result.map(item => {
+            item['color_1']['color'] = { r: item['color_1']['r'], g: item['color_1']['g'], b: item['color_1']['b']};
+            delete item['color_1']['r'];
+            delete item['color_1']['g'];
+            delete item['color_1']['b'];
+
+            item['color_2']['color'] = { r: item['color_2']['r'], g: item['color_2']['g'], b: item['color_2']['b']};
+            delete item['color_2']['r'];
+            delete item['color_2']['g'];
+            delete item['color_2']['b'];
+
+            item['color_3']['color'] = { r: item['color_3']['r'], g: item['color_3']['g'], b: item['color_3']['b']};
+            delete item['color_3']['r'];
+            delete item['color_3']['g'];
+            delete item['color_3']['b'];
+
+            item['color_4']['color'] = { r: item['color_4']['r'], g: item['color_4']['g'], b: item['color_4']['b']};
+            delete item['color_4']['r'];
+            delete item['color_4']['g'];
+            delete item['color_4']['b'];
+        });
+        
         return res.status(200).json({ success: true, data: result });
-    } catch (err) {
+    // } catch (err) {
         return res.status(500).json({ success: false, errors: err });
-    }
+    // }
 };
 
 exports.create = async (req, res) => {

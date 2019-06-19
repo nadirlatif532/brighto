@@ -1,21 +1,22 @@
 const { User, Product, Shades, Pallet } = require('../models');
 
 exports.likePallete = async (req, res) => {
-    const { user_id, pallete_id } = req.body;
+    const { pallete_id } = req.body;
     try {
-        if (!user_id || !pallete_id) {
-            throw "User id or Pallet id is missing.";
+        if (!pallete_id) {
+            throw "Pallet id is missing.";
         }
-        const user = await User.findAll({ where: { user_id }, raw: true });
-        let liked_pallets = user[0].liked_pallets;
-        liked_pallets.split(',').map((item) => {
-            if (item == pallete_id) {
-                throw "Pallete is already liked";
-            }
-        });
+        let liked_pallets = req.user.liked_pallets;
+        if (liked_pallets) {
+            liked_pallets.split(',').map((item) => {
+                if (item == pallete_id) {
+                    throw "Pallete is already liked";
+                }
+            });
+        }
         liked_pallets = liked_pallets ? `${liked_pallets},${pallete_id}` : pallete_id;
-        await User.update({ liked_pallets }, { where: { user_id } });
-        return res.status(200).json({ success: true, message: 'Pallete updated successfully' });
+        await User.update({ liked_pallets }, { where: { id: req.user.id } });
+        return res.status(200).json({ success: true, message: 'Pallete liked' });
     }
     catch (err) {
         return res.status(500).json({ success: false, errors: err });
@@ -29,7 +30,7 @@ exports.getLikedProducts = async (req, res) => {
         const details = await Product.findAll({
             where: { id: liked_products.split(',') }
         })
-        return res.status(200).json({ success: true, result: details });
+        return res.status(200).json({ success: true, data: details });
     }
     catch (err) {
         return res.status(500).json({ success: false, errors: err });
@@ -58,17 +59,12 @@ exports.getLikedShades = async (req, res) => {
 }
 
 exports.getLikedPallets = async (req, res) => {
-    const { user_id } = req.body;
     try {
-        if (!user_id) {
-            throw "No user id is provided.";
-        }
-        const result = await User.findAll({ where: { user_id }, raw: true });
-        let liked_pallets = result[0].liked_pallets;
+        let liked_pallets = req.user.liked_pallets;
         const details = await Pallet.findAll({
             where: { id: liked_pallets.split(',') }
         })
-        return res.status(200).json({ success: true, result: details });
+        return res.status(200).json({ success: true, data: details });
     }
     catch (err) {
         return res.status(500).json({ success: false, errors: err });
@@ -76,13 +72,12 @@ exports.getLikedPallets = async (req, res) => {
 }
 
 exports.unlikePallete = async (req, res) => {
-    const { user_id, pallete_id } = req.body;
+    const { pallete_id } = req.body;
     try {
-        if (!user_id || !pallete_id) {
-            throw "User id or Pallet id is missing.";
+        if (!pallete_id) {
+            throw "Pallet id is missing.";
         }
-        const user = await User.findAll({ where: { user_id }, raw: true });
-        let liked_pallets = user[0].liked_pallets;
+        let liked_pallets = req.user.liked_pallets;
         if (!liked_pallets) {
             throw "This pallete has not been liked before";
         }
@@ -93,8 +88,8 @@ exports.unlikePallete = async (req, res) => {
             }
         })
         liked_pallets = liked_pallets.join(',');
-        await User.update({ liked_pallets }, { where: { user_id } });
-        return res.status(200).json({ success: true, message: 'Pallete updated successfully' });
+        await User.update({ liked_pallets }, { where: { id: req.user.id } });
+        return res.status(200).json({ success: true, message: 'Pallete unliked' });
     }
     catch (err) {
         return res.status(500).json({ success: false, errors: err });
