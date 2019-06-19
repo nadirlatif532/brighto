@@ -15,7 +15,10 @@ exports.signup = async (req, res) => {
           res.status(201).json({success: true, message: 'User created successfully'});
         })
         .catch(errors => {
-          res.status(400).json({success: false, errors: "Fill form fields appropriately"});
+          let errObj = JSON.parse(JSON.stringify(errors))['errors'].map((err)=>{
+            return err['message']
+          });
+          res.status(400).json({success: false, errors: errObj});
         });
   } catch (e) {
     return res.status(400).json({success: false, errors: e})

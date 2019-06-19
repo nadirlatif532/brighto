@@ -1,5 +1,6 @@
-const { Product, Country, Country_Product, Category, ProjectType, Surface, FinishType, Product_Shades } = require("../models");
+const { Product, Country, Country_Product, Category, ProjectType, Surface, FinishType, Product_Shades, Shades } = require("../models");
 const keys = require("../config/keys");
+const db  = require('../models/index')
 const fs = require('fs');
 
 exports.getAllProducts = async (req, res) => {
@@ -10,6 +11,25 @@ exports.getAllProducts = async (req, res) => {
     return res.status(500).json({ success: false, errors: err });
   }
 };
+
+exports.getProductWithShades = async (req,res) => {
+  const {id} = req.body;
+  try {
+      if(!id) {
+          throw "City Id is missing";
+      }
+      const result = await Product.findAll({where:{id},include:[
+        {
+          model: Shades,
+          through: { attributes: [] }
+        }
+      ]})
+      return res.status(200).json({ success: true, data: result });
+      } catch (err) {
+        console.log(err);
+        return res.status(500).json({ success: false, errors: err });
+    }
+}
 
 exports.getProductByCountry = async (req, res) => {
   const { country_id } = req.body;

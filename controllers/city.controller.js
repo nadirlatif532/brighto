@@ -1,5 +1,5 @@
-const { City, Country } = require('../models');
-
+const { City, Country, Dealer } = require('../models');
+const db = require('../models/index');
 exports.createCity = async (req, res) => {
     try {
         const { name, CountryId } = req.body;
@@ -74,4 +74,21 @@ exports.getCitiesByCountry = async (req, res) => {
   } catch (err) {
     return res.status(500).json({ success: false, errors: err });
   }
+}
+
+exports.getCitiesWithDealers = async (req,res) => {
+    const {id} = req.body;
+    try {
+        if(!id) {
+            throw "City Id is missing";
+        }
+        let dealers = await db.sequelize.query("select * from Dealers", { type: db.sequelize.QueryTypes.SELECT})
+        const cities =  await db.sequelize.query("select * from Cities", { type: db.sequelize.QueryTypes.SELECT})
+        let result = cities.map((item) => {
+            return {city: item, dealer:dealers.filter((dealer) => dealer['CityId'] == item['id'])}
+        });
+        return res.status(200).json({ success: true, data: result });
+        } catch (err) {
+            return res.status(500).json({ success: false, errors: err });
+    }
 }
