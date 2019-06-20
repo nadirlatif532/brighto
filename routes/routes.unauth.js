@@ -24,6 +24,7 @@ unauth.use("/finish-type", require("./routes.finishType"));
 unauth.use("/dealer", require("./routes.dealer"));
 unauth.use("/order", require("./routes.order"));
 unauth.use("/user",require("./routes.user"));
+unauth.use("/luxury-finish",require("./routes.luxuryfinish"));
 
 
 module.exports = unauth;
