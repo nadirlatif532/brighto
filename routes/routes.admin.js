@@ -13,6 +13,7 @@ const FinishTypeController = require('../controllers/finish_type.controller');
 const CityController = require("../controllers/city.controller");
 const OrderController = require("../controllers/order.controller");
 const DealersController = require("../controllers/dealer.controller");
+const LuxuryFinishController = require("../controllers/luxury_finishes.controller");
 
 admin
   .post("/family/create", FamilyController.createColor)
@@ -26,6 +27,7 @@ admin
   .post("/surface/create", SurfaceController.create)
   .post("/city/create", CityController.createCity)
   .post("/order/create", OrderController.createOrder)
+  .post("/luxury-finish/create",LuxuryFinishController.create)
   .put("/order/:id",OrderController.updateOrder)
   .post("/dealer/create",DealersController.createDealer)
   .put("/dealer/:id", DealersController.updateDealer)
@@ -41,6 +43,7 @@ admin
   .put("/finish-type/:id", FinishTypeController.update)
   .put("/surface/:id", SurfaceController.update)
   .put("/city/:id",CityController.updateCity)
+  .put("/luxury-finish/:id",LuxuryFinishController.updateFinish)
   .delete("/order/:id",OrderController.deleteOrder)
   .delete('/dealer/:id', DealersController.deleteDealer)
   .delete("/color-trends/:id", ColorTrendsController.delete)
@@ -54,6 +57,7 @@ admin
   .delete("/family/:id", FamilyController.deleteColor)
   .delete("/finish-type/:id", FinishTypeController.delete)
   .delete("/surface/:id", SurfaceController.delete)
-  .delete("/city/:id",CityController.deleteCity);
+  .delete("/city/:id",CityController.deleteCity)
+  .delete("/luxury-finish/:id",LuxuryFinishController.delete)
 
 module.exports = admin;
