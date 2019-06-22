@@ -16,7 +16,7 @@ exports.getProductWithShades = async (req,res) => {
   const {id} = req.body;
   try {
       if(!id) {
-          throw "City Id is missing";
+          throw "Product Id is missing";
       }
       const result = await Product.findAll({where:{id},include:[
         {
