@@ -9,9 +9,9 @@ exports.getUsers = async (req, res) => {
     }
 }
 
-exports.getSpecificUser = async (req,res) => {
+exports.getSpecificUser = async (req, res) => {
     try {
-        res.status(200).json({success: true, data: req.user});
+        res.status(200).json({ success: true, data: req.user });
     }
     catch (err) {
         return res.status(500).json({ success: false, errors: err });
@@ -23,8 +23,13 @@ exports.updateUser = async (req, res) => {
         throw "Id is missing or incorrect format";
     }
     try {
+        let user = await User.scope('withPassword').findOne({ where: { id } })
         const updateObject = req.body;
-        await User.update(updateObject, { where: { id } })
+        if (updateObject['oldPassword'] && updateObject['newPassword']) {
+            await user.comparePassword(updateObject['oldPassword']);
+            updateObject['password'] = updateObject['newPassword'];
+        }
+        await user.update(updateObject, { where: { id } })
         return res
             .status(200)
             .json({ success: true, message: "User updated successfully" });
