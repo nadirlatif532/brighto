@@ -4,10 +4,10 @@ const { User } = require('../models');
 const mail = require('../utils/email.util');
 
 exports.signup = async (req, res) => {
-  const { username, firstname, lastname, email, password } = req.body;
+  const { username, firstname, lastname, email, password, role } = req.body;
 
   try {
-    User.build({ username, firstname, lastname, email, password }).validate()
+    User.build({ username, firstname, lastname, email, password, role }).validate()
       .then((user) => {
         return user.save();
       })
