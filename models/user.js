@@ -69,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     role: {
       type: DataTypes.ENUM({
-        values: ['CUSTOMER', 'ADMIN', 'DEALER']
+        values: ['CUSTOMER', 'ADMIN', 'DEALER','DATAENTRY']
       }),
       defaultValue: 'CUSTOMER'
     },
@@ -123,7 +123,10 @@ module.exports = (sequelize, DataTypes) => {
     return bcrypt.compare(password, this.password, cb);
   };
 
-  const hashPassword = user => bcrypt.hash(user.password, 10).then(hash => user.password = hash);
+  const hashPassword = user => {
+    if(!user.changed('password')) return
+    return bcrypt.hash(user.password, 10).then(hash => user.password = hash)
+  };
 
   User.beforeCreate(user => hashPassword(user));
 
