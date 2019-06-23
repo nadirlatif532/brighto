@@ -3,9 +3,19 @@ const fs = require('fs');
 const keys = require('../config/keys');
 
 exports.create = async (req, res) => {
-    const { name, description } = req.body;
+    const { name, description, video } = req.body;
     try {
-        await LuxuryFinishes.create({ name, image: req.files['image'][0].filename, description });
+        console.log(req.files)
+        await LuxuryFinishes.create({
+            name,
+            image1: req.files['image1'][0].filename,
+            image2: req.files['image2'][0].filename,
+            image3: req.files['image3'][0].filename,
+            image4: req.files['image4'][0].filename,
+            description,
+            video,
+            coverImage: req.files['coverImage'][0].filename
+        });
         return res.status(200).json({ success: true, message: "Luxury Finishes created successfully" });
     }
     catch (err) {
@@ -16,18 +26,49 @@ exports.create = async (req, res) => {
 
 exports.updateFinish = async (req, res) => {
     const { id } = req.params;
-    const updateLuxuryFinish  = req.body;
+    console.log(req.body);
+    const updateLuxuryFinish = req.body;
     try {
-        if(!id) {
+        if (!id) {
             throw "Id is missing or incorrect format";
         }
-        if (req.files['image']) {
-            updateLuxuryFinish['image'] = req.files['image'][0].filename;
-            const { image } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
-            fs.unlinkSync(`${keys.storage}/${image}`);
-          }
+        console.log(req.files['image']);
+        if (req.files['image1']) {
+            updateLuxuryFinish['image1'] = req.files['image1'][0].filename;
+            const { image1 } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
+            fs.unlinkSync(`${keys.storage}/${image1}`);
+        } else {
+            delete updateLuxuryFinish['image1'];
+        }
+        if (req.files['image2']) {
+            updateLuxuryFinish['image2'] = req.files['image2'][0].filename;
+            const { image2 } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
+            fs.unlinkSync(`${keys.storage}/${image2}`);
+        } else {
+            delete updateLuxuryFinish['image2'];
+        }
+        if (req.files['image3']) {
+            updateLuxuryFinish['image3'] = req.files['image3'][0].filename;
+            const { image3 } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
+            fs.unlinkSync(`${keys.storage}/${image3}`);
+        }
         else {
-             delete updateLuxuryFinish["image"];
+            delete updateLuxuryFinish['image3'];
+        }
+        if (req.files['image4']) {
+            updateLuxuryFinish['image4'] = req.files['image4'][0].filename;
+            const { image4 } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
+            fs.unlinkSync(`${keys.storage}/${image4}`);
+        }
+        else {
+            delete updateLuxuryFinish['image4'];
+        }
+        if (req.files['coverImage']) {
+            updateLuxuryFinish['coverImage'] = req.files['coverImage'][0].filename;
+            const { coverImage } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
+            fs.unlinkSync(`${keys.storage}/${coverImage}`);
+        } else {
+            delete updateLuxuryFinish["coverImage"];
         }
         await LuxuryFinishes.update(updateLuxuryFinish, { where: { id } });
         return res.status(200).json({ success: true, message: 'Luxury Finish updated successfully' });
@@ -70,7 +111,7 @@ exports.getAllFinishes = async (req, res) => {
 exports.getSpecificFinish = async (req, res) => {
     try {
         const { finish_id } = req.body;
-        const result = await LuxuryFinishes.findAll({ where: {id: finish_id }});
+        const result = await LuxuryFinishes.findAll({ where: { id: finish_id } });
         return res.status(200).json({ success: true, data: result });
     }
     catch (err) {

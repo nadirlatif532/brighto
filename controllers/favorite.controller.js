@@ -27,6 +27,9 @@ exports.getLikedProducts = async (req, res) => {
     try {
         const result = await User.findOne({ where: { id: req.user.id }, raw: true });
         let liked_products = result.liked_products;
+        if (!liked_products) {
+            return res.status(200).json({ success: true, data: [] });
+        }
         const details = await Product.findAll({
             where: { id: liked_products.split(',') }
         })
@@ -41,6 +44,9 @@ exports.getLikedShades = async (req, res) => {
     try {
         const result = await User.findOne({ where: { id: req.user.id }, raw: true });
         let liked_shades = result.liked_shades;
+        if (!liked_shades) {
+            return res.status(200).json({ success: true, data: [] });
+        }
         let details = await Shades.findAll({
             where: { id: liked_shades.split(',') }
         })
@@ -61,12 +67,22 @@ exports.getLikedShades = async (req, res) => {
 exports.getLikedPallets = async (req, res) => {
     try {
         let liked_pallets = req.user.liked_pallets;
-        const details = await Pallet.findAll({
+        if (!liked_pallets) {
+            return res.status(200).json({ success: true, data: [] });
+        }
+        let details = await Pallet.findAll({
             where: { id: liked_pallets.split(',') }
-        })
+        });
+        details = JSON.parse(JSON.stringify(details));
+        details[0]['color'] = {color1: details[0]['color1Id'],color2: details[0]['color2Id'],color3: details[0]['color3Id'],color4: details[0]['color4Id']}
+        delete details[0]['color1Id'];
+        delete details[0]['color2Id'];
+        delete details[0]['color3Id'];
+        delete details[0]['color4Id'];
         return res.status(200).json({ success: true, data: details });
     }
     catch (err) {
+        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }
@@ -112,7 +128,7 @@ exports.likeShade = async (req, res) => {
             });
         }
 
-        const shade = await Shades.findOne({where: {id: shade_id}, raw: true});
+        const shade = await Shades.findOne({ where: { id: shade_id }, raw: true });
 
         if (shade) {
             liked_shades = liked_shades ? `${liked_shades},${shade.id}` : shade.id;
@@ -133,8 +149,8 @@ exports.unlikeShade = async (req, res) => {
     try {
         if (!shade_id) {
             throw "Shade id is missing.";
-        } 
-        const shade = await Shades.findOne({where: {id: shade_id}, raw: true});
+        }
+        const shade = await Shades.findOne({ where: { id: shade_id }, raw: true });
         if (!shade) {
             throw "Invalid Shade Id";
         }
@@ -151,7 +167,7 @@ exports.unlikeShade = async (req, res) => {
                 }
             })
         }
-        
+
         liked_shades = liked_shades.join(',');
         await User.update({ liked_shades }, { where: { id: req.user.id } });
         return res.status(200).json({ success: true, message: 'Shade unliked' });
@@ -176,14 +192,14 @@ exports.likeProduct = async (req, res) => {
                 }
             })
         }
-        const product = await Product.findOne({where: {id: product_id}, raw: true});
+        const product = await Product.findOne({ where: { id: product_id }, raw: true });
         if (product) {
             liked_products = liked_products ? `${liked_products},${product.id}` : product.id;
             await User.update({ liked_products }, { where: { id: req.user.id } });
         } else {
             throw "Invalid Product Id";
         }
-        
+
         return res.status(200).json({ success: true, message: 'Product liked' });
     }
     catch (err) {
@@ -197,7 +213,7 @@ exports.unlikeProduct = async (req, res) => {
         if (!product_id) {
             throw "Product id is missing.";
         }
-        const product = await Product.findOne({where: {id: product_id}, raw: true});
+        const product = await Product.findOne({ where: { id: product_id }, raw: true });
         if (!product) {
             throw "Invalid Product Id";
         }

@@ -1,27 +1,32 @@
 const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
-const {User} = require('../models');
+const { User } = require('../models');
 const mail = require('../utils/email.util');
 
 exports.signup = async (req, res) => {
-  const {username, firstname, lastname, email, password} = req.body;
+  const { username, firstname, lastname, email, password, role } = req.body;
 
   try {
-    User.build({username, firstname, lastname, email, password}).validate()
-        .then((user) => {
-          return user.save();
-        })
-        .then(() => {
-          res.status(201).json({success: true, message: 'User created successfully'});
-        })
-        .catch(errors => {
-          let errObj = JSON.parse(JSON.stringify(errors))['errors'].map((err)=>{
-            return err['message']
-          });
-          res.status(400).json({success: false, errors: errObj});
+    User.build({ username, firstname, lastname, email, password, role }).validate()
+      .then((user) => {
+        return user.save();
+      })
+      .then((user) => {
+        jwt.sign({ sub: user.id }, keys.jwtSecret, (err, token) => {
+          if (err) return err;
+          let userObject = JSON.parse(JSON.stringify(user));
+          delete userObject["password"];
+          res.status(201).json({ success: true, message: 'User created successfully', token: token, data: user });
         });
+      })
+      .catch(errors => {
+        let errObj = JSON.parse(JSON.stringify(errors))['errors'].map((err) => {
+          return err['message']
+        });
+        res.status(400).json({ success: false, errors: errObj });
+      });
   } catch (e) {
-    return res.status(400).json({success: false, errors: e})
+    return res.status(400).json({ success: false, errors: e })
   }
 };
 
@@ -32,48 +37,50 @@ exports.login = async (req, res) => {
     if (!username && !email) throw "Email, username not found.";
     if (!password) throw "Password not found";
 
-    let user = await User.scope('withPassword').findOne({where: {
-      $or: [
-        {
-          email: {
-            $eq: email
+    let user = await User.scope('withPassword').findOne({
+      where: {
+        $or: [
+          {
+            email: {
+              $eq: email
+            }
+          }, {
+            username: {
+              $eq: username
+            }
           }
-        }, {
-          username: {
-            $eq: username
-          }
-        }
-      ]
-    }});
-  
+        ]
+      }
+    });
+
     if (!user) {
-      return res.status(400).json({success: false, errors: "Email or username does not exist."});
+      return res.status(400).json({ success: false, errors: "Email or username does not exist." });
     }
 
     user.comparePassword(password, (err, result) => {
-      if (err) return res.status(500).json({success: false, message: 'Something went wrong', errors: err});
-  
+      if (err) return res.status(500).json({ success: false, message: 'Something went wrong', errors: err });
+
       if (result) {
-        jwt.sign({sub: user.id}, keys.jwtSecret, (err, token) => {
+        jwt.sign({ sub: user.id }, keys.jwtSecret, (err, token) => {
           if (err) return err;
           user = JSON.parse(JSON.stringify(user));
           delete user["password"];
-          res.status(200).json({success: true, token: token, data: user});
+          res.status(200).json({ success: true, token: token, data: user });
         });
       } else {
-        res.status(401).json({success: false, errors: "Incorrect password" });
+        res.status(401).json({ success: false, errors: "Incorrect password" });
       }
-    });    
-  } catch(err) {
+    });
+  } catch (err) {
     return res.status(500).json({ success: false, errors: err });
   }
 };
 
 exports.forgotPassword = async (req, res) => {
-  const {email} = req.body;
+  const { email } = req.body;
   try {
     const user = await User.findOne({
-      where: {email: email},
+      where: { email: email },
       attributes: ['id', 'firstname', 'password', 'createdAt'],
       raw: true
     });
@@ -82,7 +89,7 @@ exports.forgotPassword = async (req, res) => {
       throw "Password reset link will be sent if the email exists in our system.";
     }
 
-    const token = jwt.sign({sub: user.id}, (user.password + user.createdAt));
+    const token = jwt.sign({ sub: user.id }, (user.password + user.createdAt));
 
     const url = `${keys.host}/api/v1/u/reset-password/${token}`;
     const subject = '[Brighto] Forgotten password reset';
@@ -103,9 +110,9 @@ exports.forgotPassword = async (req, res) => {
     `;
 
     await mail(email, subject, body);
-    return res.status(200).send({message: "Password reset link will be sent if the email exists in our system."});
+    return res.status(200).send({ message: "Password reset link will be sent if the email exists in our system." });
   } catch (e) {
-    return res.status(401).json({message: e});
+    return res.status(401).json({ message: e });
   }
 };
 
@@ -113,7 +120,7 @@ exports.resetPassword = async (req, res) => {
   const decoded = jwt.decode(req.params.token);
   try {
     const user = await User.findOne({
-      where: {id: decoded.sub},
+      where: { id: decoded.sub },
       attributes: ['firstname', 'email', 'password', 'createdAt'],
       raw: true
     });
@@ -123,12 +130,12 @@ exports.resetPassword = async (req, res) => {
       maxAge: "1h"
     }, async (err, token) => {
       if (err) {
-        return res.status(401).json({success: false, message: "The token is expired or invalid"});
+        return res.status(401).json({ success: false, message: "The token is expired or invalid" });
       }
 
       await User.update(
-          {password: req.body.password},
-          {where: {id: token.sub}, individualHooks: true}
+        { password: req.body.password },
+        { where: { id: token.sub }, individualHooks: true }
       );
 
       const subject = '[Brighto] Password has been reset'
@@ -140,9 +147,9 @@ exports.resetPassword = async (req, res) => {
       `;
 
       await mail(user.email, subject, body);
-      res.status(200).json({success: true, message: 'Password has been reset'});
+      res.status(200).json({ success: true, message: 'Password has been reset' });
     });
   } catch (e) {
-    res.status(400).json({message: 'Something went wrong'});
+    res.status(400).json({ message: 'Something went wrong' });
   }
 };
