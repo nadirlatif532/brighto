@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
-        image: {
+        video: {
             type: DataTypes.STRING,
             defaultValue: ''
         },
@@ -24,6 +24,21 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             defaultValue: ''
         },
+        coverImage: {
+            type: DataTypes.STRING
+        },
+        image1: {
+            type: DataTypes.STRING
+        },
+        image2: {
+            type: DataTypes.STRING
+        },
+        image3: {
+            type: DataTypes.STRING
+        },
+        image4: {
+            type: DataTypes.STRING
+        }
     }, {
         defaultScope: {
             attributes: { exclude: ['updatedAt', 'createdAt'] }

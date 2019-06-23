@@ -5,13 +5,16 @@ module.exports = (sequelize, DataTypes) => {
         orderDetails: {
             type: DataTypes.TEXT
         },
+        orderNumber: {
+            type: DataTypes.STRING
+        },
         quantity: {
             type: DataTypes.INTEGER,
             defaultValue: 0
         },
         status: {
             type: DataTypes.ENUM({
-                values: ['PENDING', 'CONFIRMED', 'ACCEPTED','DELIVERED']
+                values: ['PENDING', 'CONFIRMED','CANCELLED']
             }),
             allowNull: false
         },

@@ -16,9 +16,11 @@ const DealersController = require("../controllers/dealer.controller");
 const LuxuryFinishController = require("../controllers/luxury_finishes.controller");
 const UserController = require("../controllers/user.controller");
 const ColorAdvisory = require("../controllers/coloradvisory.controller");
+const LuxuryShadeController = require("../controllers/luxuryshade.controller");
 const { isAdmin } = require("../middlewares/auth.middleware");
 
 admin
+  .get("/user",UserController.getUsers)
   .get("/user/specific", UserController.getSpecificUser)
   .post("/family/create", FamilyController.createColor)
   .post("/products/create", ProductController.createProduct)
@@ -34,6 +36,8 @@ admin
   .post("/luxury-finish/create", LuxuryFinishController.create)
   .post("/dealer/create", DealersController.createDealer)
   .post("/color-advisory/create",ColorAdvisory.create)
+  .post("/luxury-shade/create", LuxuryShadeController.createLuxuryShade)
+  .put("/luxury-shade/:id", LuxuryShadeController.updateLuxuryShade)
   .put("/order/:id", OrderController.updateOrder)
   .put("/dealer/:id", DealersController.updateDealer)
   .put("/color-trends/:id", ColorTrendsController.update)
@@ -49,9 +53,10 @@ admin
   .put("/surface/:id", SurfaceController.update)
   .put("/city/:id", CityController.updateCity)
   .put("/luxury-finish/:id", LuxuryFinishController.updateFinish)
-  .put("/user/:id", isAdmin, UserController.updateUser)
+  .put("/user/:id", UserController.updateUser)
   .put("/color-advisory/:id",ColorAdvisory.update)
   .put("/user/:id", isAdmin, UserController.deleteUser)
+  .delete("/luxury-shade/:id",LuxuryShadeController.deleteLuxuryShade)
   .delete("/order/:id", OrderController.deleteOrder)
   .delete('/dealer/:id', DealersController.deleteDealer)
   .delete("/color-trends/:id", ColorTrendsController.delete)

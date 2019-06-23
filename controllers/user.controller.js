@@ -26,10 +26,14 @@ exports.updateUser = async (req, res) => {
         let user = await User.scope('withPassword').findOne({ where: { id } })
         const updateObject = req.body;
         if (updateObject['oldPassword'] && updateObject['newPassword']) {
-            await user.comparePassword(updateObject['oldPassword']);
+            try {
+                await user.comparePassword(updateObject['oldPassword']);
+            } catch(err) {
+                return res.status(500).json({ success: false, errors: "Old password was incorrect." });
+            }
             updateObject['password'] = updateObject['newPassword'];
         }
-        await user.update(updateObject, { where: { id } })
+        await user.update(updateObject, { where: { id } });
         return res
             .status(200)
             .json({ success: true, message: "User updated successfully" });

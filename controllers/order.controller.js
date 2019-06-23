@@ -1,9 +1,22 @@
 const { Order, Dealer, User, Product, Shades, Country, City,Family } = require('../models');
-
+const crypto = require('crypto');
 exports.createOrder = async (req, res) => {
+    if(!Array.isArray(req.body)) {
+        throw "Invalid format entered.";
+    }
     try {
-        const { orderDetails, quantity, status, UserId, DealerId, ProductId, ShadeId } = req.body;
-        await Order.create({ orderDetails, quantity, status, UserId, DealerId, ProductId, ShadeId });
+        for(let item=0;item<req.body.length;item++ ) {
+            req.body[item]['status'] = 'PENDING';
+            let token = await new Promise((resolve,reject)=>{
+                crypto.randomBytes(8, (err, buf) => {
+                        if (err) throw err;
+                        resolve(buf.toString('hex'));
+                });
+            })
+            req.body[item]['orderNumber'] = await token;
+        }
+   
+        await Order.bulkCreate(req.body, { individualHooks: true })
         return res.status(200).json({ success: true, message: 'Order created successfully' });
     }
     catch (err) {
@@ -17,6 +30,9 @@ exports.updateOrder = async (req, res) => {
     try {
         if (!id) {
             throw "Id is missing or incorrect format";
+        }
+        if(updateObject['status']!== 'PENDING' || updateObject['status']!== 'CONFIRMED' || updateObject['status']!== 'CANCELLED' ) {
+            throw "Invalid Status";
         }
         await Order.update(
             updateObject,
