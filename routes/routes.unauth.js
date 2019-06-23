@@ -23,7 +23,6 @@ unauth.use("/surface", require("./routes.surface"));
 unauth.use("/finish-type", require("./routes.finishType"));
 unauth.use("/dealer", require("./routes.dealer"));
 unauth.use("/order", require("./routes.order"));
-unauth.use("/user",require("./routes.user"));
 unauth.use("/luxury-finish",require("./routes.luxuryfinish"));
 unauth.use("/luxury-shade",require("./routes.luxuryshade"));
 unauth.use("/color-advisory",require("./routes.colorAdvisory"));
