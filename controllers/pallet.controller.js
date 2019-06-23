@@ -37,27 +37,27 @@ exports.getAll = async (req, res) => {
         });
         result = JSON.parse(JSON.stringify(result));
         result.map(item => {
-            item['color_1']['color'] = { r: item['color_1']['r'], g: item['color_1']['g'], b: item['color_1']['b']};
+            item['color_1']['color'] = { r: item['color_1']['r'], g: item['color_1']['g'], b: item['color_1']['b'] };
             delete item['color_1']['r'];
             delete item['color_1']['g'];
             delete item['color_1']['b'];
 
-            item['color_2']['color'] = { r: item['color_2']['r'], g: item['color_2']['g'], b: item['color_2']['b']};
+            item['color_2']['color'] = { r: item['color_2']['r'], g: item['color_2']['g'], b: item['color_2']['b'] };
             delete item['color_2']['r'];
             delete item['color_2']['g'];
             delete item['color_2']['b'];
 
-            item['color_3']['color'] = { r: item['color_3']['r'], g: item['color_3']['g'], b: item['color_3']['b']};
+            item['color_3']['color'] = { r: item['color_3']['r'], g: item['color_3']['g'], b: item['color_3']['b'] };
             delete item['color_3']['r'];
             delete item['color_3']['g'];
             delete item['color_3']['b'];
 
-            item['color_4']['color'] = { r: item['color_4']['r'], g: item['color_4']['g'], b: item['color_4']['b']};
+            item['color_4']['color'] = { r: item['color_4']['r'], g: item['color_4']['g'], b: item['color_4']['b'] };
             delete item['color_4']['r'];
             delete item['color_4']['g'];
             delete item['color_4']['b'];
         });
-        
+
         return res.status(200).json({ success: true, data: result });
     } catch (err) {
         return res.status(500).json({ success: false, errors: err });
@@ -138,3 +138,50 @@ exports.delete = async (req, res) => {
         return res.status(500).json({ success: false, errors: err });
     }
 };
+
+exports.getPalleteByShadeId = async (req, res) => {
+
+    try {
+        const { shade_id } = req.body;
+        if (!shade_id) {
+            throw "No valid shade id was provided.";
+        }
+        let result = await Pallet.findAll({
+            where: {
+                $or: [
+                    {
+                        color1Id: {
+                            $eq: shade_id
+                        }
+                    }, {
+                        color2Id: {
+                            $eq: shade_id
+                        }
+                    },
+                    {
+                        color3Id: {
+                            $eq: shade_id
+                        }
+                    },
+                    {
+                        color4Id: {
+                            $eq: shade_id
+                        }
+                    }
+                ]
+            }
+        });
+        result = JSON.parse(JSON.stringify(result));
+        result.map((item) => {
+            item['color'] = {color1: item['color1Id'], color2: item['color2Id'], color3: item['color3Id'], color4: item['color4Id']}
+            delete item['color1Id'];
+            delete item['color2Id'];
+            delete item['color3Id'];
+            delete item['color4Id'];
+            return item;
+        })
+        return res.status(200).json({ success: true, data: result });
+    } catch (err) {
+        return res.status(500).json({ success: false, errors: err });
+    }
+}
