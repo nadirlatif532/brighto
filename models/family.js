@@ -35,6 +35,8 @@ module.exports = (sequelize, DataTypes) => {
     })
     Family.associate = function (models) {
         // associations can be defined here
+        const { ShadeFilter } = models;
+        Family.belongsTo(ShadeFilter);
     };
     return Family;
 };

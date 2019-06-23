@@ -5,9 +5,9 @@ exports.createColor = async (req, res) => {
    {name:"Red",r:255,g:101,b:0}
  */
   try {
-    const { name, r, g, b } = req.body;
+    const { name, r, g, b, ShadeFilterId } = req.body;
     await Family.create({
-      name, r, g, b
+      name, r, g, b, ShadeFilterId
     });
     return res.status(200).json({ success: true, message: 'Color created successfully' });
   }

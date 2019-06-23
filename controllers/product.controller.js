@@ -1,34 +1,44 @@
 const { Product, Country, Country_Product, Category, ProjectType, Surface, FinishType, Product_Shades, Shades } = require("../models");
 const keys = require("../config/keys");
-const db  = require('../models/index')
+const db = require('../models/index')
 const fs = require('fs');
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const result = await Product.findAll({});
+    const result = await Product.findAll({
+      include: {
+        model: Category,
+        attributes: ['name']
+      }
+    });
     return res.status(200).json({ success: true, data: result });
   } catch (err) {
     return res.status(500).json({ success: false, errors: err });
   }
 };
 
-exports.getProductWithShades = async (req,res) => {
-  const {id} = req.body;
+exports.getProductWithShades = async (req, res) => {
+  const { id } = req.body;
   try {
-      if(!id) {
-          throw "Product Id is missing";
-      }
-      const result = await Product.findAll({where:{id},include:[
+    if (!id) {
+      throw "Product Id is missing";
+    }
+    const result = await Product.findAll({
+      where: { id }, include: [
         {
           model: Shades,
           through: { attributes: [] }
+        },
+        {
+          model: Category,
+          attributes: ['name']
         }
-      ]})
-      return res.status(200).json({ success: true, data: result });
-      } catch (err) {
-        console.log(err);
-        return res.status(500).json({ success: false, errors: err });
-    }
+      ]
+    })
+    return res.status(200).json({ success: true, data: result });
+  } catch (err) {
+    return res.status(500).json({ success: false, errors: err });
+  }
 }
 
 exports.getProductByCountry = async (req, res) => {
@@ -38,11 +48,17 @@ exports.getProductByCountry = async (req, res) => {
       throw "No Country id was sent.";
     }
     result = await Product.findAll({
-      include: {
-        model: Country,
-        where: { id: country_id},
-        through: { attributes: [] }
-      }
+      include: [
+        {
+          model: Country,
+          where: { id: country_id },
+          through: { attributes: [] }
+        },
+        {
+          model: Category,
+          attributes: ['name']
+        }
+      ]
     });
 
     return res.status(200).json({ success: true, data: result });
@@ -75,7 +91,7 @@ exports.getSpecificProduct = async (req, res) => {
               model: ProjectType,
               through: { attributes: [] }
             }
-          ] 
+          ]
         },
         {
           model: Surface,
@@ -89,7 +105,7 @@ exports.getSpecificProduct = async (req, res) => {
                   through: { attributes: [] }
                 }
               ]
-            }  
+            }
           ]
         },
         {
@@ -111,7 +127,7 @@ exports.getSpecificProduct = async (req, res) => {
                 }
               ]
             }
-          ] 
+          ]
         }
       ]
     });
@@ -174,9 +190,9 @@ exports.updateProduct = async (req, res) => {
     fs.unlinkSync(`${keys.storage}/${image}`);
   }
   else {
-     delete updateObject["image"];
+    delete updateObject["image"];
   }
-  if(req.files['coverImage']) {
+  if (req.files['coverImage']) {
     updateObject['coverImage'] = req.files['coverImage'][0].filename;
     const { coverImage } = await Product.find({ where: { id: req.params.id }, raw: true });
     fs.unlinkSync(`${keys.storage}/${coverImage}`);
