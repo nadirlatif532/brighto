@@ -1,10 +1,10 @@
 const { Order, Dealer, User, Product, Shades, Country, City,Family } = require('../models');
 const crypto = require('crypto');
 exports.createOrder = async (req, res) => {
-    if(!Array.isArray(req.body)) {
-        throw "Invalid format entered.";
-    }
     try {
+        if(!Array.isArray(req.body)) {
+            throw "Invalid format entered.";
+        }
         for(let item=0;item<req.body.length;item++ ) {
             req.body[item]['status'] = 'PENDING';
             let token = await new Promise((resolve,reject)=>{

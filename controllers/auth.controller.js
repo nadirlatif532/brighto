@@ -20,7 +20,8 @@ exports.signup = async (req, res) => {
         });
       })
       .catch(errors => {
-        let errObj = JSON.parse(JSON.stringify(errors))['errors'].map((err) => {
+        let errArray = JSON.parse(JSON.stringify(errors))['errors'] || [];
+        let errObj = errArray.map((err) => {
           return err['message']
         });
         res.status(400).json({ success: false, errors: errObj });
