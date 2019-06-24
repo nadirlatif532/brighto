@@ -55,7 +55,7 @@ admin
   .put("/luxury-finish/:id", LuxuryFinishController.updateFinish)
   .put("/user/:id", UserController.updateUser)
   .put("/color-advisory/:id",ColorAdvisory.update)
-  .put("/user/:id", isAdmin, UserController.deleteUser)
+  .delete("/user/:id", isAdmin, UserController.deleteUser)
   .delete("/luxury-shade/:id",LuxuryShadeController.deleteLuxuryShade)
   .delete("/order/:id", OrderController.deleteOrder)
   .delete('/dealer/:id', DealersController.deleteDealer)
@@ -73,5 +73,6 @@ admin
   .delete("/city/:id", CityController.deleteCity)
   .delete("/luxury-finish/:id", LuxuryFinishController.delete)
   .delete("/color-advisory/:id",ColorAdvisory.delete)
+  .delete("/:id")
   
 module.exports = admin;
