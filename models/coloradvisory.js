@@ -19,10 +19,6 @@ module.exports = (sequelize, DataTypes) => {
         },
         email: {
             type: DataTypes.STRING,
-            unique: {
-                args: true,
-                msg: 'Oops. Looks like you already have an account with this email address. Please try logging in'
-            },
             allowNull: false,
             defaultValue: '',
             validate: {
