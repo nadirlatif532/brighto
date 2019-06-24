@@ -37,25 +37,26 @@ exports.getAll = async (req, res) => {
         });
         result = JSON.parse(JSON.stringify(result));
         result.map(item => {
-            if(item['color1']) {
+            console.log(item)
+            if(item['color_1']) {
                 item['color_1']['color'] = { r: item['color_1']['r'], g: item['color_1']['g'], b: item['color_1']['b'] };
                 delete item['color_1']['r'];
                 delete item['color_1']['g'];
                 delete item['color_1']['b'];
             }
-            if (item['color2']) {
+            if (item['color_2']) {
                 item['color_2']['color'] = { r: item['color_2']['r'], g: item['color_2']['g'], b: item['color_2']['b'] };
                 delete item['color_2']['r'];
                 delete item['color_2']['g'];
                 delete item['color_2']['b'];
             }
-            if (item['color3']) {
+            if (item['color_3']) {
                 item['color_3']['color'] = { r: item['color_3']['r'], g: item['color_3']['g'], b: item['color_3']['b'] };
                 delete item['color_3']['r'];
                 delete item['color_3']['g'];
                 delete item['color_3']['b'];
             }
-            if (item['color4']) {
+            if (item['color_4']) {
                 item['color_4']['color'] = { r: item['color_4']['r'], g: item['color_4']['g'], b: item['color_4']['b'] };
                 delete item['color_4']['r'];
                 delete item['color_4']['g'];
