@@ -74,11 +74,13 @@ exports.getLikedPallets = async (req, res) => {
             where: { id: liked_pallets.split(',') }
         });
         details = JSON.parse(JSON.stringify(details));
-        details[0]['color'] = {color1: details[0]['color1Id'],color2: details[0]['color2Id'],color3: details[0]['color3Id'],color4: details[0]['color4Id']}
-        delete details[0]['color1Id'];
-        delete details[0]['color2Id'];
-        delete details[0]['color3Id'];
-        delete details[0]['color4Id'];
+        details.map((item) => {
+            item['color'] = { color1: item['color1Id'], color2: item['color2Id'], color3: item['color3Id'], color4: item['color4Id'] }
+            delete item['color1Id'];
+            delete item['color2Id'];
+            delete item['color3Id'];
+            delete item['color4Id'];
+        })
         return res.status(200).json({ success: true, data: details });
     }
     catch (err) {
@@ -239,6 +241,114 @@ exports.unlikeProduct = async (req, res) => {
         await User.update({ liked_products }, { where: { id: req.user.id } });
         return res.status(200).json({ success: true, message: 'Product unliked' });
     } catch (err) {
+        return res.status(500).json({ success: false, errors: err });
+    }
+}
+exports.getUserPalletes = async (req, res) => {
+    try {
+        let palletes = await Pallet.findAll({});
+        palletes = JSON.parse(JSON.stringify(palletes));
+        let userLikedPalletes = await User.findOne({ where: { id: req.user.id }, attributes: ['liked_pallets'] });
+        userLikedPalletes = JSON.parse(JSON.stringify(userLikedPalletes));
+        userLikedPalletes = userLikedPalletes['liked_pallets'].toString().split(',');
+
+        if (!userLikedProducts['liked_pallets']) {
+            userLikedProducts['liked_pallets'] = [];
+        }
+
+        palletes = palletes.map((item) => {
+            let isLiked = false;
+            userLikedPalletes.map((liked) => {
+                if (liked == item['id']) {
+                    item['isLiked'] = true
+                    isLiked = true;
+                }
+            })
+            if (!isLiked) {
+                item['isLiked'] = false
+            }
+            return item;
+        });
+        palletes.map((item) => {
+            item['color'] = { color1: item['color1Id'], color2: item['color2Id'], color3: item['color3Id'], color4: item['color4Id'] }
+            delete item['color1Id'];
+            delete item['color2Id'];
+            delete item['color3Id'];
+            delete item['color4Id'];
+        })
+        return res.status(200).json({ success: true, data: palletes });
+    }
+    catch (err) {
+        return res.status(500).json({ success: false, errors: err });
+    }
+}
+
+exports.getUserProducts = async (req, res) => {
+    try {
+        let products = await Product.findAll({});
+        products = JSON.parse(JSON.stringify(products));
+        let userLikedProducts = await User.findOne({ where: { id: req.user.id }, attributes: ['liked_products'] });
+        userLikedProducts = JSON.parse(JSON.stringify(userLikedProducts));
+        if (!userLikedProducts['liked_products']) {
+            userLikedProducts['liked_products'] = [];
+        }
+        userLikedProducts = userLikedProducts['liked_products'].toString().split(',');
+
+        products = products.map((item) => {
+            let isLiked = false;
+            userLikedProducts.map((liked) => {
+                if (liked == item['id']) {
+                    item['isLiked'] = true
+                    isLiked = true;
+                }
+            })
+            if (!isLiked) {
+                item['isLiked'] = false
+            }
+            return item;
+        });
+        return res.status(200).json({ success: true, data: products });
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).json({ success: false, errors: err });
+    }
+}
+
+exports.getUserShades = async (req, res) => {
+    try {
+        let shades = await Shades.findAll({});
+        shades = JSON.parse(JSON.stringify(shades));
+        let userLikedShades = await User.findOne({ where: { id: req.user.id }, attributes: ['liked_shades'] });
+        userLikedShades = JSON.parse(JSON.stringify(userLikedShades));
+        if (!userLikedShades['liked_shades']) {
+            userLikedShades['liked_shades'] = [];
+        }
+        userLikedShades = userLikedShades['liked_shades'].toString().split(',');
+
+        shades = shades.map((item) => {
+            let isLiked = false;
+            userLikedShades.map((liked) => {
+                if (liked == item['id']) {
+                    item['isLiked'] = true
+                    isLiked = true;
+                }
+            })
+            if (!isLiked) {
+                item['isLiked'] = false
+            }
+            return item;
+        });
+        shades.map(item => {
+            item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
+            delete item['r'];
+            delete item['g'];
+            delete item['b'];
+        })
+        return res.status(200).json({ success: true, data: shades });
+    }
+    catch (err) {
+        console.log(err)
         return res.status(500).json({ success: false, errors: err });
     }
 }
