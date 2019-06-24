@@ -53,7 +53,6 @@ admin
   .put("/surface/:id", SurfaceController.update)
   .put("/city/:id", CityController.updateCity)
   .put("/luxury-finish/:id", LuxuryFinishController.updateFinish)
-  .put("/user/:id", UserController.updateUser)
   .put("/color-advisory/:id",ColorAdvisory.update)
   .delete("/user/:id", isAdmin, UserController.deleteUser)
   .delete("/luxury-shade/:id",LuxuryShadeController.deleteLuxuryShade)
