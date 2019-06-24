@@ -13,5 +13,10 @@ favorite
 
   .get("/products", FavouriteRoutes.getLikedProducts)
   .get("/shades", FavouriteRoutes.getLikedShades)
-  .get("/pallets", FavouriteRoutes.getLikedPallets);
+  .get("/pallets", FavouriteRoutes.getLikedPallets)
+
+  .get("/user/pallete", FavouriteRoutes.getUserPalletes)
+  .get("/user/product", FavouriteRoutes.getUserProducts)
+  .get("/user/shade", FavouriteRoutes.getUserShades)
+
 module.exports = favorite;
