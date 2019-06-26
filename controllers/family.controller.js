@@ -1,4 +1,4 @@
-const { Family, Shades, Country } = require('../models');
+const { Family, Shades, Country, ShadeFilter } = require('../models');
 
 exports.createColor = async (req, res) => {
   /*Expects an object with the format:
@@ -59,7 +59,14 @@ exports.deleteColor = async (req, res) => {
 
 exports.getAllColors = async (req, res) => {
   try {
-    const result = await Family.findAll({ raw: true });
+    let result = await Family.findAll({ 
+      include: [
+        {
+          model: ShadeFilter
+        }
+      ]
+    });
+    result = JSON.parse(JSON.stringify(result));
     result.map((item) => {
       item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
       delete item['r'];
@@ -69,6 +76,7 @@ exports.getAllColors = async (req, res) => {
     return res.status(200).json({ success: true, data: result });
   }
   catch (err) {
+    console.log(err);
     return res.status(500).json({ success: false, errors: err });
   }
 }

@@ -136,7 +136,7 @@ exports.getColorDetails = async (req, res) => {
                 },
                 {
                     model: Product,
-                    attributes:['name'],
+                    attributes: ['id', 'name'],
                     through: { attributes: [] }
                 }
             ]

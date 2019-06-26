@@ -332,7 +332,7 @@ exports.updateProduct = async (req, res) => {
         });
       }
     }
-
+    
     if (updateObject['FinishTypeId']) {
       await Product_FinishType.destroy({ where: { ProductId: id } });
       for (let category of JSON.parse(updateObject['FinishTypeId'])) {
