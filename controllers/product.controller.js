@@ -224,6 +224,7 @@ exports.createProduct = async (req, res) => {
       { raw: true }
     );
 
+
     for (let country of JSON.parse(countries)) {
       await Country_Product.create({
         ProductId: product["id"],
@@ -234,7 +235,7 @@ exports.createProduct = async (req, res) => {
     for (let category of JSON.parse(CategoryId)) {
       await Product_Category.create({
         ProductId: product["id"],
-        CategoryId: category["id"]
+        CategoryId: category
       })
     }
 
@@ -242,21 +243,21 @@ exports.createProduct = async (req, res) => {
       console.log(surface['id'])
       await Product_Surface.create({
         ProductId: product["id"],
-        SurfaceId: surface["id"]
+        SurfaceId: surface
       })
     }
 
     for (let type of JSON.parse(ProjectTypeId)) {
       await Product_ProjectType.create({
         ProductId: product["id"],
-        ProjectTypeId: type["id"]
+        ProjectTypeId: type
       })
     }
 
     for (let type of JSON.parse(FinishTypeId)) {
       await Product_FinishType.create({
         ProductId: product["id"],
-        FinishTypeId: type["id"]
+        FinishTypeId: type
       })
     }
 
@@ -307,7 +308,7 @@ exports.updateProduct = async (req, res) => {
       await Product_Category.destroy({ where: { ProductId: id } });
       for (let category of JSON.parse(updateObject['CategoryId'])) {
         await Product_Category.create({
-          CategoryId: category.id,
+          CategoryId: category,
           ProductId: id
         });
       }
@@ -317,7 +318,7 @@ exports.updateProduct = async (req, res) => {
       await Product_Surface.destroy({ where: { ProductId: id } });
       for (let category of JSON.parse(updateObject['SurfaceId'])) {
         await Product_Surface.create({
-          SurfaceId: category.id,
+          SurfaceId: category,
           ProductId: id
         });
       }
@@ -327,7 +328,7 @@ exports.updateProduct = async (req, res) => {
       await Product_ProjectType.destroy({ where: { ProductId: id } });
       for (let category of JSON.parse(updateObject['ProjectTypeId'])) {
         await Product_ProjectType.create({
-          ProjectTypeId: category.id,
+          ProjectTypeId: category,
           ProductId: id
         });
       }
@@ -337,7 +338,7 @@ exports.updateProduct = async (req, res) => {
       await Product_FinishType.destroy({ where: { ProductId: id } });
       for (let category of JSON.parse(updateObject['FinishTypeId'])) {
         await Product_FinishType.create({
-          FinishTypeId: category.id,
+          FinishTypeId: category,
           ProductId: id
         });
       }
