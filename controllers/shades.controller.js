@@ -1,4 +1,4 @@
-const { Shades, Product, Family, Country, Color_Family, Country_Shades, Product_Shades } = require('../models');
+const { Shades, Product, Family, Country, Color_Family, Country_Shades, Product_Shades, ShadeFilter } = require('../models');
 
 /*helper methods */
 exports.isValid = async (array, deleteValue = false, id) => {
@@ -257,7 +257,9 @@ exports.getShades = async (req, res) => {
                 },
                 {
                     model: Family,
-
+                    include: {
+                        model: ShadeFilter
+                    }
                 },
                 {
                     model: Country,
