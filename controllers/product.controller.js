@@ -1,4 +1,4 @@
-const { Product, Country, Country_Product, Category, ProjectType, Surface, FinishType, Product_Shades, Shades } = require("../models");
+const { Product_Category, Product_Surface, Product_ProjectType, Product_FinishType, Product, Country, Country_Product, Category, ProjectType, Surface, FinishType, Product_Shades, Shades } = require("../models");
 const keys = require("../config/keys");
 const db = require('../models/index')
 const fs = require('fs');
@@ -6,10 +6,33 @@ const fs = require('fs');
 exports.getAllProducts = async (req, res) => {
   try {
     const result = await Product.findAll({
-      include: {
-        model: Category,
-        attributes: ['name']
-      }
+      include: [
+        {
+          model: Category,
+          attributes: ['name'],
+          through: { attributes: [] }
+        },
+        {
+          model: FinishType,
+          attributes: ['name'],
+          through: { attributes: [] }
+        },
+        {
+          model: ProjectType,
+          attributes: ['name'],
+          through: { attributes: [] }
+        },
+        {
+          model: Surface,
+          attributes: ['name'],
+          through: { attributes: [] }
+        },
+        {
+          model: Country,
+          attributes: ['name'],
+          through: { attributes: [] }
+        }
+      ]
     });
     return res.status(200).json({ success: true, data: result });
   } catch (err) {
@@ -31,7 +54,28 @@ exports.getProductWithShades = async (req, res) => {
         },
         {
           model: Category,
-          attributes: ['name']
+          attributes: ['name'],
+          through: { attributes: [] }
+        },
+        {
+          model: FinishType,
+          attributes: ['name'],
+          through: { attributes: [] }
+        },
+        {
+          model: ProjectType,
+          attributes: ['name'],
+          through: { attributes: [] }
+        },
+        {
+          model: Surface,
+          attributes: ['name'],
+          through: { attributes: [] }
+        },
+        {
+          model: Country,
+          attributes: ['name'],
+          through: { attributes: [] }
         }
       ]
     })
@@ -56,7 +100,23 @@ exports.getProductByCountry = async (req, res) => {
         },
         {
           model: Category,
-          attributes: ['name']
+          attributes: ['name'],
+          through: { attributes: [] }
+        },
+        {
+          model: FinishType,
+          attributes: ['name'],
+          through: { attributes: [] }
+        },
+        {
+          model: ProjectType,
+          attributes: ['name'],
+          through: { attributes: [] }
+        },
+        {
+          model: Surface,
+          attributes: ['name'],
+          through: { attributes: [] }
         }
       ]
     });
@@ -82,10 +142,12 @@ exports.getSpecificProduct = async (req, res) => {
           through: { attributes: [] }
         },
         {
-          model: ProjectType
+          model: ProjectType,
+          through: { attributes: [] }
         },
         {
           model: Category,
+          through: { attributes: [] },
           include: [
             {
               model: ProjectType,
@@ -95,6 +157,7 @@ exports.getSpecificProduct = async (req, res) => {
         },
         {
           model: Surface,
+          through: { attributes: [] },
           include: [
             {
               model: Category,
@@ -110,6 +173,7 @@ exports.getSpecificProduct = async (req, res) => {
         },
         {
           model: FinishType,
+          through: { attributes: [] },
           include: [
             {
               model: Surface,
@@ -152,10 +216,6 @@ exports.createProduct = async (req, res) => {
     const product = await Product.create(
       {
         name,
-        ProjectTypeId,
-        CategoryId,
-        SurfaceId,
-        FinishTypeId,
         description,
         spreading,
         image: req.files['image'][0].filename,
@@ -163,16 +223,48 @@ exports.createProduct = async (req, res) => {
       },
       { raw: true }
     );
+
     for (let country of JSON.parse(countries)) {
       await Country_Product.create({
         ProductId: product["id"],
         CountryId: country["id"]
       });
     }
+
+    for (let category of JSON.parse(CategoryId)) {
+      await Product_Category.create({
+        ProductId: product["id"],
+        CategoryId: category["id"]
+      })
+    }
+
+    for (let surface of JSON.parse(SurfaceId)) {
+      console.log(surface['id'])
+      await Product_Surface.create({
+        ProductId: product["id"],
+        SurfaceId: surface["id"]
+      })
+    }
+
+    for (let type of JSON.parse(ProjectTypeId)) {
+      await Product_ProjectType.create({
+        ProductId: product["id"],
+        ProjectTypeId: type["id"]
+      })
+    }
+
+    for (let type of JSON.parse(FinishTypeId)) {
+      await Product_FinishType.create({
+        ProductId: product["id"],
+        FinishTypeId: type["id"]
+      })
+    }
+
     return res
       .status(200)
       .json({ success: true, message: "Product created successfully" });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ success: false, errors: err });
   }
 };
@@ -210,6 +302,47 @@ exports.updateProduct = async (req, res) => {
         });
       }
     }
+
+    if (updateObject['CategoryId']) {
+      await Product_Category.destroy({ where: { ProductId: id } });
+      for (let category of JSON.parse(updateObject['CategoryId'])) {
+        await Product_Category.create({
+          CategoryId: category.id,
+          ProductId: id
+        });
+      }
+    }
+
+    if (updateObject['SurfaceId']) {
+      await Product_Surface.destroy({ where: { ProductId: id } });
+      for (let category of JSON.parse(updateObject['SurfaceId'])) {
+        await Product_Surface.create({
+          SurfaceId: category.id,
+          ProductId: id
+        });
+      }
+    }
+
+    if (updateObject['ProjectTypeId']) {
+      await Product_ProjectType.destroy({ where: { ProductId: id } });
+      for (let category of JSON.parse(updateObject['ProjectTypeId'])) {
+        await Product_ProjectType.create({
+          ProjectTypeId: category.id,
+          ProductId: id
+        });
+      }
+    }
+
+    if (updateObject['FinishTypeId']) {
+      await Product_FinishType.destroy({ where: { ProductId: id } });
+      for (let category of JSON.parse(updateObject['FinishTypeId'])) {
+        await Product_FinishType.create({
+          FinishTypeId: category.id,
+          ProductId: id
+        });
+      }
+    }
+
     return res
       .status(200)
       .json({ success: true, message: "Product updated successfully" });
@@ -245,22 +378,22 @@ exports.getFilteredProduct = async (req, res) => {
         {
           model: Category,
           where: { id: category_id },
-          attributes: []
+          through: { attributes: [] }
         },
         {
           model: Surface,
           where: { id: surface_id },
-          attributes: []
+          through: { attributes: [] }
         },
         {
           model: ProjectType,
           where: { id: project_type_id },
-          attributes: []
+          through: { attributes: [] }
         },
         {
           model: FinishType,
           where: { id: finish_type_id },
-          attributes: []
+          through: { attributes: [] }
         }
       ]
     });

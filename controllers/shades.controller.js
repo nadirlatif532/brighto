@@ -122,33 +122,39 @@ exports.deleteShade = async (req, res) => {
 exports.getColorDetails = async (req, res) => {
     const { family_id, country_id } = req.body;
     try {
-      if (!family_id || !country_id) {
-        throw "Family Id or Country Id is missing";
-      }
-      let result = await Shades.findAll({
-          where: {FamilyId: family_id},
-        include: [
-        {
-          model: Country,
-          where: { id: country_id },
-          attributes: [],
-          through: { attributes: [] }
-        }]
-      });
-  
-      result = JSON.parse(JSON.stringify(result));
-      result.map((item) => {
-          item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
-          delete item['r'];
-          delete item['g'];
-          delete item['b'];
-      });
-      return res.status(200).json({ success: true, data: result });
+        if (!family_id || !country_id) {
+            throw "Family Id or Country Id is missing";
+        }
+        let result = await Shades.findAll({
+            where: { FamilyId: family_id },
+            include: [
+                {
+                    model: Country,
+                    where: { id: country_id },
+                    attributes: [],
+                    through: { attributes: [] }
+                },
+                {
+                    model: Product,
+                    attributes:['name'],
+                    through: { attributes: [] }
+                }
+            ]
+        });
+
+        result = JSON.parse(JSON.stringify(result));
+        result.map((item) => {
+            item['color'] = { r: item['r'], g: item['g'], b: item['b'] };
+            delete item['r'];
+            delete item['g'];
+            delete item['b'];
+        });
+        return res.status(200).json({ success: true, data: result });
     }
     catch (err) {
-      return res.status(500).json({ success: false, errors: err });
+        return res.status(500).json({ success: false, errors: err });
     }
-  }
+}
 
 exports.getShadeByCode = async (req, res) => {
     const { code } = req.body;
@@ -265,7 +271,7 @@ exports.getShades = async (req, res) => {
             delete item['r'];
             delete item['g'];
             delete item['b'];
-            if(item['Family']) {
+            if (item['Family']) {
                 item['Family']['color'] = { r: item['Family']['r'], g: item['Family']['g'], b: item['Family']['b'] };
                 delete item['Family']['r'];
                 delete item['Family']['g'];

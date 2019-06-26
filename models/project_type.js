@@ -28,12 +28,13 @@ module.exports = (sequelize, DataTypes) => {
             ],
             defaultScope: {
                 attributes: { exclude: ['updatedAt', 'createdAt'] }
-            }        
+            }
         });
 
     ProjectType.associate = function (models) {
-        const { Category, ProjectType_Category } = models;
+        const { Category, ProjectType_Category, Product_ProjectType,Product } = models;
         ProjectType.belongsToMany(Category, { through: ProjectType_Category, onDelete: 'cascade' });
+        ProjectType.belongsToMany(Product, { through: Product_ProjectType, onDelete: 'cascade' ,hooks: true,});
         // associations can be defined here
     };
     return ProjectType;
