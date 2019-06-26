@@ -1,4 +1,5 @@
 const { User, Product, Shades, Pallet } = require('../models');
+const db = require('../models/index');
 
 exports.likePallete = async (req, res) => {
     const { pallete_id } = req.body;
@@ -14,11 +15,14 @@ exports.likePallete = async (req, res) => {
                 }
             });
         }
+        await Pallet.update({ likes: db.sequelize.literal('likes + 1') }, { where: { id: pallete_id } });
+    
         liked_pallets = liked_pallets ? `${liked_pallets},${pallete_id}` : pallete_id;
         await User.update({ liked_pallets }, { where: { id: req.user.id } });
         return res.status(200).json({ success: true, message: 'Pallete liked' });
     }
     catch (err) {
+        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }
@@ -106,6 +110,7 @@ exports.unlikePallete = async (req, res) => {
             }
         })
         liked_pallets = liked_pallets.join(',');
+        await Pallet.update({ likes: db.sequelize.literal('likes - 1') }, { where: { id: pallete_id } });
         await User.update({ liked_pallets }, { where: { id: req.user.id } });
         return res.status(200).json({ success: true, message: 'Pallete unliked' });
     }
