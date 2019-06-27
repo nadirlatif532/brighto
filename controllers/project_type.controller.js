@@ -8,7 +8,7 @@ exports.getAll = async (req, res) => {
       attributes: ['id', 'image', 'name']
     });
     return res.status(200).json({ success: true, data: result });
-  } catch {
+  } catch(err) {
     return res.status(500).json({ success: false, errors: err });
   }
 };

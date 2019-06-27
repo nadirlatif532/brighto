@@ -23,10 +23,9 @@ exports.updateColor = async (req, res) => {
     if rgb only:  {r: 255, g: 101, b: 0},
     if both :  {name: 'Red', r: 255, g: 101, b: 0}
   */
-  const updateObject = req.body;
-  if(updateObject['ShadeFilter']) {
-    updateObject['ShadeFilterId'] = ShadeFilter['id'];
-  }
+  let updateObject = req.body;
+  console.log(updateObject)
+  updateObject['ShadeFilterId'] = updateObject['ShadeFilter']['id'];
   const { id } = req.params;
   try {
     if (!id) {
