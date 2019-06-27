@@ -8,7 +8,7 @@ exports.createColor = async (req, res) => {
     const { name, r, g, b, ShadeFilter } = req.body;
     let id = ShadeFilter['id'];
     await Family.create({
-      name, r, g, b, id
+      name, r, g, b, ShadeFilterId: id
     });
     return res.status(200).json({ success: true, message: 'Color created successfully' });
   }
@@ -24,6 +24,9 @@ exports.updateColor = async (req, res) => {
     if both :  {name: 'Red', r: 255, g: 101, b: 0}
   */
   const updateObject = req.body;
+  if(updateObject['ShadeFilter']) {
+    updateObject['ShadeFilterId'] = ShadeFilter['id'];
+  }
   const { id } = req.params;
   try {
     if (!id) {
