@@ -1,4 +1,4 @@
-const { Product_Category, Product_Surface, Product_ProjectType, Product_FinishType, Product, Country, Country_Product, Category, ProjectType, Surface, FinishType, Product_Shades, Shades } = require("../models");
+const { Packaging, Product_Category, Product_Surface, Product_ProjectType, Product_FinishType, Product, Country, Country_Product, Category, ProjectType, Surface, FinishType, Product_Shades, Shades } = require("../models");
 const keys = require("../config/keys");
 const db = require('../models/index')
 const fs = require('fs');
@@ -7,6 +7,9 @@ exports.getAllProducts = async (req, res) => {
   try {
     const result = await Product.findAll({
       include: [
+        {
+          model: Packaging
+        },
         {
           model: Category,
           attributes: ['name'],
@@ -48,6 +51,9 @@ exports.getProductWithShades = async (req, res) => {
     }
     const result = await Product.findAll({
       where: { id }, include: [
+        {
+          model: Packaging
+        },
         {
           model: Shades,
           through: { attributes: [] }
@@ -94,6 +100,9 @@ exports.getProductByCountry = async (req, res) => {
     result = await Product.findAll({
       include: [
         {
+          model: Packaging
+        },
+        {
           model: Country,
           where: { id: country_id },
           through: { attributes: [] }
@@ -136,6 +145,9 @@ exports.getSpecificProduct = async (req, res) => {
     const result = await Product.findAll({
       where: { id: product_id },
       include: [
+        {
+          model: Packaging
+        },
         {
           model: Country,
           required: true,
@@ -211,6 +223,7 @@ exports.createProduct = async (req, res) => {
     description,
     spreading,
     countries,
+    PackagingId
   } = req.body;
   try {
     const product = await Product.create(
@@ -219,7 +232,8 @@ exports.createProduct = async (req, res) => {
         description,
         spreading,
         image: req.files['image'][0].filename,
-        coverImage: req.files['coverImage'][0].filename
+        coverImage: req.files['coverImage'][0].filename,
+        PackagingId
       },
       { raw: true }
     );
@@ -333,7 +347,7 @@ exports.updateProduct = async (req, res) => {
         });
       }
     }
-    
+
     if (updateObject['FinishTypeId']) {
       await Product_FinishType.destroy({ where: { ProductId: id } });
       for (let category of JSON.parse(updateObject['FinishTypeId'])) {
@@ -376,6 +390,9 @@ exports.getFilteredProduct = async (req, res) => {
     const { project_type_id, category_id, surface_id, finish_type_id } = req.body;
     const result = await Product.findAll({
       include: [
+        {
+          model: Packaging
+        },
         {
           model: Category,
           where: { id: category_id },
