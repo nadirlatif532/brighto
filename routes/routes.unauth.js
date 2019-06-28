@@ -27,6 +27,7 @@ unauth.use("/luxury-finish",require("./routes.luxuryfinish"));
 unauth.use("/luxury-shade",require("./routes.luxuryshade"));
 unauth.use("/color-advisory",require("./routes.colorAdvisory"));
 unauth.use("/shade-filter", require('./routes.shadeFilter'));
+unauth.use("/packaging", require("./routes.packaging"))
 
 
 module.exports = unauth;
