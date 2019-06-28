@@ -226,6 +226,9 @@ exports.createProduct = async (req, res) => {
     PackagingId
   } = req.body;
   try {
+    if(!PackagingId || !PackagingId['id']) {
+      throw "Please provide a valid Packaing Id";
+    }
     const product = await Product.create(
       {
         name,
@@ -233,7 +236,7 @@ exports.createProduct = async (req, res) => {
         spreading,
         image: req.files['image'][0].filename,
         coverImage: req.files['coverImage'][0].filename,
-        PackagingId
+        PackagingId: PackagingId['id']
       },
       { raw: true }
     );
