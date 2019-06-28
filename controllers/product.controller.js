@@ -226,7 +226,7 @@ exports.createProduct = async (req, res) => {
     PackagingId
   } = req.body;
   try {
-    if(!PackagingId || !PackagingId['id']) {
+    if(!PackagingId && !PackagingId['id']) {
       throw "Please provide a valid Packaing Id";
     }
     const product = await Product.create(
