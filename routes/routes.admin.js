@@ -18,6 +18,7 @@ const UserController = require("../controllers/user.controller");
 const ColorAdvisory = require("../controllers/coloradvisory.controller");
 const LuxuryShadeController = require("../controllers/luxuryshade.controller");
 const ShadeFilterController = require("../controllers/shadefilter.controller");
+const PackagingController = require("../controllers/packaging.controller");
 const { isAdmin } = require("../middlewares/auth.middleware");
 
 admin
@@ -39,6 +40,7 @@ admin
   .post("/dealer/create", DealersController.createDealer)
   .post("/color-advisory/create",ColorAdvisory.create)
   .post("/luxury-shade/create", LuxuryShadeController.createLuxuryShade)
+  .post("/packaging/create", PackagingController.create)
   .put("/shade-filter/:id", ShadeFilterController.updateShadeFilter)
   .put("/luxury-shade/:id", LuxuryShadeController.updateLuxuryShade)
   .put("/order/:id", OrderController.updateOrder)
@@ -57,6 +59,7 @@ admin
   .put("/city/:id", CityController.updateCity)
   .put("/luxury-finish/:id", LuxuryFinishController.updateFinish)
   .put("/color-advisory/:id",ColorAdvisory.update)
+  .put("/packaging/:id", PackagingController.update)
   .delete("/shade-filter/:id", ShadeFilterController.deleteShadeFilter)
   .delete("/user/:id", isAdmin, UserController.deleteUser)
   .delete("/luxury-shade/:id",LuxuryShadeController.deleteLuxuryShade)
@@ -76,6 +79,7 @@ admin
   .delete("/city/:id", CityController.deleteCity)
   .delete("/luxury-finish/:id", LuxuryFinishController.delete)
   .delete("/color-advisory/:id",ColorAdvisory.delete)
+  .delete("/packaging/:id", PackagingController.delete)
   .delete("/:id")
   
 module.exports = admin;
