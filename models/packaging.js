@@ -27,8 +27,6 @@ module.exports = (sequelize, DataTypes) => {
         });
     Packaging.associate = function (models) {
         // associations can be defined here
-        const { FinishType, Packaging_FinishType } = models;
-        Packaging.belongsToMany(FinishType, { through: Packaging_FinishType, onDelete: 'cascade' });
     };
     return Packaging;
 };

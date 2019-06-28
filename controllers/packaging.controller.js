@@ -1,4 +1,4 @@
-const { Packaging, Packaging_FinishType } = require("../models");
+const { Packaging } = require("../models");
 const fs = require('fs');
 const keys = require("../config/keys")
 
@@ -12,15 +12,9 @@ exports.getAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-    const { name, FinishId } = req.body;
+    const { name } = req.body;
     try {
-        let packagingId = await Packaging.create({ name, image: req.files['image'][0].filename, FinishId });
-        packagingId = JSON.parse(JSON.stringify(packagingId));
-        if (FinishId) {
-            for (let id of JSON.parse(FinishId)) {
-                await Packaging_FinishType.create({ PackagingId: packagingId.id, FinishTypeId: id })
-            }
-        }
+        await Packaging.create({ name, image: req.files['image'][0].filename });
         return res
             .status(200)
             .json({ success: true, message: "Packaging created successfully" });
@@ -62,12 +56,6 @@ exports.update = async (req,res) => {
   
     try {
       await Packaging.update(updatePackagingObject, { where: { id } });
-      if (updatePackagingObject['FinishTypeId']) {
-        await Packaging_FinishType.destroy({ where: { FinishTypeId: id } });
-        for (let sid of JSON.parse(updatePackagingObject['FinishTypeId'])) {
-          await Packaging_FinishType.create({ PackagingId: sid, FinishTypeId: id })
-        }
-      }
       return res
         .status(200)
         .json({ success: true, message: "Packaging updated successfully" });
