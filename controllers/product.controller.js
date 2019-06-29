@@ -283,7 +283,7 @@ exports.createProduct = async (req, res) => {
     }
 
     for(let package of JSON.parse(PackagingId)) {
-      await Product_Packaging.createa({
+      await Product_Packaging.create({
         ProductId: product["id"],
         PackagingId: package
       })
