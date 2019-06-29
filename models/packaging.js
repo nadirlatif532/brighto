@@ -27,6 +27,8 @@ module.exports = (sequelize, DataTypes) => {
         });
     Packaging.associate = function (models) {
         // associations can be defined here
+        const {Product} = models;
+        Packaging.belongsToMany(Product, {through: Product_Packaging, onDelete: 'cascade'});
     };
     return Packaging;
 };

@@ -1,4 +1,4 @@
-const { Packaging, Product_Category, Product_Surface, Product_ProjectType, Product_FinishType, Product, Country, Country_Product, Category, ProjectType, Surface, FinishType, Product_Shades, Shades } = require("../models");
+const { Product_Packaging, Packaging, Product_Category, Product_Surface, Product_ProjectType, Product_FinishType, Product, Country, Country_Product, Category, ProjectType, Surface, FinishType, Product_Shades, Shades } = require("../models");
 const keys = require("../config/keys");
 const db = require('../models/index')
 const fs = require('fs');
@@ -8,7 +8,8 @@ exports.getAllProducts = async (req, res) => {
     const result = await Product.findAll({
       include: [
         {
-          model: Packaging
+          model: Packaging,
+          through: {attributes: []}
         },
         {
           model: Category,
@@ -52,7 +53,8 @@ exports.getProductWithShades = async (req, res) => {
     const result = await Product.findAll({
       where: { id }, include: [
         {
-          model: Packaging
+          model: Packaging,
+          through: {attributes: []}
         },
         {
           model: Shades,
@@ -100,7 +102,8 @@ exports.getProductByCountry = async (req, res) => {
     result = await Product.findAll({
       include: [
         {
-          model: Packaging
+          model: Packaging,
+          through: {attributes: []}
         },
         {
           model: Country,
@@ -146,7 +149,8 @@ exports.getSpecificProduct = async (req, res) => {
       where: { id: product_id },
       include: [
         {
-          model: Packaging
+          model: Packaging,
+          through: {attributes: []}
         },
         {
           model: Country,
@@ -275,6 +279,13 @@ exports.createProduct = async (req, res) => {
       })
     }
 
+    for(let package of JSON.parse(PackagingId)) {
+      await Product_Packaging.createa({
+        ProductId: product["id"],
+        PackagingId: package
+      })
+    }
+
     return res
       .status(200)
       .json({ success: true, message: "Product created successfully" });
@@ -358,6 +369,16 @@ exports.updateProduct = async (req, res) => {
       }
     }
 
+    if(updateObject['PackagingId']) {
+      await Product_Packaging.destroy({ where: { ProductId: id } });
+      for (let package of JSON.parse(updateObject['PackagingId'])) {
+        await Product_FinishType.create({
+          PackagingId: package,
+          ProductId: id
+        });
+      }
+    }
+
     return res
       .status(200)
       .json({ success: true, message: "Product updated successfully" });
@@ -391,7 +412,8 @@ exports.getFilteredProduct = async (req, res) => {
     const result = await Product.findAll({
       include: [
         {
-          model: Packaging
+          model: Packaging,
+          through: {attributes: []}
         },
         {
           model: Category,
