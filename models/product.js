@@ -58,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
         Product.belongsToMany(ProjectType, { through: Product_ProjectType, onDelete: 'cascade',hooks: true,  });
         Product.belongsToMany(FinishType, { through: Product_FinishType, onDelete: 'cascade',hooks: true,  });
 
-        Product.belongsTo(Packaging)
+        Product.belongsToMany(Packaging, {through: Product_Packaging, onDelete: 'cascade'});
     };
     return Product;
 };
