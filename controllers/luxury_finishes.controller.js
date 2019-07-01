@@ -7,13 +7,13 @@ exports.create = async (req, res) => {
     try {
         await LuxuryFinishes.create({
             name,
-            image1: req.files['image1'][0].filename,
-            image2: req.files['image2'][0].filename,
-            image3: req.files['image3'][0].filename,
-            productImage: req.files['image4'][0].filename,
+            image1: req.files['image1'] && req.files['image1'][0].filename || "",
+            image2: req.files['image2'] && req.files['image2'][0].filename || "",
+            image3: req.files['image3'] && req.files['image3'][0].filename || "",
+            productImage: req.files['image4'] && req.files['image4'][0].filename || "",
             description,
             video,
-            coverImage: req.files['coverImage'][0].filename
+            coverImage: req.files['coverImage'] && req.files['coverImage'][0].filename || ""
         });
         return res.status(200).json({ success: true, message: "Luxury Finishes created successfully" });
     }
