@@ -3,8 +3,8 @@ const fs = require('fs');
 const keys = require('../config/keys');
 
 exports.create = async (req, res) => {
-    const { name, description, video } = req.body;
     try {
+        const { name, description, video } = req.body;
         await LuxuryFinishes.create({
             name,
             image1: req.files['image1'][0].filename,
