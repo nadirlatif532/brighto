@@ -164,50 +164,50 @@ exports.getSpecificProduct = async (req, res) => {
         {
           model: Category,
           through: { attributes: [] },
-          include: [
-            {
-              model: ProjectType,
-              through: { attributes: [] }
-            }
-          ]
+          // include: [
+          //   {
+          //     model: ProjectType,
+          //     through: { attributes: [] }
+          //   }
+          // ]
         },
         {
           model: Surface,
           through: { attributes: [] },
-          include: [
-            {
-              model: Category,
-              through: { attributes: [] },
-              include: [
-                {
-                  model: ProjectType,
-                  through: { attributes: [] }
-                }
-              ]
-            }
-          ]
+          // include: [
+          //   {
+          //     model: Category,
+          //     through: { attributes: [] },
+          //     include: [
+          //       {
+          //         model: ProjectType,
+          //         through: { attributes: [] }
+          //       }
+          //     ]
+          //   }
+          // ]
         },
         {
           model: FinishType,
           through: { attributes: [] },
-          include: [
-            {
-              model: Surface,
-              through: { attributes: [] },
-              include: [
-                {
-                  model: Category,
-                  through: { attributes: [] },
-                  include: [
-                    {
-                      model: ProjectType,
-                      through: { attributes: [] }
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+          // include: [
+          //   {
+          //     model: Surface,
+          //     through: { attributes: [] },
+          //     include: [
+          //       {
+          //         model: Category,
+          //         through: { attributes: [] },
+          //         include: [
+          //           {
+          //             model: ProjectType,
+          //             through: { attributes: [] }
+          //           }
+          //         ]
+          //       }
+          //     ]
+          //   }
+          // ]
         }
       ]
     });
@@ -375,7 +375,7 @@ exports.updateProduct = async (req, res) => {
     if(updateObject['PackagingId']) {
       await Product_Packaging.destroy({ where: { ProductId: id } });
       for (let package of JSON.parse(updateObject['PackagingId'])) {
-        await Product_FinishType.create({
+        await Product_Packaging.create({
           PackagingId: package,
           ProductId: id
         });
