@@ -5,13 +5,12 @@ const keys = require('../config/keys');
 exports.create = async (req, res) => {
     const { name, description, video } = req.body;
     try {
-        console.log(req.files)
         await LuxuryFinishes.create({
             name,
             image1: req.files['image1'][0].filename,
             image2: req.files['image2'][0].filename,
             image3: req.files['image3'][0].filename,
-            image4: req.files['image4'][0].filename,
+            productImage: req.files['image4'][0].filename,
             description,
             video,
             coverImage: req.files['coverImage'][0].filename
