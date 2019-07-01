@@ -32,6 +32,13 @@ exports.updateFinish = async (req, res) => {
             throw "Id is missing or incorrect format";
         }
         if (req.files['image1']) {
+            updateLuxuryFinish['productImage'] = req.files['image1'][0].filename;
+            const { productImage } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
+            fs.unlinkSync(`${keys.storage}/${productImage}`);
+        } else {
+            delete updateLuxuryFinish['productImage'];
+        }
+        if (req.files['image1']) {
             updateLuxuryFinish['image1'] = req.files['image1'][0].filename;
             const { image1 } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
             fs.unlinkSync(`${keys.storage}/${image1}`);
@@ -42,7 +49,8 @@ exports.updateFinish = async (req, res) => {
             updateLuxuryFinish['image2'] = req.files['image2'][0].filename;
             const { image2 } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
             fs.unlinkSync(`${keys.storage}/${image2}`);
-        } else {
+        }
+        else {
             delete updateLuxuryFinish['image2'];
         }
         if (req.files['image3']) {
@@ -52,14 +60,6 @@ exports.updateFinish = async (req, res) => {
         }
         else {
             delete updateLuxuryFinish['image3'];
-        }
-        if (req.files['image4']) {
-            updateLuxuryFinish['image4'] = req.files['image4'][0].filename;
-            const { image4 } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
-            fs.unlinkSync(`${keys.storage}/${image4}`);
-        }
-        else {
-            delete updateLuxuryFinish['image4'];
         }
         if (req.files['coverImage']) {
             updateLuxuryFinish['coverImage'] = req.files['coverImage'][0].filename;
