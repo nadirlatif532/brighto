@@ -99,10 +99,26 @@ exports.delete = async (req, res) => {
 
 exports.getAllFinishes = async (req, res) => {
     try {
-        const result = await LuxuryFinishes.findAll({});
+        let result = await LuxuryFinishes.findAll({});
+        result = JSON.parse(JSON.stringify(result));
+        result = result.map((item)=>{
+            item['images'] = [];
+            item['images'].push(item['productImage']);
+            delete item['productImage'];
+            item['images'].push(item['coverImage']);
+            delete item['coverImage'];
+            item['images'].push(item['image1']);
+            delete item['image1'];
+            item['images'].push(item['image2']);
+            delete item['image2'];
+            item['images'].push(item['image3']);
+            delete item['image3'];
+            return item;
+        })
         return res.status(200).json({ success: true, data: result });
     }
     catch (err) {
+        console.log(err)
         return res.status(500).json({ success: false, errors: err });
     }
 }
@@ -110,7 +126,22 @@ exports.getAllFinishes = async (req, res) => {
 exports.getSpecificFinish = async (req, res) => {
     try {
         const { finish_id } = req.body;
-        const result = await LuxuryFinishes.findAll({ where: { id: finish_id } });
+        let result = await LuxuryFinishes.findAll({ where: { id: finish_id } });
+        result = JSON.parse(JSON.stringify(result));
+        result = result.map((item)=>{
+            item['images'] = [];
+            item['images'].push(item['productImage']);
+            delete item['productImage'];
+            item['images'].push(item['coverImage']);
+            delete item['coverImage'];
+            item['images'].push(item['image1']);
+            delete item['image1'];
+            item['images'].push(item['image2']);
+            delete item['image2'];
+            item['images'].push(item['image3']);
+            delete item['image3'];
+            return item;
+        })
         return res.status(200).json({ success: true, data: result });
     }
     catch (err) {
