@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: '',
             validate: {
                 notEmpty: {
-                    msg: 'Username is required'
+                    msg: 'Product name is required'
                 },
                 len: {
                     args: [3, 40],

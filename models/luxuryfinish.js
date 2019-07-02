@@ -40,9 +40,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING
         }
     }, {
-        defaultScope: {
-            attributes: { exclude: ['updatedAt', 'createdAt'] }
-        }
-    })
+            defaultScope: {
+                attributes: { exclude: ['updatedAt', 'createdAt'] }
+            }
+        })
+    LuxuryFinishes.associate = function (models) {
+        // associations can be defined here
+        const { Country, LuxuryFinishes_Country } = models;
+        LuxuryFinishes.belongsToMany(Country, { through: LuxuryFinishes_Country, onDelete: 'cascade' })
+    };
     return LuxuryFinishes;
 };
