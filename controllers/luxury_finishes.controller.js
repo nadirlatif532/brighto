@@ -25,7 +25,6 @@ exports.create = async (req, res) => {
 
 exports.updateFinish = async (req, res) => {
     const { id } = req.params;
-    console.log(req.body);
     const updateLuxuryFinish = req.body;
     try {
         if (!id) {
@@ -34,21 +33,27 @@ exports.updateFinish = async (req, res) => {
         if (req.files['image1']) {
             updateLuxuryFinish['productImage'] = req.files['image1'][0].filename;
             const { productImage } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
-            fs.unlinkSync(`${keys.storage}/${productImage}`);
+            if (fs.existsSync(`${keys.storage}/${productImage}`)) {
+                fs.unlinkSync(`${keys.storage}/${productImage}`);
+            }
         } else {
             delete updateLuxuryFinish['productImage'];
         }
-        if (req.files['image1']) {
-            updateLuxuryFinish['image1'] = req.files['image1'][0].filename;
+        if (req.files['image4']) {
+            updateLuxuryFinish['image1'] = req.files['image4'][0].filename;
             const { image1 } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
-            fs.unlinkSync(`${keys.storage}/${image1}`);
+            if (fs.existsSync(`${keys.storage}/${image1}`)) {
+                fs.unlinkSync(`${keys.storage}/${image1}`);
+            }
         } else {
             delete updateLuxuryFinish['image1'];
         }
         if (req.files['image2']) {
             updateLuxuryFinish['image2'] = req.files['image2'][0].filename;
             const { image2 } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
-            fs.unlinkSync(`${keys.storage}/${image2}`);
+            if (fs.existsSync(`${keys.storage}/${image2}`)) {
+                fs.unlinkSync(`${keys.storage}/${image2}`);
+            }
         }
         else {
             delete updateLuxuryFinish['image2'];
@@ -56,7 +61,9 @@ exports.updateFinish = async (req, res) => {
         if (req.files['image3']) {
             updateLuxuryFinish['image3'] = req.files['image3'][0].filename;
             const { image3 } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
-            fs.unlinkSync(`${keys.storage}/${image3}`);
+            if (fs.existsSync(`${keys.storage}/${image3}`)) {
+                fs.unlinkSync(`${keys.storage}/${image3}`);
+            }
         }
         else {
             delete updateLuxuryFinish['image3'];
@@ -64,7 +71,9 @@ exports.updateFinish = async (req, res) => {
         if (req.files['coverImage']) {
             updateLuxuryFinish['coverImage'] = req.files['coverImage'][0].filename;
             const { coverImage } = await LuxuryFinishes.find({ where: { id: req.params.id }, raw: true });
-            fs.unlinkSync(`${keys.storage}/${coverImage}`);
+            if (fs.existsSync(`${keys.storage}/${coverImage}`)) {
+                fs.unlinkSync(`${keys.storage}/${coverImage}`);
+            }
         } else {
             delete updateLuxuryFinish["coverImage"];
         }
@@ -100,7 +109,7 @@ exports.getAllFinishes = async (req, res) => {
     try {
         let result = await LuxuryFinishes.findAll({});
         result = JSON.parse(JSON.stringify(result));
-        result = result.map((item)=>{
+        result = result.map((item) => {
             item['images'] = [];
             item['images'].push(item['productImage']);
             delete item['productImage'];
@@ -127,7 +136,7 @@ exports.getSpecificFinish = async (req, res) => {
         const { finish_id } = req.body;
         let result = await LuxuryFinishes.findAll({ where: { id: finish_id } });
         result = JSON.parse(JSON.stringify(result));
-        result = result.map((item)=>{
+        result = result.map((item) => {
             item['images'] = [];
             item['images'].push(item['productImage']);
             delete item['productImage'];
