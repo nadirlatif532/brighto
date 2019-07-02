@@ -9,7 +9,7 @@ exports.getAllProducts = async (req, res) => {
       include: [
         {
           model: Packaging,
-          through: {attributes: []}
+          through: { attributes: [] }
         },
         {
           model: Category,
@@ -35,6 +35,10 @@ exports.getAllProducts = async (req, res) => {
           model: Country,
           attributes: ['name'],
           through: { attributes: [] }
+        },
+        {
+          model: Shades,
+          through: { attributes: [] }
         }
       ]
     });
@@ -54,7 +58,7 @@ exports.getProductWithShades = async (req, res) => {
       where: { id }, include: [
         {
           model: Packaging,
-          through: {attributes: []}
+          through: { attributes: [] }
         },
         {
           model: Shades,
@@ -103,7 +107,7 @@ exports.getProductByCountry = async (req, res) => {
       include: [
         {
           model: Packaging,
-          through: {attributes: []}
+          through: { attributes: [] }
         },
         {
           model: Country,
@@ -129,6 +133,10 @@ exports.getProductByCountry = async (req, res) => {
           model: Surface,
           attributes: ['name'],
           through: { attributes: [] }
+        },
+        {
+          model: Shades,
+          through: { attributes: [] }
         }
       ]
     });
@@ -149,8 +157,12 @@ exports.getSpecificProduct = async (req, res) => {
       where: { id: product_id },
       include: [
         {
+          model: Shades,
+          through: { attributes: [] }
+        },
+        {
           model: Packaging,
-          through: {attributes: []}
+          through: { attributes: [] }
         },
         {
           model: Country,
@@ -230,7 +242,7 @@ exports.createProduct = async (req, res) => {
     PackagingId
   } = req.body;
   try {
-    if(!PackagingId && !PackagingId['id']) {
+    if (!PackagingId && !PackagingId['id']) {
       throw "Please provide a valid Packaing Id";
     }
     const product = await Product.create(
@@ -282,7 +294,7 @@ exports.createProduct = async (req, res) => {
       })
     }
 
-    for(let package of JSON.parse(PackagingId)) {
+    for (let package of JSON.parse(PackagingId)) {
       await Product_Packaging.create({
         ProductId: product["id"],
         PackagingId: package
@@ -372,7 +384,7 @@ exports.updateProduct = async (req, res) => {
       }
     }
 
-    if(updateObject['PackagingId']) {
+    if (updateObject['PackagingId']) {
       await Product_Packaging.destroy({ where: { ProductId: id } });
       for (let package of JSON.parse(updateObject['PackagingId'])) {
         await Product_Packaging.create({
@@ -416,7 +428,7 @@ exports.getFilteredProduct = async (req, res) => {
       include: [
         {
           model: Packaging,
-          through: {attributes: []}
+          through: { attributes: [] }
         },
         {
           model: Category,
@@ -436,6 +448,10 @@ exports.getFilteredProduct = async (req, res) => {
         {
           model: FinishType,
           where: { id: finish_type_id },
+          through: { attributes: [] }
+        },
+        {
+          model: Shades,
           through: { attributes: [] }
         }
       ]
