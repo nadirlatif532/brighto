@@ -1,4 +1,4 @@
-const { LuxuryFinishes, LuxuryFinishes_Country } = require("../models");
+const { LuxuryFinishes, LuxuryFinishes_Country, Country } = require("../models");
 const fs = require('fs');
 const keys = require('../config/keys');
 
@@ -126,7 +126,14 @@ exports.delete = async (req, res) => {
 
 exports.getAllFinishes = async (req, res) => {
     try {
-        let result = await LuxuryFinishes.findAll({});
+        let result = await LuxuryFinishes.findAll({
+            include: [
+                {
+                    model: Country,
+                    through: { attributes: [] }
+                }
+            ]
+        });
         result = JSON.parse(JSON.stringify(result));
         result = result.map((item) => {
             item['images'] = [];
@@ -153,7 +160,15 @@ exports.getAllFinishes = async (req, res) => {
 exports.getSpecificFinish = async (req, res) => {
     try {
         const { finish_id } = req.body;
-        let result = await LuxuryFinishes.findAll({ where: { id: finish_id } });
+        let result = await LuxuryFinishes.findAll({
+            where: { id: finish_id }, 
+            include: [
+                {
+                    model: Country,
+                    through: { attributes: [] }
+                }
+            ]
+        });
         result = JSON.parse(JSON.stringify(result));
         result = result.map((item) => {
             item['images'] = [];
