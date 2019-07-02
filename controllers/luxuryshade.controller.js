@@ -1,5 +1,6 @@
 const { LuxuryShade, LuxuryFinishes_Shade,LuxuryFinishes } = require('../models');
 const fs = require('fs');
+const keys = require('../config/keys');
 exports.createLuxuryShade = async (req, res) => {
     const { name, itemCode, LuxuryFinishes, description } = req.body;
     try {
@@ -14,7 +15,6 @@ exports.createLuxuryShade = async (req, res) => {
         return res.status(200).json({ success: true, message: "Luxury Shade created successfully" });
     }
     catch (err) {
-        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }
@@ -47,6 +47,7 @@ exports.updateLuxuryShade = async (req, res) => {
         return res.status(200).json({ success: true, message: 'Luxury Shade updated successfully' });
     }
     catch (err) {
+        console.log(err);
         return res.status(500).json({ success: false, errors: err });
     }
 }
