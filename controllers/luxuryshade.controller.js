@@ -1,4 +1,4 @@
-const { LuxuryShade, LuxuryFinishes_Shade } = require('../models');
+const { LuxuryShade, LuxuryFinishes_Shade,LuxuryFinishes } = require('../models');
 
 exports.createLuxuryShade = async (req, res) => {
     const { name, itemCode, LuxuryFinishes, description } = req.body;
