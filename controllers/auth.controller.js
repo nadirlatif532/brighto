@@ -4,12 +4,12 @@ const { User } = require('../models');
 const mail = require('../utils/email.util');
 
 exports.signup = async (req, res) => {
-  const { username, firstname, lastname, email, password, role } = req.body;
+  const { email, password } = req.body;
 
   try {
-    User.build({ username, firstname, lastname, email, password, role }).validate()
+    User.build({ email, password }).validate({skip:['firstname','lastname','city','country','phone']})
       .then((user) => {
-        return user.save();
+        return user.save({skip:['firstname','lastname','city','country','phone']});
       })
       .then((user) => {
         jwt.sign({ sub: user.id }, keys.jwtSecret, (err, token) => {
@@ -32,30 +32,20 @@ exports.signup = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const { email, username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    if (!username && !email) throw "Email, username not found.";
+    if (!email) throw "Email, username not found.";
     if (!password) throw "Password not found";
 
     let user = await User.scope('withPassword').findOne({
       where: {
-        $or: [
-          {
-            email: {
-              $eq: email
-            }
-          }, {
-            username: {
-              $eq: username
-            }
-          }
-        ]
+        email
       }
     });
 
     if (!user) {
-      return res.status(400).json({ success: false, errors: "Email or username does not exist." });
+      return res.status(400).json({ success: false, errors: "Email does not exist." });
     }
 
     user.comparePassword(password, (err, result) => {

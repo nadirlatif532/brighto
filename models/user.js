@@ -3,31 +3,31 @@ const bcrypt = require("bcrypt");
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    username: {
-      type: DataTypes.STRING,
-      unique: {
-        args: true,
-        msg: 'Username must be unique'
-      },
-      allowNull: false,
-      defaultValue: '',
-      validate: {
-        notEmpty: {
-          msg: 'Username is required'
-        },
-        len: {
-          args: [3, 40],
-          msg: 'Please provide a username which must start with a letter, have no spaces, and be 3-40 characters in length'
-        },
-        is: {
-          args: /^[A-Za-z][A-Za-z0-9-]+$/i,
-          msg: 'Username must start with a letter, have no spaces, and be 3-40 characters in length'
-        }
-      }
-    },
+    // username: {
+    //   type: DataTypes.STRING,
+    //   unique: {
+    //     args: true,
+    //     msg: 'Username must be unique'
+    //   },
+    //   allowNull: false,
+    //   defaultValue: '',
+    //   validate: {
+    //     notEmpty: {
+    //       msg: 'Username is required'
+    //     },
+    //     len: {
+    //       args: [3, 40],
+    //       msg: 'Please provide a username which must start with a letter, have no spaces, and be 3-40 characters in length'
+    //     },
+    //     is: {
+    //       args: /^[A-Za-z][A-Za-z0-9-]+$/i,
+    //       msg: 'Username must start with a letter, have no spaces, and be 3-40 characters in length'
+    //     }
+    //   }
+    // },
     firstname: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull:true,
       defaultValue: '',
       validate: {
         isAlpha: {
@@ -41,7 +41,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     lastname: {
       type: DataTypes.STRING,
-      allowNull: false,
       defaultValue: '',
       validate: {
         isAlpha: {
@@ -52,6 +51,47 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Please provide an alphabetical last name which is 2-254 characters in length'
         }
       }
+    },
+    city: {
+      type: DataTypes.STRING,
+      defaultValue: '',
+      validate: {
+        isAlpha: {
+          msg: 'City name should only contain alphabets'
+        },
+        len: {
+          args: [2, 254],
+          msg: 'Please provide an alphabetical city name which is 2-254 characters in length'
+        }
+      }
+    },
+    phone: {
+      type: DataTypes.STRING,
+      defaultValue: '',
+      validate: {
+        len: {
+          args: [2, 254],
+          msg: 'Please provide a valid phone number.'
+        }
+      }
+    },
+    country: {
+      type: DataTypes.STRING,
+      defaultValue: '',
+      validate: {
+        isAlpha: {
+          msg: 'Country name should only contain alphabets'
+        },
+        len: {
+          args: [2, 254],
+          msg: 'Please provide an alphabetical country name which is 2-254 characters in length'
+        }
+      }
+    },
+    profession: {
+      type: DataTypes.ENUM({
+        values: ['HOMEOWNER', 'ARCHITECT', 'INTERIORDESIGNER', 'BUILDER', 'DEVELOPER', 'OTHER']
+      })
     },
     email: {
       type: DataTypes.STRING,
