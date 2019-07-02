@@ -1,11 +1,11 @@
-const { LuxuryFinishes } = require("../models");
+const { LuxuryFinishes, LuxuryFinishes_Country } = require("../models");
 const fs = require('fs');
 const keys = require('../config/keys');
 
 exports.create = async (req, res) => {
+    const { name, description, video, countries } = req.body;
     try {
-        const { name, description, video } = req.body;
-        await LuxuryFinishes.create({
+        let result = await LuxuryFinishes.create({
             name,
             image1: req.files['image4'] && req.files['image4'][0].filename || null,
             image2: req.files['image2'] && req.files['image2'][0].filename || null,
@@ -15,6 +15,13 @@ exports.create = async (req, res) => {
             video,
             coverImage: req.files['coverImage'] && req.files['coverImage'][0].filename || null
         });
+        result = JSON.parse(JSON.stringify(result));
+        for (let country of JSON.parse(countries)) {
+            await LuxuryFinishes_Country.create({
+                CountryId: country['id'],
+                LuxuryFinishId: result['id']
+            })
+        }
         return res.status(200).json({ success: true, message: "Luxury Finishes created successfully" });
     }
     catch (err) {
@@ -77,6 +84,18 @@ exports.updateFinish = async (req, res) => {
         } else {
             delete updateLuxuryFinish["coverImage"];
         }
+
+        if (updateLuxuryFinish['countries']) {
+            await LuxuryFinishes_Country.destroy({ where: { LuxuryFinishId: id } });
+            for (let country of JSON.parse(updateLuxuryFinish['countries'])) {
+                await LuxuryFinishes_Country.create({
+                    CountryId: country.id,
+                    LuxuryFinishId: id
+                });
+            }
+        }
+
+
         await LuxuryFinishes.update(updateLuxuryFinish, { where: { id } });
         return res.status(200).json({ success: true, message: 'Luxury Finish updated successfully' });
     }
