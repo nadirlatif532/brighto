@@ -1,9 +1,16 @@
-const { LuxuryShade } = require('../models');
+const { LuxuryShade, LuxuryFinishes_Shade } = require('../models');
 
 exports.createLuxuryShade = async (req, res) => {
-    const { name, itemCode, LuxuryFinishId } = req.body;
+    const { name, itemCode, LuxuryFinishes, description } = req.body;
     try {
-        await LuxuryShade.create({ name, image: req.files['image'][0].filename, itemCode, LuxuryFinishId });
+        let result = await LuxuryShade.create({ name, image: req.files['image'][0].filename, itemCode, description });
+        result = JSON.parse(JSON.stringify(result));
+        for (let finish of JSON.parse(LuxuryFinishes)) {
+            await LuxuryFinishes_Shade.create({
+                LuxuryShadeId: result['id'],
+                LuxuryFinishId: finish['id']
+            })
+        }
         return res.status(200).json({ success: true, message: "Luxury Shade created successfully" });
     }
     catch (err) {
@@ -23,6 +30,15 @@ exports.updateLuxuryShade = async (req, res) => {
             updateLuxuryShade['image'] = req.files['image'][0].filename;
             const { image } = await LuxuryShade.find({ where: { id: req.params.id }, raw: true });
             fs.unlinkSync(`${keys.storage}/${image}`);
+        }
+        if (updateLuxuryShade['LuxuryFinishes']) {
+            await LuxuryFinishes_Shade.destroy({ where: { LuxuryShadeId: id } });
+            for (let finish of JSON.parse(updateLuxuryShade['LuxuryFinishes'])) {
+                await LuxuryFinishes_Shade.create({
+                    LuxuryShadeId: id,
+                    LuxuryFinishId: finish['id']
+                });
+            }
         }
         else {
             delete updateLuxuryShade["image"];
@@ -66,7 +82,15 @@ exports.getAllShades = async (req, res) => {
 exports.getSpecificShade = async (req, res) => {
     try {
         const { shade_id } = req.body;
-        const result = await LuxuryShade.findAll({ id: shade_id });
+        const result = await LuxuryShade.findAll({
+            where: { id: shade_id },
+            include: [
+                {
+                    model: LuxuryFinishes,
+                    through: { attributes: [] }
+                }
+            ]
+        });
         return res.status(200).json({ success: true, data: result });
     }
     catch (err) {

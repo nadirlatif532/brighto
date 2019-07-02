@@ -46,8 +46,9 @@ module.exports = (sequelize, DataTypes) => {
         })
     LuxuryFinishes.associate = function (models) {
         // associations can be defined here
-        const { Country, LuxuryFinishes_Country } = models;
-        LuxuryFinishes.belongsToMany(Country, { through: LuxuryFinishes_Country, onDelete: 'cascade' })
+        const { Country, LuxuryFinishes_Country, LuxuryShade, LuxuryFinishes_Shade } = models;
+        LuxuryFinishes.belongsToMany(Country, { through: LuxuryFinishes_Country, onDelete: 'cascade' });
+        LuxuryFinishes.belongsToMany(LuxuryShade, {through: LuxuryFinishes_Shade, onDelete: 'cascade'})
     };
     return LuxuryFinishes;
 };

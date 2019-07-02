@@ -21,6 +21,9 @@ module.exports = (sequelize, DataTypes) => {
         },
         itemCode: {
             type: DataTypes.STRING
+        },
+        description: {
+            type: DataTypes.TEXT
         }
     }, {
         defaultScope: {
@@ -29,8 +32,8 @@ module.exports = (sequelize, DataTypes) => {
     })
     LuxuryShade.associate = function (models) {
         // associations can be defined here 
-        const {LuxuryFinishes} = models;
-        LuxuryShade.belongsTo(LuxuryFinishes);
+        const {LuxuryFinishes, LuxuryFinishes_Shade} = models;
+        LuxuryShade.belongsToMany(LuxuryFinishes, {through: LuxuryFinishes_Shade, onDelete: 'cascade'});
     };
     return LuxuryShade;
 };
