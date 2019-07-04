@@ -41,6 +41,7 @@ admin
   .post("/color-advisory/create",ColorAdvisory.create)
   .post("/luxury-shade/create", LuxuryShadeController.createLuxuryShade)
   .post("/packaging/create", PackagingController.create)
+  .post("/user/create", UserController.createUser)
   .put("/shade-filter/:id", ShadeFilterController.updateShadeFilter)
   .put("/luxury-shade/:id", LuxuryShadeController.updateLuxuryShade)
   .put("/order/:id", OrderController.updateOrder)

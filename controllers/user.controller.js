@@ -1,4 +1,7 @@
 const { User } = require('../models');
+const jwt = require('jsonwebtoken');
+const keys = require('../config/keys');
+
 exports.getUsers = async (req, res) => {
     try {
         const result = await User.findAll({});
@@ -6,6 +9,34 @@ exports.getUsers = async (req, res) => {
     }
     catch (err) {
         return res.status(500).json({ success: false, errors: err });
+    }
+}
+
+exports.createUser = async (req, res) => {
+    const { email, password, firstname, lastname, phone, role, profession, country, city } = req.body;
+
+    try {
+        User.build({ email, password, firstname, lastname, phone, role, profession, country, city }).validate()
+            .then((user) => {
+                return user.save();
+            })
+            .then((user) => {
+                jwt.sign({ sub: user.id }, keys.jwtSecret, (err, token) => {
+                    if (err) return err;
+                    let userObject = JSON.parse(JSON.stringify(user));
+                    delete userObject["password"];
+                    res.status(201).json({ success: true, message: 'User created successfully', token: token, data: user });
+                });
+            })
+            .catch(errors => {
+                let errArray = JSON.parse(JSON.stringify(errors))['errors'] || [];
+                let errObj = errArray.map((err) => {
+                    return err['message']
+                });
+                res.status(400).json({ success: false, errors: errObj });
+            });
+    } catch (e) {
+        return res.status(400).json({ success: false, errors: e })
     }
 }
 
@@ -28,7 +59,7 @@ exports.updateUser = async (req, res) => {
         if (updateObject['oldPassword'] && updateObject['newPassword']) {
             try {
                 await user.comparePassword(updateObject['oldPassword']);
-            } catch(err) {
+            } catch (err) {
                 return res.status(500).json({ success: false, errors: "Old password was incorrect." });
             }
             updateObject['password'] = updateObject['newPassword'];
