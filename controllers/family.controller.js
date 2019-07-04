@@ -5,10 +5,10 @@ exports.createColor = async (req, res) => {
    {name:"Red",r:255,g:101,b:0}
  */
   try {
-    const { name, r, g, b, ShadeFilter } = req.body;
+    const { name, r, g, b, ShadeFilter, sequence } = req.body;
     let id = ShadeFilter['id'];
     await Family.create({
-      name, r, g, b, ShadeFilterId: id
+      name, r, g, b, ShadeFilterId: id, sequence
     });
     return res.status(200).json({ success: true, message: 'Color created successfully' });
   }
@@ -24,7 +24,6 @@ exports.updateColor = async (req, res) => {
     if both :  {name: 'Red', r: 255, g: 101, b: 0}
   */
   let updateObject = req.body;
-  console.log(updateObject)
   updateObject['ShadeFilterId'] = updateObject['ShadeFilter']['id'];
   const { id } = req.params;
   try {
@@ -67,7 +66,8 @@ exports.getAllColors = async (req, res) => {
         {
           model: ShadeFilter
         }
-      ]
+      ],
+      order: ['sequence']
     });
     result = JSON.parse(JSON.stringify(result));
     result.map((item) => {
@@ -79,7 +79,6 @@ exports.getAllColors = async (req, res) => {
     return res.status(200).json({ success: true, data: result });
   }
   catch (err) {
-    console.log(err);
     return res.status(500).json({ success: false, errors: err });
   }
 }

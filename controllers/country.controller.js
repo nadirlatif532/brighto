@@ -15,7 +15,7 @@ exports.updateCountry = async (req, res) => {
     const updateObject = req.body;
     const { id } = req.params;
     try {
-        if(!id) {
+        if (!id) {
             throw "Id is missing or incorrect format";
         }
         await Country.update(
@@ -32,7 +32,7 @@ exports.updateCountry = async (req, res) => {
 exports.deleteCountry = async (req, res) => {
     const { id } = req.params;
     try {
-        if(!id) {
+        if (!id) {
             throw "Id is missing or incorrect format";
         }
         await Country.destroy({
@@ -50,7 +50,8 @@ exports.deleteCountry = async (req, res) => {
 exports.getAllCountries = async (req, res) => {
     try {
         const result = await Country.findAll({
-            attributes: ["id", "name"]
+            attributes: ["id", "name"],
+            order: ['sequence']
         });
         return res.status(200).json({ success: true, data: result });
     }

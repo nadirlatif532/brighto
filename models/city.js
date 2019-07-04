@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
                     msg: 'Please provide a City name which must be 3-40 characters in length'
                 }
             }
+        },
+        sequence: {
+            type: DataTypes.INTEGER,
+            allowNull:false
         }
     }, {
         defaultScope: {

@@ -38,6 +38,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         productImage: {
             type: DataTypes.STRING
+        },
+        sequence: {
+            type: DataTypes.INTEGER,
+            allowNull:false
         }
     }, {
             defaultScope: {

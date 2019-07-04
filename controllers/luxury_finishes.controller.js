@@ -132,7 +132,8 @@ exports.getAllFinishes = async (req, res) => {
                     model: Country,
                     through: { attributes: [] }
                 }
-            ]
+            ],
+            order: ['sequence']
         });
         result = JSON.parse(JSON.stringify(result));
         result = result.map((item) => {

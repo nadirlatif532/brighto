@@ -16,7 +16,7 @@ exports.updateCity = async (req, res) => {
     const { id } = req.params;
     updateObject['CountryId'] = updateObject.CountryId;
     try {
-        if(!id) {
+        if (!id) {
             throw "Id is missing or incorrect format";
         }
         await City.update(
@@ -33,7 +33,7 @@ exports.updateCity = async (req, res) => {
 exports.deleteCity = async (req, res) => {
     const { id } = req.params;
     try {
-        if(!id) {
+        if (!id) {
             throw "Id is missing or incorrect format";
         }
         await City.destroy({
@@ -54,7 +54,8 @@ exports.getAllCities = async (req, res) => {
             include: {
                 model: Country,
                 attributes: ["id", "name"]
-            }
+            },
+            order: ['sequence']
         });
         return res.status(200).json({ success: true, data: result });
     }
@@ -64,31 +65,34 @@ exports.getAllCities = async (req, res) => {
 }
 
 exports.getCitiesByCountry = async (req, res) => {
-  const { country_id } = req.body;
-  try {
-    if (!country_id) {
-      throw "Country Id missing";
+    const { country_id } = req.body;
+    try {
+        if (!country_id) {
+            throw "Country Id missing";
+        }
+        const result = await City.findAll({
+            where: { CountryId: country_id },
+            order: ['sequence']
+        }, { raw: true });
+        return res.status(200).json({ success: true, data: result });
+    } catch (err) {
+        return res.status(500).json({ success: false, errors: err });
     }
-    const result = await City.findAll({where: { CountryId: country_id }}, { raw: true });
-    return res.status(200).json({ success: true, data: result });
-  } catch (err) {
-    return res.status(500).json({ success: false, errors: err });
-  }
 }
 
-exports.getCitiesWithDealers = async (req,res) => {
-    const {id} = req.body;
+exports.getCitiesWithDealers = async (req, res) => {
+    const { id } = req.body;
     try {
-        if(!id) {
+        if (!id) {
             throw "City Id is missing";
         }
-        let dealers = await db.sequelize.query("select * from Dealers", { type: db.sequelize.QueryTypes.SELECT})
-        const cities =  await db.sequelize.query("select * from Cities", { type: db.sequelize.QueryTypes.SELECT})
+        let dealers = await db.sequelize.query("select * from Dealers", { type: db.sequelize.QueryTypes.SELECT })
+        const cities = await db.sequelize.query("select * from Cities", { type: db.sequelize.QueryTypes.SELECT })
         let result = cities.map((item) => {
-            return {city: item, dealer:dealers.filter((dealer) => dealer['CityId'] == item['id'])}
+            return { city: item, dealer: dealers.filter((dealer) => dealer['CityId'] == item['id']) }
         });
         return res.status(200).json({ success: true, data: result });
-        } catch (err) {
-            return res.status(500).json({ success: false, errors: err });
+    } catch (err) {
+        return res.status(500).json({ success: false, errors: err });
     }
 }

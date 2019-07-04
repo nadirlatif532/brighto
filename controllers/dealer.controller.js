@@ -64,7 +64,8 @@ exports.getAllDealers = async (req, res) => {
                         }
                     ]
                 }
-            ]
+            ],
+            order: ['sequence']
         });
         return res.status(200).json({ success: true, data: result });
     }
@@ -104,7 +105,10 @@ exports.getCountryDealers = async (req, res) => {
         if (!country_id) {
             throw "Country Id missing";
         }
-        const result = await Dealer.findAll({ where: { CountryId: country_id } });
+        const result = await Dealer.findAll({
+            where: { CountryId: country_id },
+            order: ['sequence']
+        });
         return res.status(200).json({ success: true, data: result });
     } catch (err) {
         return res.status(500).json({ success: false, errors: err });
@@ -117,7 +121,10 @@ exports.getCityDealers = async (req, res) => {
         if (!city_id) {
             throw "City Id missing";
         }
-        const result = await Dealer.findAll({ where: { CityId: city_id } });
+        const result = await Dealer.findAll({
+            where: { CityId: city_id },
+            order: ['sequence']
+        });
         return res.status(200).json({ success: true, data: result });
     } catch (err) {
         return res.status(500).json({ success: false, errors: err });

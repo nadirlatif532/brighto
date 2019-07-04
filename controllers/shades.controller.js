@@ -139,7 +139,8 @@ exports.getColorDetails = async (req, res) => {
                     attributes: ['id', 'name'],
                     through: { attributes: [] }
                 }
-            ]
+            ],
+            order: ['sequence']
         });
 
         result = JSON.parse(JSON.stringify(result));
@@ -231,7 +232,8 @@ exports.getShadeByProduct = async (req, res) => {
                 model: Product,
                 where: { id: product_id },
                 through: { attributes: [] }
-            }
+            },
+            order: ['sequence']
         });
         result = JSON.parse(JSON.stringify(result));
         result.map((item) => {
@@ -265,7 +267,8 @@ exports.getShades = async (req, res) => {
                     model: Country,
                     through: { attributes: [] }
                 }
-            ]
+            ],
+            order: ['sequence']
         });
         result = JSON.parse(JSON.stringify(result));
         result.map((item) => {

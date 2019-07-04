@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
         b: {
             type: DataTypes.INTEGER,
             allowNull: false,
+        },
+        sequence: {
+            type: DataTypes.INTEGER,
+            allowNull:false
         }
     }, {
         defaultScope: {
