@@ -40,7 +40,8 @@ exports.getAllProducts = async (req, res) => {
           model: Shades,
           through: { attributes: [] }
         }
-      ]
+      ],
+      order: ['sequence']
     });
     return res.status(200).json({ success: true, data: result });
   } catch (err) {
@@ -89,7 +90,8 @@ exports.getProductWithShades = async (req, res) => {
           attributes: ['name'],
           through: { attributes: [] }
         }
-      ]
+      ],
+      order: ['sequence']
     })
     return res.status(200).json({ success: true, data: result });
   } catch (err) {
@@ -138,7 +140,8 @@ exports.getProductByCountry = async (req, res) => {
           model: Shades,
           through: { attributes: [] }
         }
-      ]
+      ],
+      order: ['sequence']
     });
 
     return res.status(200).json({ success: true, data: result });
@@ -176,50 +179,14 @@ exports.getSpecificProduct = async (req, res) => {
         {
           model: Category,
           through: { attributes: [] },
-          // include: [
-          //   {
-          //     model: ProjectType,
-          //     through: { attributes: [] }
-          //   }
-          // ]
         },
         {
           model: Surface,
           through: { attributes: [] },
-          // include: [
-          //   {
-          //     model: Category,
-          //     through: { attributes: [] },
-          //     include: [
-          //       {
-          //         model: ProjectType,
-          //         through: { attributes: [] }
-          //       }
-          //     ]
-          //   }
-          // ]
         },
         {
           model: FinishType,
           through: { attributes: [] },
-          // include: [
-          //   {
-          //     model: Surface,
-          //     through: { attributes: [] },
-          //     include: [
-          //       {
-          //         model: Category,
-          //         through: { attributes: [] },
-          //         include: [
-          //           {
-          //             model: ProjectType,
-          //             through: { attributes: [] }
-          //           }
-          //         ]
-          //       }
-          //     ]
-          //   }
-          // ]
         }
       ]
     });
@@ -454,7 +421,8 @@ exports.getFilteredProduct = async (req, res) => {
           model: Shades,
           through: { attributes: [] }
         }
-      ]
+      ],
+      order: ['sequence']
     });
     return res
       .status(200)

@@ -34,6 +34,10 @@ module.exports = (sequelize, DataTypes) => {
         isActive: {
             type: DataTypes.BOOLEAN,
             defaultValue: true
+        },
+        sequence: {
+            type: DataTypes.INTEGER,
+            allowNull:false
         }
     }, {
             indexes: [

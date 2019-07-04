@@ -45,6 +45,10 @@ module.exports = (sequelize, DataTypes) => {
         isRM: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
+        },
+        sequence: {
+            type: DataTypes.INTEGER,
+            allowNull:false
         }
     }, {
         defaultScope: {

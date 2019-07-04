@@ -1,4 +1,4 @@
-const { LuxuryShade, LuxuryFinishes_Shade,LuxuryFinishes } = require('../models');
+const { LuxuryShade, LuxuryFinishes_Shade, LuxuryFinishes } = require('../models');
 const fs = require('fs');
 const keys = require('../config/keys');
 exports.createLuxuryShade = async (req, res) => {
@@ -72,7 +72,9 @@ exports.deleteLuxuryShade = async (req, res) => {
 
 exports.getAllShades = async (req, res) => {
     try {
-        const result = await LuxuryShade.findAll({});
+        const result = await LuxuryShade.findAll({
+            order: ['sequence']
+        });
         return res.status(200).json({ success: true, data: result });
     }
     catch (err) {
