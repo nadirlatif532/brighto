@@ -3,7 +3,7 @@ const fs = require('fs');
 const keys = require('../config/keys');
 
 exports.create = async (req, res) => {
-    const { name, description, video, countries } = req.body;
+    const { name, description, video, countries, sequence } = req.body;
     try {
         let result = await LuxuryFinishes.create({
             name,
@@ -13,6 +13,7 @@ exports.create = async (req, res) => {
             productImage: req.files['image1'] && req.files['image1'][0].filename || null,
             description,
             video,
+            sequence:1,
             coverImage: req.files['coverImage'] && req.files['coverImage'][0].filename || null
         });
         result = JSON.parse(JSON.stringify(result));
