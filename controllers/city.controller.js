@@ -2,8 +2,8 @@ const { City, Country, Dealer } = require('../models');
 const db = require('../models/index');
 exports.createCity = async (req, res) => {
     try {
-        const { name, CountryId } = req.body;
-        await City.create({ name, CountryId });
+        const { name, CountryId, sequence} = req.body;
+        await City.create({ name, CountryId, sequence:1});
         return res.status(200).json({ success: true, message: 'City created successfully' });
     }
     catch (err) {

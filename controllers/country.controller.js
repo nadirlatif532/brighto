@@ -2,8 +2,8 @@ const { Country } = require('../models');
 
 exports.createCountry = async (req, res) => {
     try {
-        const { name } = req.body;
-        await Country.create({ name });
+        const { name, sequence } = req.body;
+        await Country.create({ name, sequence:1 });
         return res.status(200).json({ success: true, message: 'Country created successfully' });
     }
     catch (err) {
