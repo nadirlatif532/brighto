@@ -206,7 +206,8 @@ exports.createProduct = async (req, res) => {
     description,
     spreading,
     countries,
-    PackagingId
+    PackagingId,
+    sequence
   } = req.body;
   try {
     if (!PackagingId && !PackagingId['id']) {
@@ -219,7 +220,8 @@ exports.createProduct = async (req, res) => {
         spreading,
         image: req.files['image'][0].filename,
         coverImage: req.files['coverImage'][0].filename,
-        PackagingId: PackagingId['id']
+        PackagingId: PackagingId['id'],
+        sequence:1
       },
       { raw: true }
     );
