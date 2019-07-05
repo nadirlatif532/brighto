@@ -29,11 +29,11 @@ exports.createProductShade = async (ProductId, id) => {
 
 exports.createShade = async (req, res) => {
     try {
-        const { name, description, itemCode, isAC, isRM, Products, Countries } = req.body;
+        const { name, description, itemCode, isAC, isRM, Products, Countries, sequence } = req.body;
         const { r, g, b } = req.body.color;
         const FamilyId = req.body.Family.id;
         const shade = await Shades.create({
-            name, r, g, b, description, itemCode, isAC, isRM, FamilyId
+            name, r, g, b, description, itemCode, isAC, isRM, FamilyId,sequence:1
         }, { raw: true });
 
         for (let country of Countries) {
