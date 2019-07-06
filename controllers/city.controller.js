@@ -3,7 +3,7 @@ const db = require('../models/index');
 exports.createCity = async (req, res) => {
     try {
         const { name, CountryId, sequence} = req.body;
-        await City.create({ name, CountryId, sequence:1});
+        await City.create({ name, CountryId, sequence});
         return res.status(200).json({ success: true, message: 'City created successfully' });
     }
     catch (err) {
@@ -53,7 +53,6 @@ exports.getAllCities = async (req, res) => {
         const result = await City.findAll({
             include: {
                 model: Country,
-                attributes: ["id", "name"]
             },
             order: ['sequence']
         });

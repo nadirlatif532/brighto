@@ -33,7 +33,7 @@ exports.createShade = async (req, res) => {
         const { r, g, b } = req.body.color;
         const FamilyId = req.body.Family.id;
         const shade = await Shades.create({
-            name, r, g, b, description, itemCode, isAC, isRM, FamilyId,sequence:1
+            name, r, g, b, description, itemCode, isAC, isRM, FamilyId,sequence
         }, { raw: true });
 
         for (let country of Countries) {

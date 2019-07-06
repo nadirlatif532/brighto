@@ -3,7 +3,7 @@ const { Country } = require('../models');
 exports.createCountry = async (req, res) => {
     try {
         const { name, sequence } = req.body;
-        await Country.create({ name, sequence:1 });
+        await Country.create({ name, sequence});
         return res.status(200).json({ success: true, message: 'Country created successfully' });
     }
     catch (err) {
@@ -50,7 +50,7 @@ exports.deleteCountry = async (req, res) => {
 exports.getAllCountries = async (req, res) => {
     try {
         const result = await Country.findAll({
-            attributes: ["id", "name"],
+            attributes: ["id", "name","sequence"],
             order: ['sequence']
         });
         return res.status(200).json({ success: true, data: result });

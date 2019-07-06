@@ -2,8 +2,8 @@ const { Dealer, Country, City } = require('../models');
 
 exports.createDealer = async (req, res) => {
     try {
-        const { name, address, longitude, latitude, phone, isAC, isRM, CountryId, CityId } = req.body;
-        let result = await Dealer.create({ name, address, longitude, latitude, phone, isAC, isRM, CountryId, CityId });
+        const { name, address, longitude, latitude, phone, isAC, isRM, CountryId, CityId, sequence } = req.body;
+        let result = await Dealer.create({ name, address, longitude, latitude, phone, isAC, isRM, CountryId, CityId, sequence });
         result = JSON.parse(JSON.stringify(result));
         return res.status(200).json({ success: true, message: 'Dealer created successfully', data: result.id });
     }
@@ -51,7 +51,7 @@ exports.deleteDealer = async (req, res) => {
 exports.getAllDealers = async (req, res) => {
     try {
         const result = await Dealer.findAll({
-            attributes: ["id", "name", "address", "longitude", "latitude", "isAC", "isRM"],
+
             include: [
                 {
                     model: Country

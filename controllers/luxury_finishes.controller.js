@@ -13,7 +13,7 @@ exports.create = async (req, res) => {
             productImage: req.files['image1'] && req.files['image1'][0].filename || null,
             description,
             video,
-            sequence:1,
+            sequence,
             coverImage: req.files['coverImage'] && req.files['coverImage'][0].filename || null
         });
         result = JSON.parse(JSON.stringify(result));

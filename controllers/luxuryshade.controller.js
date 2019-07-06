@@ -4,7 +4,7 @@ const keys = require('../config/keys');
 exports.createLuxuryShade = async (req, res) => {
     const { name, itemCode, LuxuryFinishes, description, sequence } = req.body;
     try {
-        let result = await LuxuryShade.create({ name, image: req.files['image'][0].filename, itemCode, description, sequence:1 });
+        let result = await LuxuryShade.create({ name, image: req.files['image'][0].filename, itemCode, description, sequence });
         result = JSON.parse(JSON.stringify(result));
         for (let finish of JSON.parse(LuxuryFinishes)) {
             await LuxuryFinishes_Shade.create({

@@ -221,7 +221,7 @@ exports.createProduct = async (req, res) => {
         image: req.files['image'][0].filename,
         coverImage: req.files['coverImage'][0].filename,
         PackagingId: PackagingId['id'],
-        sequence:1
+        sequence
       },
       { raw: true }
     );
@@ -289,7 +289,9 @@ exports.updateProduct = async (req, res) => {
   if (req.files['image']) {
     updateObject['image'] = req.files['image'][0].filename;
     const { image } = await Product.find({ where: { id: req.params.id }, raw: true });
-    fs.unlinkSync(`${keys.storage}/${image}`);
+    if(fs.existsSync(`${keys.storage}/${image}`)) {
+      fs.unlinkSync(`${keys.storage}/${image}`);
+    }
   }
   else {
     delete updateObject["image"];
@@ -297,7 +299,9 @@ exports.updateProduct = async (req, res) => {
   if (req.files['coverImage']) {
     updateObject['coverImage'] = req.files['coverImage'][0].filename;
     const { coverImage } = await Product.find({ where: { id: req.params.id }, raw: true });
-    fs.unlinkSync(`${keys.storage}/${coverImage}`);
+    if(fs.existsSync(`${keys.storage}/${coverImage}`)) {
+      fs.unlinkSync(`${keys.storage}/${coverImage}`);
+    }
   } else {
     delete updateObject["coverImage"];
   }
